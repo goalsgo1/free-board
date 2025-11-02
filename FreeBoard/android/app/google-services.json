@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "13173094667",
+    "project_id": "freeboard-501e6",
+    "storage_bucket": "freeboard-501e6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:13173094667:android:e3fbfd3b91bc12b2594a0e",
+        "android_client_info": {
+          "package_name": "com.freeboard.free_board"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAP8GwSu7uXIbzXV-fFpmcGTs1B3SvufmQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
