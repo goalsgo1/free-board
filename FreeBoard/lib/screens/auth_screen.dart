@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../services/auth_service.dart';
+import 'package:provider/provider.dart';
+import '../providers/auth_provider.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -10,9 +11,7 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _authService = AuthService();
   bool _isLogin = true; // true: 로그인, false: 회원가입
-  bool _isLoading = false;
   bool _obscurePassword = true;
 
   // 로그인/회원가입 공통 필드
@@ -30,21 +29,21 @@ class _AuthScreenState extends State<AuthScreen> {
 
   Future<void> _submit() async {
     if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
       if (_isLogin) {
         // 로그인
-        final result = await _authService.signInWithEmail(
-          _emailController.text.trim(),
-          _passwordController.text.trim(),
+        final success = await authProvider.signIn(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
         );
 
-        if (result == null && mounted) {
+        if (!success && mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.'),
+            SnackBar(
+              content: Text(
+                authProvider.errorMessage ?? '로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.',
+              ),
               backgroundColor: Colors.red,
             ),
           );
@@ -60,26 +59,25 @@ class _AuthScreenState extends State<AuthScreen> {
               ),
             );
           }
-          setState(() {
-            _isLoading = false;
-          });
           return;
         }
 
-        final result = await _authService.signUpWithEmail(
-          _emailController.text.trim(),
-          _passwordController.text.trim(),
-          _displayNameController.text.trim(),
+        final success = await authProvider.signUp(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
+          displayName: _displayNameController.text.trim(),
         );
 
-        if (result == null && mounted) {
+        if (!success && mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('회원가입에 실패했습니다.'),
+            SnackBar(
+              content: Text(
+                authProvider.errorMessage ?? '회원가입에 실패했습니다.',
+              ),
               backgroundColor: Colors.red,
             ),
           );
-        } else if (mounted) {
+        } else if (success && mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('회원가입이 완료되었습니다.'),
@@ -87,12 +85,6 @@ class _AuthScreenState extends State<AuthScreen> {
             ),
           );
         }
-      }
-
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
       }
     }
   }
@@ -208,47 +200,55 @@ class _AuthScreenState extends State<AuthScreen> {
               ),
               const SizedBox(height: 32),
               // 로그인/회원가입 버튼
-              ElevatedButton(
-                onPressed: _isLoading ? null : _submit,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: _isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                        ),
-                      )
-                    : Text(
-                        _isLogin ? '로그인' : '회원가입',
-                        style: const TextStyle(fontSize: 16),
+              Consumer<AuthProvider>(
+                builder: (context, authProvider, child) {
+                  return ElevatedButton(
+                    onPressed: authProvider.isLoading ? null : _submit,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
                       ),
+                    ),
+                    child: authProvider.isLoading
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          )
+                        : Text(
+                            _isLogin ? '로그인' : '회원가입',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                  );
+                },
               ),
               const SizedBox(height: 16),
               // 로그인/회원가입 전환 버튼
-              TextButton(
-                onPressed: _isLoading
-                    ? null
-                    : () {
-                        setState(() {
-                          _isLogin = !_isLogin;
-                          _formKey.currentState?.reset();
-                        });
-                      },
-                child: Text(
-                  _isLogin
-                      ? '계정이 없으신가요? 회원가입'
-                      : '이미 계정이 있으신가요? 로그인',
-                  style: TextStyle(color: Colors.blue[700]),
-                ),
+              Consumer<AuthProvider>(
+                builder: (context, authProvider, child) {
+                  return TextButton(
+                    onPressed: authProvider.isLoading
+                        ? null
+                        : () {
+                            setState(() {
+                              _isLogin = !_isLogin;
+                              _formKey.currentState?.reset();
+                            });
+                          },
+                    child: Text(
+                      _isLogin
+                          ? '계정이 없으신가요? 회원가입'
+                          : '이미 계정이 있으신가요? 로그인',
+                      style: TextStyle(color: Colors.blue[700]),
+                    ),
+                  );
+                },
               ),
             ],
           ),

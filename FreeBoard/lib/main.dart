@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
 import 'firebase_options.dart';
+import 'providers/auth_provider.dart';
+import 'providers/post_provider.dart';
+import 'providers/comment_provider.dart';
 import 'screens/post_list_screen.dart';
 import 'screens/auth_screen.dart';
 
@@ -21,21 +24,28 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'FreeBoard',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blue,
-          brightness: Brightness.light,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => PostProvider()),
+        ChangeNotifierProvider(create: (_) => CommentProvider()),
+      ],
+      child: MaterialApp(
+        title: 'FreeBoard',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.blue,
+            brightness: Brightness.light,
+          ),
+          useMaterial3: true,
+          appBarTheme: const AppBarTheme(
+            centerTitle: true,
+            elevation: 2,
+          ),
         ),
-        useMaterial3: true,
-        appBarTheme: const AppBarTheme(
-          centerTitle: true,
-          elevation: 2,
-        ),
+        home: const AuthWrapper(),
       ),
-      home: const AuthWrapper(),
     );
   }
 }
@@ -46,18 +56,17 @@ class AuthWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<User?>(
-      stream: FirebaseAuth.instance.authStateChanges(),
-      builder: (context, snapshot) {
+    return Consumer<AuthProvider>(
+      builder: (context, authProvider, child) {
         // 로딩 중
-        if (snapshot.connectionState == ConnectionState.waiting) {
+        if (authProvider.isLoading && authProvider.currentUser == null) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
         }
         
         // 로그인 여부 확인
-        if (snapshot.hasData) {
+        if (authProvider.isAuthenticated) {
           // 로그인됨 - 게시글 목록 화면
           return const PostListScreen();
         } else {

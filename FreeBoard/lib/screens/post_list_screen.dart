@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../models/post.dart';
-import '../services/firestore_service.dart';
-import '../services/auth_service.dart';
+import 'package:provider/provider.dart';
+import '../providers/post_provider.dart';
+import '../providers/auth_provider.dart';
 import 'post_detail_screen.dart';
 import 'post_create_screen.dart';
 import 'deleted_posts_screen.dart';
@@ -30,9 +30,9 @@ class PostListScreen extends StatelessWidget {
       ),
     );
 
-    if (confirm == true) {
-      final authService = AuthService();
-      await authService.signOut();
+    if (confirm == true && context.mounted) {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      await authProvider.signOut();
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -46,7 +46,6 @@ class PostListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final firestoreService = FirestoreService();
 
     return Scaffold(
       appBar: AppBar(
@@ -74,25 +73,20 @@ class PostListScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: StreamBuilder<List<Post>>(
-        stream: firestoreService.getPosts(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (snapshot.hasError) {
+      body: Consumer<PostProvider>(
+        builder: (context, postProvider, child) {
+          if (postProvider.errorMessage != null) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Icon(Icons.error_outline, size: 64, color: Colors.red),
                   const SizedBox(height: 16),
-                  Text('오류 발생: ${snapshot.error}'),
+                  Text('오류 발생: ${postProvider.errorMessage}'),
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
-                      // 재시도 로직
+                      postProvider.clearError();
                     },
                     child: const Text('다시 시도'),
                   ),
@@ -101,7 +95,7 @@ class PostListScreen extends StatelessWidget {
             );
           }
 
-          final posts = snapshot.data ?? [];
+          final posts = postProvider.posts;
 
           if (posts.isEmpty) {
             return Center(
