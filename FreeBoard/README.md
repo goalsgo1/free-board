@@ -30,7 +30,7 @@
 
 1. 저장소 클론:
 ```bash
-git clone https://github.com/your-username/free-board.git
+git clone https://github.com/goalsgo1/free-board.git
 cd FreeBoard
 ```
 
@@ -66,7 +66,20 @@ flutter run -d chrome
 - [Firestore 인덱스 설정](FIRESTORE_INDEX_SETUP.md)
 - [Firestore 보안 규칙](FIRESTORE_SECURITY_RULES.md)
 - [레이아웃 디자인 컨셉](LAYOUT_DESIGN_CONCEPTS.md)
+- [보안 가이드](SECURITY.md)
+
+## 🔒 보안
+
+이 프로젝트는 Firebase를 사용하므로 **반드시** [보안 가이드](SECURITY.md)를 읽고 설정하세요.
+
+## 🤝 기여하기
+
+버그 리포트나 기능 제안은 [Issues](https://github.com/goalsgo1/free-board/issues)에 등록해주세요.
 
 ## 📄 라이선스
 
 이 프로젝트는 자유롭게 사용 가능합니다.
+
+## 🔗 링크
+
+- **GitHub 저장소**: https://github.com/goalsgo1/free-board
