@@ -38,7 +38,7 @@ android {
 
     // 서명 설정 (key.properties 파일이 있을 경우만 사용)
     signingConfigs {
-        val keystorePropertiesFile = rootProject.file("../key.properties")
+        val keystorePropertiesFile = rootProject.file("key.properties")
         if (keystorePropertiesFile.exists()) {
             val keystoreProperties = Properties()
             keystoreProperties.load(FileInputStream(keystorePropertiesFile))
@@ -55,7 +55,7 @@ android {
     buildTypes {
         getByName("release") {
             // key.properties 파일이 있으면 릴리즈 키 사용, 없으면 디버그 키 사용
-            val keystorePropertiesFile = rootProject.file("../key.properties")
+            val keystorePropertiesFile = rootProject.file("key.properties")
             if (keystorePropertiesFile.exists()) {
                 signingConfig = signingConfigs.getByName("release")
             } else {
