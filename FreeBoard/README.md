@@ -1,16 +1,72 @@
-# free_board
+# FreeBoard
 
-FreeBoard - A free bulletin board app
+**FreeBoard**는 Firebase 백엔드를 활용한 크로스 플랫폼 자유 게시판 애플리케이션입니다.
 
-## Getting Started
+## 📱 주요 기능
 
-This project is a starting point for a Flutter application.
+- 🔐 Firebase Authentication을 통한 이메일/비밀번호 로그인
+- 📝 게시글 작성, 수정, 삭제
+- 💬 게시글에 댓글 작성
+- 🔍 게시글 검색 및 필터링
+- 📋 삭제된 게시글 모아보기
+- 🎨 Material Design 3를 활용한 현대적인 UI
 
-A few resources to get you started if this is your first Flutter project:
+## 🛠 기술 스택
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- **프레임워크**: Flutter 3.8.1+
+- **백엔드**: Firebase (Firestore, Authentication)
+- **상태 관리**: Provider
+- **언어**: Dart 3.8.1+
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 📦 설치 및 실행
+
+### 사전 요구사항
+
+- Flutter SDK 설치
+- Firebase 프로젝트 생성
+- Android Studio / Xcode (모바일 빌드용)
+
+### 설치
+
+1. 저장소 클론:
+```bash
+git clone https://github.com/your-username/free-board.git
+cd FreeBoard
+```
+
+2. 의존성 설치:
+```bash
+flutter pub get
+```
+
+3. Firebase 설정 파일 추가:
+```bash
+flutterfire configure
+```
+
+더 자세한 Firebase 설정 방법은 [FIREBASE_SETUP.md](FIREBASE_SETUP.md)를 참고하세요.
+
+### 실행
+
+```bash
+# Android
+flutter run
+
+# iOS
+flutter run -d ios
+
+# Web
+flutter run -d chrome
+```
+
+## 📚 문서
+
+- [Firebase 설정 가이드](FIREBASE_SETUP.md)
+- [Firebase 인증 설정](FIREBASE_AUTH_SETUP.md)
+- [Firestore 인덱스 설정](FIRESTORE_INDEX_SETUP.md)
+- [Firestore 보안 규칙](FIRESTORE_SECURITY_RULES.md)
+- [레이아웃 디자인 컨셉](LAYOUT_DESIGN_CONCEPTS.md)
+
+## 📄 라이선스
+
+이 프로젝트는 자유롭게 사용 가능합니다.
