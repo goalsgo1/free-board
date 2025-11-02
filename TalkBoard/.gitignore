@@ -1,0 +1,89 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# Android related
+/android/local.properties
+/android/.gradle/
+/android/captures/
+/android/.idea/
+# Firebase 설정 파일 (민감 정보 포함 가능)
+/android/app/google-services.json
+# Android 서명 키 (절대 커밋하지 말 것!)
+/android/app/key.jks
+/android/key.properties
+*.jks
+*.keystore
+
+# iOS related
+/ios/Flutter/Generated.xcconfig
+/ios/Flutter/flutter_export_environment.sh
+/ios/Flutter/ephemeral/
+/ios/Runner/GoogleService-Info.plist
+
+# Firebase related
+# Note: firebase_options.dart is usually committed as it's needed for builds
+# Uncomment the following line if you want to exclude it:
+# lib/firebase_options.dart
+
+# Web related
+/web/index.html
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE
+*.iml
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
