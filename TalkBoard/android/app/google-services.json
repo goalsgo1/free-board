@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "389872967993",
+    "project_id": "talkboard-b93dd",
+    "storage_bucket": "talkboard-b93dd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:389872967993:android:dc9652404c723a6b04c8e8",
+        "android_client_info": {
+          "package_name": "com.freeboard.free_board"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEjewknPeEhdICNnFrIlFdaA_ASlgjHAw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:389872967993:android:96ccc791723034c504c8e8",
+        "android_client_info": {
+          "package_name": "com.talkboard.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEjewknPeEhdICNnFrIlFdaA_ASlgjHAw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
