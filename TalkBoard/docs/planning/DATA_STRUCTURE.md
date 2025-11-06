@@ -14,11 +14,18 @@
   isPremium: boolean,          // 프리미엄 구독 여부
   premiumExpiresAt: timestamp, // 프리미엄 만료 일시
   pushToken: string,           // 푸시 알림 토큰
+  lastActiveAt: timestamp,    // 마지막 활동 일시 (재활성화 판단용)
+  lastNotificationSentAt: timestamp, // 마지막 알림 발송 일시
+  dailyNotificationCount: number, // 일일 알림 발송 횟수
   notificationSettings: {
     anniversaryAlerts: boolean, // 기념일 알림
     commentAlerts: boolean,    // 댓글 알림
     prayerAlerts: boolean,     // 기도 알림
-    homePublicAlerts: boolean  // 홈 화면 공개 제안 알림
+    homePublicAlerts: boolean, // 홈 화면 공개 제안 알림
+    reengagementAlerts: boolean, // 재활성화 알림
+    eternalTimeAlerts: boolean, // 영원한 시간 알림 (주간/월간)
+    notificationTimeStart: string, // 알림 수신 시작 시간 (예: "09:00")
+    notificationTimeEnd: string    // 알림 수신 종료 시간 (예: "22:00")
   }
 }
 ```
@@ -28,10 +35,12 @@
 ```javascript
 {
   memorialId: string,          // 추모관 고유 ID
-  creatorId: string,           // 생성자 ID (users.userId)
+  creatorId: string,           // 생성자 ID (users.userId) - AI 생성 시 'system' 또는 null
   memorialType: 'human' | 'pet', // 추모 대상 타입 (사람/애완동물)
   deceasedName: string,        // 고인 이름
   lifeSummary: string,         // 생애 요약
+  isAIGenerated: boolean,      // AI 생성 데이터 여부 (초기 데이터 식별용)
+  aiGeneratedAt: timestamp,    // AI 생성 일시 (isAIGenerated가 true일 때)
   photos: [                   // 사진 배열 (최대 5장, 프리미엄: 무제한)
     {
       url: string,             // 이미지 URL
@@ -51,6 +60,7 @@
     homePublicRequested: boolean, // 홈 화면 공개 제안 알림 발송 여부
     homePublicRequestedAt: timestamp, // 홈 화면 공개 제안 알림 발송 일시
     likeCount: number,        // 좋아요 수 (댓글 수와 합산하여 공개 제안 기준)
+    isAIGenerated: boolean,   // AI 생성 편지 여부 (초기 데이터 식별용)
     createdAt: timestamp
   },
   anniversary: {
@@ -61,6 +71,20 @@
     startDate: timestamp,     // 영원한 시간 시작일 (memorialDay와 동일)
     enabled: boolean,         // 영원한 시간 표시 활성화 여부
     lastUpdated: timestamp    // 마지막 업데이트 일시 (실시간 계산용)
+  },
+  notificationSettings: {
+    // 추모관별 알림 설정
+    anniversaryAlerts: boolean,        // 기념일 알림 (생일/기일)
+    commentAlerts: boolean,           // 댓글 알림
+    prayerAlerts: boolean,            // 기도 요청 알림
+    donationAlerts: boolean,          // 추모금 전달 알림
+    visitMilestoneAlerts: boolean,    // 방문 수 증가 알림 (10, 50, 100, 500, 1000명)
+    shareAlerts: boolean,             // 공유 알림
+    eternalTimeAlerts: boolean,       // 영원한 시간 알림 (주간/월간/특별한 날)
+    reengagementAlerts: boolean,      // 재활성화 알림 (유령 회원용)
+    homePublicAlerts: boolean,       // 홈 화면 공개 제안 알림
+    notificationTimeStart: string,   // 알림 수신 시작 시간 (예: "09:00")
+    notificationTimeEnd: string       // 알림 수신 종료 시간 (예: "22:00")
   },
   isPublic: boolean,          // 공개/비공개
   visitCount: number,         // 방문 횟수
@@ -82,9 +106,11 @@
 {
   commentId: string,          // 댓글 고유 ID
   memorialId: string,         // 추모관 ID
-  userId: string,             // 작성자 ID
+  userId: string,             // 작성자 ID (AI 생성 시 'system' 또는 null)
   userName: string,           // 작성자 이름
   content: string,            // 댓글 내용
+  isAIGenerated: boolean,    // AI 생성 댓글 여부 (초기 데이터 식별용)
+  aiGeneratedAt: timestamp,  // AI 생성 일시 (isAIGenerated가 true일 때)
   createdAt: timestamp,       // 작성 일시
   updatedAt: timestamp,       // 수정 일시
   deletedAt: timestamp        // 삭제 일시 (소프트 삭제)
@@ -97,12 +123,14 @@
 {
   prayerId: string,           // 기도 요청 고유 ID
   memorialId: string,         // 추모관 ID (선택)
-  userId: string,             // 작성자 ID
+  userId: string,             // 작성자 ID (AI 생성 시 'system' 또는 null)
   userName: string,           // 작성자 이름
   title: string,              // 제목
   content: string,            // 내용
   prayerCount: number,        // 함께 기도 카운트
   participants: [string],    // 참여자 ID 배열
+  isAIGenerated: boolean,    // AI 생성 기도 요청 여부 (초기 데이터 식별용)
+  aiGeneratedAt: timestamp,  // AI 생성 일시 (isAIGenerated가 true일 때)
   createdAt: timestamp,       // 작성 일시
   updatedAt: timestamp        // 수정 일시
 }
@@ -144,13 +172,15 @@
 ```javascript
 {
   emotionId: string,         // 글 고유 ID
-  userId: string,             // 작성자 ID
+  userId: string,             // 작성자 ID (AI 생성 시 'system' 또는 null)
   userName: string,           // 작성자 이름
   title: string,             // 제목
   content: string,           // 내용
   likeCount: number,         // 좋아요 수
   commentCount: number,      // 댓글 수
   category: 'grief' | 'memory' | 'comfort', // 카테고리
+  isAIGenerated: boolean,   // AI 생성 글 여부 (초기 데이터 식별용)
+  aiGeneratedAt: timestamp,  // AI 생성 일시 (isAIGenerated가 true일 때)
   createdAt: timestamp,       // 작성 일시
   updatedAt: timestamp,       // 수정 일시
   deletedAt: timestamp        // 삭제 일시 (소프트 삭제)
@@ -279,6 +309,23 @@
 }
 ```
 
+### 17. notifications (알림 내역) - 선택
+
+```javascript
+{
+  notificationId: string,  // 알림 고유 ID
+  userId: string,         // 수신자 ID
+  type: string,           // 알림 타입 (anniversary, comment, prayer, reengagement, eternalTime 등)
+  title: string,          // 알림 제목
+  body: string,           // 알림 내용
+  data: object,          // 알림 데이터 (화면 이동용)
+  memorialId: string,    // 관련 추모관 ID (선택)
+  isRead: boolean,        // 읽음 여부
+  sentAt: timestamp,      // 발송 일시
+  readAt: timestamp       // 읽은 일시 (선택)
+}
+```
+
 ## 🔍 인덱스 설정
 
 ### Firestore 인덱스
@@ -287,15 +334,18 @@
 // memorials 컬렉션
 - creatorId (ascending) + createdAt (descending)
 - isPublic (ascending) + createdAt (descending)
+- isAIGenerated (ascending) + createdAt (descending)  // AI 데이터 제거용
 - anniversary.birthday (ascending)
 - anniversary.memorialDay (ascending)
 
 // comments 컬렉션
 - memorialId (ascending) + createdAt (descending)
+- isAIGenerated (ascending) + createdAt (descending)  // AI 데이터 제거용
 
 // prayers 컬렉션
 - createdAt (descending)
 - memorialId (ascending) + createdAt (descending)
+- isAIGenerated (ascending) + createdAt (descending)  // AI 데이터 제거용
 
 // donations 컬렉션
 - memorialId (ascending) + createdAt (descending)
@@ -305,6 +355,7 @@
 // emotions 컬렉션
 - createdAt (descending)
 - category (ascending) + createdAt (descending)
+- isAIGenerated (ascending) + createdAt (descending)  // AI 데이터 제거용
 - likeCount (descending)
 
 // visits 컬렉션
@@ -322,6 +373,11 @@
 // backups 컬렉션
 - memorialId (ascending) + createdAt (descending)
 - userId (ascending) + createdAt (descending)
+
+// notifications 컬렉션 (선택)
+- userId (ascending) + sentAt (descending)
+- userId (ascending) + isRead (ascending) + sentAt (descending)
+- memorialId (ascending) + sentAt (descending)
 ```
 
 ## 🔐 보안 규칙
@@ -402,6 +458,17 @@ service cloud.firestore {
                      resource.data.userId == request.auth.uid;
       allow create: if request.auth != null && 
                        request.auth.uid == request.resource.data.userId;
+      allow delete: if request.auth != null && 
+                       resource.data.userId == request.auth.uid;
+    }
+    
+    // 알림 내역 (선택)
+    match /notifications/{notificationId} {
+      allow read: if request.auth != null && 
+                     resource.data.userId == request.auth.uid;
+      allow create: if request.auth != null; // 서버에서만 생성
+      allow update: if request.auth != null && 
+                       resource.data.userId == request.auth.uid;
       allow delete: if request.auth != null && 
                        resource.data.userId == request.auth.uid;
     }

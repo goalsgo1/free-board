@@ -5,6 +5,7 @@ import '../providers/auth_provider.dart';
 import 'privacy_policy_screen.dart';
 import 'components_guide_screen.dart';
 import 'ui_preview_screen.dart';
+import 'database_structure_screen.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -363,6 +364,25 @@ class _AuthScreenState extends State<AuthScreen> {
                 style: OutlinedButton.styleFrom(
                   foregroundColor: Colors.blue[700],
                   side: BorderSide(color: Colors.blue[300]!),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+              ),
+              // 데이터베이스 구조 버튼 (항상 표시)
+              const SizedBox(height: 16),
+              OutlinedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const DatabaseStructureScreen(),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.storage),
+                label: const Text('데이터베이스 구조'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.green[700],
+                  side: BorderSide(color: Colors.green[300]!),
                   padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
               ),

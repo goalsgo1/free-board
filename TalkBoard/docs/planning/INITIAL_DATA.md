@@ -4,11 +4,14 @@
 
 앱 출시 시 초기 데이터가 없어 사용자 경험이 저하될 수 있습니다. AI를 활용하여 감성적이고 자연스러운 초기 추모 데이터를 생성합니다.
 
+**⚠️ 중요**: AI로 생성한 초기 데이터는 사용자에게 불쾌감을 줄 수 있으므로, 나중에 실제 사용자 데이터가 많아지면 제거할 수 있도록 설계합니다.
+
 ## 🎯 목표
 
 1. **사용자 경험 향상**: 앱 출시 시 바로 추모 콘텐츠를 확인할 수 있도록
 2. **감성적 콘텐츠**: AI를 활용하여 진정성 있는 추모글 생성
 3. **다양성**: 사람/애완동물, 다양한 연령대, 다양한 상황의 추모관 생성
+4. **제거 가능성**: AI 생성 데이터를 식별하고 나중에 제거할 수 있도록 설계
 
 ## 🤖 AI 활용 방안
 
@@ -95,6 +98,9 @@ exports.generateInitialData = functions.https.onCall(async (data, context) => {
   const comments = await generateComments(memorials);
   const prayers = await generatePrayers();
   const emotions = await generateEmotions();
+
+  // 모든 생성된 데이터에 isAIGenerated: true 표시
+  // (generateMemorials, generateComments 등 함수 내에서 처리)
 
   return {
     success: true,
@@ -225,13 +231,16 @@ ${memorialType == 'human' ? '사람을 추모하는' : '애완동물을 추모�
         relationship: memorial['relationship'],
       );
       
-      // Firestore에 저장
+      // Firestore에 저장 (AI 생성 데이터 표시)
       await _firestore.collection('memorials').add({
         ...memorial,
+        'isAIGenerated': true,  // AI 생성 데이터 식별 필드
+        'aiGeneratedAt': FieldValue.serverTimestamp(),  // AI 생성 일시
         'letter': {
           'type': 'text',
           'content': letter,
           'isHomePublic': false,
+          'isAIGenerated': true,  // 편지도 AI 생성 표시
           'createdAt': FieldValue.serverTimestamp(),
         },
       });
@@ -268,7 +277,9 @@ ${memorialType == 'human' ? '사람을 추모하는' : '애완동물을 추모�
     "memorialDay": "2023-11-20"
   },
   "photos": [],
-  "isPublic": true
+  "isPublic": true,
+  "isAIGenerated": true,
+  "aiGeneratedAt": "2024-01-01T00:00:00Z"
 }
 ```
 
@@ -284,7 +295,9 @@ ${memorialType == 'human' ? '사람을 추모하는' : '애완동물을 추모�
     "memorialDay": "2023-09-15"
   },
   "photos": [],
-  "isPublic": true
+  "isPublic": true,
+  "isAIGenerated": true,
+  "aiGeneratedAt": "2024-01-01T00:00:00Z"
 }
 ```
 
@@ -420,6 +433,8 @@ class AdminScreen extends StatelessWidget {
 - [ ] AI 프롬프트 최적화
 - [ ] 생성 데이터 품질 검토
 - [ ] 다양성 확인 (사람/애완동물, 연령대, 관계)
+- [ ] 모든 AI 생성 데이터에 `isAIGenerated: true` 필드 추가
+- [ ] AI 생성 일시 기록 (`aiGeneratedAt` 필드)
 
 ### 배포
 - [ ] Firestore에 데이터 업로드
@@ -434,6 +449,8 @@ class AdminScreen extends StatelessWidget {
 3. **다양성**: 다양한 상황과 관계를 포함해야 함
 4. **품질 관리**: 생성된 데이터는 반드시 검토 후 사용
 5. **비용 관리**: API 호출 비용을 모니터링하고 제한 설정
+6. **AI 데이터 식별**: 모든 AI 생성 데이터에 `isAIGenerated: true` 필드를 반드시 추가
+7. **제거 계획**: AI 데이터는 나중에 제거할 수 있도록 설계 (사용자 불쾌감 방지)
 
 ## 🔄 업데이트 계획
 
@@ -444,4 +461,259 @@ class AdminScreen extends StatelessWidget {
 ### 사용자 피드백 반영
 - 사용자가 보고한 부적절한 콘텐츠 제거
 - 사용자 요청에 따른 새로운 카테고리 추가
+
+## 🗑️ AI 생성 데이터 제거
+
+### 제거 전략
+
+AI로 생성한 초기 데이터는 사용자에게 불쾌감을 줄 수 있으므로, 실제 사용자 데이터가 충분히 많아지면 제거할 수 있습니다.
+
+#### 제거 조건
+
+1. **사용자 데이터 충분성**
+   - 실제 사용자가 생성한 추모관이 일정 수 이상 (예: 50개 이상)
+   - 실제 사용자 댓글이 일정 수 이상 (예: 200개 이상)
+   - 실제 사용자 활동이 활발한 경우
+
+2. **제거 시점 결정**
+   - 사용자 데이터가 AI 데이터보다 많아질 때
+   - 사용자 피드백에서 AI 데이터에 대한 불만이 많을 때
+   - 앱 출시 후 3-6개월 경과 시
+
+3. **제거 방법**
+   - **점진적 제거**: 한 번에 모두 제거하지 않고 단계적으로 제거
+   - **백업 후 제거**: 제거 전 데이터 백업 (필요시 복구 가능)
+   - **소프트 삭제**: 완전 삭제 대신 `deletedAt` 필드 설정
+
+#### 제거 구현
+
+### 방법 1: Cloud Functions로 일괄 제거
+
+```javascript
+// functions/index.js
+exports.removeAIGeneratedData = functions.https.onCall(async (data, context) => {
+  // 관리자만 실행 가능
+  if (!context.auth || !context.auth.token.admin) {
+    throw new functions.https.HttpsError('permission-denied', '관리자만 실행 가능');
+  }
+
+  const batch = admin.firestore().batch();
+  let count = 0;
+
+  // AI 생성 추모관 찾기
+  const memorialsSnapshot = await admin.firestore()
+    .collection('memorials')
+    .where('isAIGenerated', '==', true)
+    .get();
+
+  for (const doc of memorialsSnapshot.docs) {
+    // 소프트 삭제 (완전 삭제 대신)
+    batch.update(doc.ref, {
+      deletedAt: admin.firestore.FieldValue.serverTimestamp(),
+      deletedReason: 'ai_generated_data_removal',
+    });
+    count++;
+  }
+
+  // AI 생성 댓글 찾기
+  const commentsSnapshot = await admin.firestore()
+    .collection('comments')
+    .where('isAIGenerated', '==', true)
+    .get();
+
+  for (const doc of commentsSnapshot.docs) {
+    batch.update(doc.ref, {
+      deletedAt: admin.firestore.FieldValue.serverTimestamp(),
+      deletedReason: 'ai_generated_data_removal',
+    });
+    count++;
+  }
+
+  // AI 생성 기도 요청 찾기
+  const prayersSnapshot = await admin.firestore()
+    .collection('prayers')
+    .where('isAIGenerated', '==', true)
+    .get();
+
+  for (const doc of prayersSnapshot.docs) {
+    batch.update(doc.ref, {
+      deletedAt: admin.firestore.FieldValue.serverTimestamp(),
+      deletedReason: 'ai_generated_data_removal',
+    });
+    count++;
+  }
+
+  // AI 생성 감정 공유 글 찾기
+  const emotionsSnapshot = await admin.firestore()
+    .collection('emotions')
+    .where('isAIGenerated', '==', true)
+    .get();
+
+  for (const doc of emotionsSnapshot.docs) {
+    batch.update(doc.ref, {
+      deletedAt: admin.firestore.FieldValue.serverTimestamp(),
+      deletedReason: 'ai_generated_data_removal',
+    });
+    count++;
+  }
+
+  await batch.commit();
+
+  return {
+    success: true,
+    removedCount: count,
+  };
+});
+```
+
+### 방법 2: 점진적 제거 (권장)
+
+```javascript
+// 점진적으로 AI 데이터 제거 (하루에 일정 수만 제거)
+exports.removeAIGeneratedDataGradually = functions.pubsub
+  .schedule('0 2 * * *')  // 매일 새벽 2시에 실행
+  .timeZone('Asia/Seoul')
+  .onRun(async (context) => {
+    // 실제 사용자 데이터 수 확인
+    const realMemorialsCount = await admin.firestore()
+      .collection('memorials')
+      .where('isAIGenerated', '==', false)
+      .where('deletedAt', '==', null)
+      .get()
+      .then(snapshot => snapshot.size);
+
+    // 실제 사용자 데이터가 충분하면 AI 데이터 제거 시작
+    if (realMemorialsCount >= 50) {
+      // 하루에 최대 5개씩 제거
+      const aiMemorials = await admin.firestore()
+        .collection('memorials')
+        .where('isAIGenerated', '==', true)
+        .where('deletedAt', '==', null)
+        .limit(5)
+        .get();
+
+      const batch = admin.firestore().batch();
+      aiMemorials.docs.forEach(doc => {
+        batch.update(doc.ref, {
+          deletedAt: admin.firestore.FieldValue.serverTimestamp(),
+          deletedReason: 'ai_generated_data_removal',
+        });
+      });
+
+      await batch.commit();
+    }
+  });
+```
+
+### 방법 3: 사용자 데이터 비율 기반 제거
+
+```javascript
+// 실제 사용자 데이터 비율이 80% 이상이면 AI 데이터 제거
+exports.removeAIGeneratedDataByRatio = functions.https.onCall(async (data, context) => {
+  if (!context.auth || !context.auth.token.admin) {
+    throw new functions.https.HttpsError('permission-denied', '관리자만 실행 가능');
+  }
+
+  // 전체 추모관 수
+  const totalMemorials = await admin.firestore()
+    .collection('memorials')
+    .where('deletedAt', '==', null)
+    .get()
+    .then(snapshot => snapshot.size);
+
+  // 실제 사용자 추모관 수
+  const realMemorials = await admin.firestore()
+    .collection('memorials')
+    .where('isAIGenerated', '==', false)
+    .where('deletedAt', '==', null)
+    .get()
+    .then(snapshot => snapshot.size);
+
+  // 실제 사용자 데이터 비율
+  const realDataRatio = realMemorials / totalMemorials;
+
+  // 실제 사용자 데이터 비율이 80% 이상이면 AI 데이터 제거
+  if (realDataRatio >= 0.8) {
+    const aiMemorials = await admin.firestore()
+      .collection('memorials')
+      .where('isAIGenerated', '==', true)
+      .where('deletedAt', '==', null)
+      .get();
+
+    const batch = admin.firestore().batch();
+    aiMemorials.docs.forEach(doc => {
+      batch.update(doc.ref, {
+        deletedAt: admin.firestore.FieldValue.serverTimestamp(),
+        deletedReason: 'ai_generated_data_removal',
+      });
+    });
+
+    await batch.commit();
+
+    return {
+      success: true,
+      removedCount: aiMemorials.size,
+      realDataRatio: realDataRatio,
+    };
+  } else {
+    return {
+      success: false,
+      message: `실제 사용자 데이터 비율이 ${(realDataRatio * 100).toFixed(1)}%입니다. 80% 이상이 되어야 제거할 수 있습니다.`,
+      realDataRatio: realDataRatio,
+    };
+  }
+});
+```
+
+### 제거 전 확인사항
+
+1. **데이터 백업**
+   - 제거 전 모든 AI 생성 데이터 백업
+   - 필요시 복구 가능하도록
+
+2. **사용자 알림**
+   - AI 데이터 제거 전 사용자에게 공지
+   - 제거 이유 설명
+
+3. **점진적 제거**
+   - 한 번에 모두 제거하지 않고 단계적으로 제거
+   - 사용자 반응 확인 후 진행
+
+4. **통계 확인**
+   - 제거 후 실제 사용자 데이터 비율 확인
+   - 제거가 사용자 경험에 미치는 영향 모니터링
+
+### 제거 후 조치
+
+1. **데이터 정리**
+   - 삭제된 데이터의 관련 데이터도 정리 (댓글, 좋아요 등)
+   - Storage에 저장된 이미지/영상도 삭제
+
+2. **통계 업데이트**
+   - 전체 추모관 수, 댓글 수 등 통계 업데이트
+   - 홈 화면 추천 알고리즘 재계산
+
+3. **사용자 피드백 수집**
+   - AI 데이터 제거 후 사용자 피드백 수집
+   - 필요시 추가 조치
+
+## 📊 AI 데이터 제거 체크리스트
+
+### 제거 전
+- [ ] 실제 사용자 데이터 수 확인 (추모관 50개 이상, 댓글 200개 이상)
+- [ ] 실제 사용자 데이터 비율 확인 (80% 이상)
+- [ ] AI 생성 데이터 백업
+- [ ] 사용자 공지 작성 및 발송
+- [ ] 제거 스크립트 테스트 (테스트 환경)
+
+### 제거 중
+- [ ] 점진적 제거 실행 (하루에 일정 수만 제거)
+- [ ] 제거 진행 상황 모니터링
+- [ ] 사용자 피드백 확인
+
+### 제거 후
+- [ ] 삭제된 데이터 관련 데이터 정리
+- [ ] Storage 이미지/영상 삭제
+- [ ] 통계 업데이트
+- [ ] 사용자 피드백 수집 및 분석
 
