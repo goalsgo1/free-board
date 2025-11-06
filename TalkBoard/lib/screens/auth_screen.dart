@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import 'privacy_policy_screen.dart';
 import 'components_guide_screen.dart';
+import 'ui_preview_screen.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -346,6 +347,25 @@ class _AuthScreenState extends State<AuthScreen> {
                   ),
                 ),
               ],
+              // UI 프리뷰 버튼 (항상 표시)
+              const SizedBox(height: 16),
+              OutlinedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const UIPreviewScreen(),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.visibility),
+                label: const Text('UI 프리뷰'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.blue[700],
+                  side: BorderSide(color: Colors.blue[300]!),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+              ),
             ],
           ),
         ),

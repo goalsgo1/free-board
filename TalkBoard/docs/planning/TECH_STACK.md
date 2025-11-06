@@ -43,6 +43,11 @@
 - **url_launcher**: ^6.2.0+ - URL 열기
 - **share_plus**: ^7.0.0+ - 공유 기능
 
+#### AI (초기 데이터 생성용, 선택)
+- **http**: ^1.1.0 - HTTP 요청 (AI API 호출)
+- **openai_dart**: ^0.3.0 - OpenAI API 클라이언트 (선택)
+- 또는 **anthropic_dart**: ^0.1.0 - Claude API 클라이언트 (선택)
+
 #### 개발 도구
 - **flutter_lints**: ^5.0.0 - 린터 규칙
 - **flutter_test**: SDK - 테스트
@@ -70,6 +75,7 @@
   - 추모금 처리
   - 이미지 리사이징
   - 푸시 알림 전송
+  - AI를 활용한 초기 데이터 생성 (선택)
 
 #### Cloud Messaging
 - **푸시 알림**: 기념일 알림, 댓글 알림
@@ -125,7 +131,8 @@ lib/
   │   ├── memorial_service.dart
   │   ├── storage_service.dart
   │   ├── payment_service.dart
-  │   └── notification_service.dart
+  │   ├── notification_service.dart
+  │   └── ai_data_generator.dart  # AI 초기 데이터 생성 (선택)
   ├── screens/              # 화면
   │   ├── home_screen.dart
   │   ├── memorial_list_screen.dart

@@ -10,9 +10,12 @@
 - **[FEATURES.md](./FEATURES.md)** - 핵심 기능 상세 명세
 - **[REVENUE_MODEL.md](./REVENUE_MODEL.md)** - 수익 모델 및 비즈니스 전략
 - **[SCREENS.md](./SCREENS.md)** - 화면 구성 및 UI/UX 상세 기획
+- **[SCREEN_LAYOUTS.md](./SCREEN_LAYOUTS.md)** - 화면 레이아웃 디자인 및 화면 이동 플로우
+- **[FEATURE_ANALYSIS.md](./FEATURE_ANALYSIS.md)** - 기능 분석 및 추가 제안
 - **[DATA_STRUCTURE.md](./DATA_STRUCTURE.md)** - 데이터베이스 구조 및 데이터 모델
 - **[TECH_STACK.md](./TECH_STACK.md)** - 기술 스택 및 아키텍처 설계
 - **[USER_FLOW.md](./USER_FLOW.md)** - 사용자 플로우 및 기능 흐름도
+- **[INITIAL_DATA.md](./INITIAL_DATA.md)** - AI를 활용한 초기 데이터 생성 가이드
 
 ## 🎯 앱의 목적
 

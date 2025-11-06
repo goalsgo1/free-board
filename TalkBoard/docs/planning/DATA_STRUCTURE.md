@@ -17,7 +17,8 @@
   notificationSettings: {
     anniversaryAlerts: boolean, // 기념일 알림
     commentAlerts: boolean,    // 댓글 알림
-    prayerAlerts: boolean      // 기도 알림
+    prayerAlerts: boolean,     // 기도 알림
+    homePublicAlerts: boolean  // 홈 화면 공개 제안 알림
   }
 }
 ```
@@ -28,6 +29,7 @@
 {
   memorialId: string,          // 추모관 고유 ID
   creatorId: string,           // 생성자 ID (users.userId)
+  memorialType: 'human' | 'pet', // 추모 대상 타입 (사람/애완동물)
   deceasedName: string,        // 고인 이름
   lifeSummary: string,         // 생애 요약
   photos: [                   // 사진 배열 (최대 5장, 프리미엄: 무제한)
@@ -45,15 +47,29 @@
   letter: {
     type: 'text' | 'audio',    // 편지 타입
     content: string,          // 텍스트 내용 또는 오디오 URL
+    isHomePublic: boolean,    // 홈 화면 공개 여부
+    homePublicRequested: boolean, // 홈 화면 공개 제안 알림 발송 여부
+    homePublicRequestedAt: timestamp, // 홈 화면 공개 제안 알림 발송 일시
+    likeCount: number,        // 좋아요 수 (댓글 수와 합산하여 공개 제안 기준)
     createdAt: timestamp
   },
   anniversary: {
     birthday: date,           // 생일
-    memorialDay: date          // 기일
+    memorialDay: date          // 기일 (고인이 돌아가신 날)
+  },
+  eternalTime: {
+    startDate: timestamp,     // 영원한 시간 시작일 (memorialDay와 동일)
+    enabled: boolean,         // 영원한 시간 표시 활성화 여부
+    lastUpdated: timestamp    // 마지막 업데이트 일시 (실시간 계산용)
   },
   isPublic: boolean,          // 공개/비공개
   visitCount: number,         // 방문 횟수
   lastVisitedAt: timestamp,  // 마지막 방문 일시
+  shareCount: number,        // 공유 횟수
+  shareVisitCount: number,   // 공유를 통해 방문한 사람 수
+  commentCount: number,       // 댓글 수 (통계용)
+  donationCount: number,      // 추모금 전달 횟수 (통계용)
+  totalDonationAmount: number, // 총 추모금 수령액 (통계용)
   createdAt: timestamp,       // 생성 일시
   updatedAt: timestamp,       // 수정 일시
   deletedAt: timestamp       // 삭제 일시 (소프트 삭제)
@@ -220,6 +236,49 @@
 }
 ```
 
+### 14. shares (추모관 공유 기록)
+
+```javascript
+{
+  shareId: string,        // 공유 기록 고유 ID
+  memorialId: string,    // 추모관 ID
+  userId: string,         // 공유한 사용자 ID (익명: null)
+  shareType: 'link' | 'qr' | 'kakao' | 'facebook' | 'twitter', // 공유 타입
+  sharedAt: timestamp,    // 공유 일시
+  visitedFromShare: boolean // 공유를 통해 방문했는지 여부
+}
+```
+
+### 15. memorialStats (추모관 통계 - 일별 집계)
+
+```javascript
+{
+  statId: string,         // 통계 고유 ID
+  memorialId: string,    // 추모관 ID
+  date: string,          // 날짜 (YYYY-MM-DD)
+  visitCount: number,    // 일별 방문 수
+  commentCount: number,  // 일별 댓글 수
+  donationCount: number, // 일별 추모금 전달 횟수
+  donationAmount: number, // 일별 추모금 수령액
+  shareCount: number,    // 일별 공유 횟수
+  createdAt: timestamp   // 생성 일시
+}
+```
+
+### 16. backups (추모관 백업 내역)
+
+```javascript
+{
+  backupId: string,       // 백업 고유 ID
+  memorialId: string,    // 추모관 ID
+  userId: string,         // 백업한 사용자 ID
+  backupType: 'pdf' | 'photos' | 'videos' | 'letters' | 'full', // 백업 타입
+  fileUrl: string,        // 백업 파일 URL (Storage 경로)
+  fileSize: number,       // 파일 크기 (bytes)
+  createdAt: timestamp    // 백업 일시
+}
+```
+
 ## 🔍 인덱스 설정
 
 ### Firestore 인덱스
@@ -251,6 +310,18 @@
 // visits 컬렉션
 - memorialId (ascending) + date (ascending)
 - memorialId (ascending) + visitedAt (descending)
+
+// shares 컬렉션
+- memorialId (ascending) + sharedAt (descending)
+- userId (ascending) + sharedAt (descending)
+
+// memorialStats 컬렉션
+- memorialId (ascending) + date (ascending)
+- memorialId (ascending) + date (descending)
+
+// backups 컬렉션
+- memorialId (ascending) + createdAt (descending)
+- userId (ascending) + createdAt (descending)
 ```
 
 ## 🔐 보안 규칙
@@ -312,6 +383,28 @@ service cloud.firestore {
       allow update, delete: if request.auth != null && 
                                resource.data.userId == request.auth.uid;
     }
+    
+    // 추모관 공유 기록
+    match /shares/{shareId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+    }
+    
+    // 추모관 통계
+    match /memorialStats/{statId} {
+      allow read: if request.auth != null;
+      allow create, update: if request.auth != null; // 서버에서만 생성/수정
+    }
+    
+    // 추모관 백업
+    match /backups/{backupId} {
+      allow read: if request.auth != null && 
+                     resource.data.userId == request.auth.uid;
+      allow create: if request.auth != null && 
+                       request.auth.uid == request.resource.data.userId;
+      allow delete: if request.auth != null && 
+                       resource.data.userId == request.auth.uid;
+    }
   }
 }
 ```
@@ -329,6 +422,10 @@ memorials/
       {videoId}.mp4
     letters/
       {letterId}.mp3 (음성 편지)
+    backups/
+      {backupId}/
+        {backupType}/
+          {filename}.pdf | {filename}.zip | {filename}.json
 users/
   {userId}/
     avatar.jpg
