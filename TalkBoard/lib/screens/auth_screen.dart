@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import 'privacy_policy_screen.dart';
+import 'components_guide_screen.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -21,11 +22,19 @@ class _AuthScreenState extends State<AuthScreen> {
   final _passwordController = TextEditingController();
   final _displayNameController = TextEditingController();
 
+  // FocusNode for Tab navigation
+  final _displayNameFocusNode = FocusNode();
+  final _emailFocusNode = FocusNode();
+  final _passwordFocusNode = FocusNode();
+
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
     _displayNameController.dispose();
+    _displayNameFocusNode.dispose();
+    _emailFocusNode.dispose();
+    _passwordFocusNode.dispose();
     super.dispose();
   }
 
@@ -155,12 +164,17 @@ class _AuthScreenState extends State<AuthScreen> {
               if (!_isLogin) ...[
                 TextFormField(
                   controller: _displayNameController,
+                  focusNode: _displayNameFocusNode,
                   decoration: const InputDecoration(
                     labelText: '이름',
                     hintText: '이름을 입력하세요',
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.person),
                   ),
+                  textInputAction: TextInputAction.next,
+                  onFieldSubmitted: (_) {
+                    _emailFocusNode.requestFocus();
+                  },
                   validator: (value) {
                     if (!_isLogin && (value == null || value.trim().isEmpty)) {
                       return '이름을 입력해주세요';
@@ -174,6 +188,7 @@ class _AuthScreenState extends State<AuthScreen> {
               // 이메일 필드
               TextFormField(
                 controller: _emailController,
+                focusNode: _emailFocusNode,
                 decoration: const InputDecoration(
                   labelText: '이메일',
                   hintText: 'example@email.com',
@@ -181,6 +196,10 @@ class _AuthScreenState extends State<AuthScreen> {
                   prefixIcon: Icon(Icons.email),
                 ),
                 keyboardType: TextInputType.emailAddress,
+                textInputAction: TextInputAction.next,
+                onFieldSubmitted: (_) {
+                  _passwordFocusNode.requestFocus();
+                },
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return '이메일을 입력해주세요';
@@ -195,6 +214,7 @@ class _AuthScreenState extends State<AuthScreen> {
               // 비밀번호 필드
               TextFormField(
                 controller: _passwordController,
+                focusNode: _passwordFocusNode,
                 decoration: InputDecoration(
                   labelText: '비밀번호',
                   hintText: '비밀번호를 입력하세요',
@@ -214,6 +234,11 @@ class _AuthScreenState extends State<AuthScreen> {
                   ),
                 ),
                 obscureText: _obscurePassword,
+                textInputAction: TextInputAction.done,
+                onFieldSubmitted: (_) {
+                  // Enter 키를 누르면 폼 제출
+                  _submit();
+                },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return '비밀번호를 입력해주세요';
@@ -301,6 +326,26 @@ class _AuthScreenState extends State<AuthScreen> {
                   ),
                 ],
               ),
+              // 디버그 모드에서만 공통 컴포넌트 가이드 버튼 표시
+              if (kDebugMode) ...[
+                const SizedBox(height: 24),
+                OutlinedButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ComponentsGuideScreen(),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.widgets),
+                  label: const Text('공통 컴포넌트 가이드'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.grey[700],
+                    side: BorderSide(color: Colors.grey[300]!),
+                  ),
+                ),
+              ],
             ],
           ),
         ),

@@ -10,7 +10,7 @@ class AuthService {
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
   // 회원가입 (이메일/비밀번호)
-  Future<UserCredential?> signUpWithEmail(
+  Future<UserCredential> signUpWithEmail(
     String email,
     String password,
     String displayName,
@@ -26,22 +26,34 @@ class AuthService {
       await credential.user?.reload();
       
       return credential;
+    } on FirebaseAuthException catch (e) {
+      // Firebase 인증 에러를 그대로 전달
+      rethrow;
     } catch (e) {
-      print('Error signing up: $e');
-      return null;
+      // 기타 에러는 FirebaseAuthException으로 변환
+      throw FirebaseAuthException(
+        code: 'unknown-error',
+        message: e.toString(),
+      );
     }
   }
 
   // 로그인 (이메일/비밀번호)
-  Future<UserCredential?> signInWithEmail(String email, String password) async {
+  Future<UserCredential> signInWithEmail(String email, String password) async {
     try {
       return await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
+    } on FirebaseAuthException catch (e) {
+      // Firebase 인증 에러를 그대로 전달
+      rethrow;
     } catch (e) {
-      print('Error signing in: $e');
-      return null;
+      // 기타 에러는 FirebaseAuthException으로 변환
+      throw FirebaseAuthException(
+        code: 'unknown-error',
+        message: e.toString(),
+      );
     }
   }
 
