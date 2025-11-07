@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'preview_screens/preview_home_screen.dart';
+import 'preview_screens/preview_home_navigator_screen.dart';
 import 'preview_screens/preview_memorial_list_screen.dart';
 import 'preview_screens/preview_memorial_detail_screen.dart';
 import 'preview_screens/preview_memorial_create_screen.dart';
@@ -58,6 +59,18 @@ class UIPreviewListScreen extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) => const PreviewHomeScreen(),
+              ),
+            ),
+          ),
+          _buildPreviewCard(
+            context,
+            '1-1. 홈 내비게이터',
+            '앱 전체 기능 안내, 경로 길잡이',
+            Icons.explore,
+            () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const PreviewHomeNavigatorScreen(),
               ),
             ),
           ),

@@ -1,5 +1,112 @@
 import 'package:flutter/material.dart';
 
+import 'preview_home_navigator_screen.dart';
+
+class HomeNavigatorCategory {
+  const HomeNavigatorCategory({
+    required this.title,
+    required this.description,
+    required this.icon,
+    required this.accentColor,
+    required this.targetBuilder,
+    required this.flowSteps,
+  });
+
+  final String title;
+  final String description;
+  final IconData icon;
+  final Color accentColor;
+  final Widget Function() targetBuilder;
+  final List<String> flowSteps;
+}
+
+final List<HomeNavigatorCategory> homeNavigatorCategories = [
+  HomeNavigatorCategory(
+    title: '추모관 관리',
+    description: '추모관 생성부터 영원한 시간, 책장, 추모금까지 관리합니다.',
+    icon: Icons.auto_awesome_mosaic_outlined,
+    accentColor: Color(0xFF8B7355),
+    targetBuilder: PreviewHomeNavigatorScreen.new,
+    flowSteps: [
+      '홈 → 기억의 탐험 가이드',
+      '📁 추모관 관리 카드 선택',
+      '원하는 기능 카드에서 "바로 가기" 누르기',
+    ],
+  ),
+  HomeNavigatorCategory(
+    title: '공감 및 위로',
+    description: '감정 공유, 후회 없는 편지, 기도 요청 등 위로 기능을 모았습니다.',
+    icon: Icons.favorite_outline,
+    accentColor: Color(0xFFFF6B81),
+    targetBuilder: PreviewHomeNavigatorScreen.new,
+    flowSteps: [
+      '홈 → 기억의 탐험 가이드',
+      '💬 공감 및 위로 카드 선택',
+      '필요한 기능을 골라 "바로 가기" 실행',
+    ],
+  ),
+  HomeNavigatorCategory(
+    title: 'AI 기억 답장',
+    description: '고인의 말투로 답장을 생성하는 AI 기억 답장 기능입니다.',
+    icon: Icons.smart_toy_outlined,
+    accentColor: Color(0xFF7E57C2),
+    targetBuilder: PreviewHomeNavigatorScreen.new,
+    flowSteps: [
+      '홈 → 기억의 탐험 가이드',
+      '🤖 AI 기능 카드 선택',
+      'AI 기억 답장 카드에서 "바로 가기" 누르기',
+    ],
+  ),
+  HomeNavigatorCategory(
+    title: '특별 기능',
+    description: '유언장과 상호 위로 매칭 등 특별 기능을 안내합니다.',
+    icon: Icons.volunteer_activism_outlined,
+    accentColor: Color(0xFF5C6BC0),
+    targetBuilder: PreviewHomeNavigatorScreen.new,
+    flowSteps: [
+      '홈 → 기억의 탐험 가이드',
+      '📜 특별 기능 카드 선택',
+      '유언장/상호위로 매칭 기능으로 이동',
+    ],
+  ),
+  HomeNavigatorCategory(
+    title: '검색 및 공유',
+    description: '공개 추모관 검색과 공유, 통계를 빠르게 확인합니다.',
+    icon: Icons.travel_explore,
+    accentColor: Color(0xFF42A5F5),
+    targetBuilder: PreviewHomeNavigatorScreen.new,
+    flowSteps: [
+      '홈 → 기억의 탐험 가이드',
+      '🔍 검색 및 공유 카드 선택',
+      '검색/공유/통계 기능으로 바로 이동',
+    ],
+  ),
+  HomeNavigatorCategory(
+    title: '감사 혜택',
+    description: '감사 혜택과 쿠폰, 참여 이력을 확인합니다.',
+    icon: Icons.card_giftcard,
+    accentColor: Color(0xFFFFB74D),
+    targetBuilder: PreviewHomeNavigatorScreen.new,
+    flowSteps: [
+      '홈 → 기억의 탐험 가이드',
+      '🎁 감사 혜택 카드 선택',
+      '감사 혜택 화면에서 참여/혜택 확인',
+    ],
+  ),
+  HomeNavigatorCategory(
+    title: '설정 및 관리',
+    description: '프로필, 알림, 추모금, 백업 등 계정 관리를 지원합니다.',
+    icon: Icons.settings_outlined,
+    accentColor: Color(0xFF546E7A),
+    targetBuilder: PreviewHomeNavigatorScreen.new,
+    flowSteps: [
+      '홈 → 기억의 탐험 가이드',
+      '⚙️ 설정 및 관리 카드 선택',
+      '설정 항목 중 필요한 기능으로 이동',
+    ],
+  ),
+];
+
 class PreviewHomeScreen extends StatelessWidget {
   const PreviewHomeScreen({super.key});
 
@@ -459,6 +566,8 @@ class PreviewHomeScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
+            _buildHomeNavigatorSection(context),
+            const SizedBox(height: 24),
             // 애완동물 추모관 안내 섹션
             _buildPetMemorialSection(),
             const SizedBox(height: 24),
@@ -492,6 +601,289 @@ class PreviewHomeScreen extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: _buildBottomNav(),
+    );
+  }
+
+  Widget _buildHomeNavigatorSection(BuildContext context) {
+    const Color warmBrown = Color(0xFF8B7355);
+    const Color warmBeige = Color(0xFFF5F1E8);
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            warmBeige,
+            warmBeige.withOpacity(0.92),
+            const Color(0xFFEADFD1),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: warmBrown, width: 2.5),
+        boxShadow: [
+          BoxShadow(
+            color: warmBrown.withOpacity(0.28),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+            spreadRadius: 1,
+          ),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: warmBrown.withOpacity(0.12),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: warmBrown.withOpacity(0.25), width: 1.5),
+                ),
+                child: const Icon(Icons.explore, color: Color(0xFF8B7355)),
+              ),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Text(
+                  '기억의 탐험 가이드',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF8B7355),
+                    letterSpacing: 0.3,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          const Text(
+            '원하는 기능을 선택하면 해당 화면으로 바로 이동하거나, 단계별 경로 안내를 통해 흐름을 확인할 수 있습니다.',
+            style: TextStyle(
+              fontSize: 13,
+              height: 1.6,
+              color: Color(0xFF5C5C5C),
+            ),
+          ),
+          const SizedBox(height: 20),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final double maxWidth = constraints.maxWidth;
+              const double spacing = 12;
+              final int crossAxisCount;
+              if (maxWidth < 360) {
+                crossAxisCount = 1;
+              } else if (maxWidth < 720) {
+                crossAxisCount = 2;
+              } else {
+                crossAxisCount = 3;
+              }
+              final double cardWidth =
+                  (maxWidth - spacing * (crossAxisCount - 1)) / crossAxisCount;
+
+              return Wrap(
+                spacing: spacing,
+                runSpacing: spacing,
+                children: [
+                  for (final category in homeNavigatorCategories)
+                    SizedBox(
+                      width: cardWidth,
+                      child: _buildNavigatorQuickCard(context, category),
+                    ),
+                ],
+              );
+            },
+          ),
+          const SizedBox(height: 24),
+          Align(
+            alignment: Alignment.centerRight,
+            child: OutlinedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const PreviewHomeNavigatorScreen(),
+                  ),
+                );
+              },
+              icon: Icon(Icons.slideshow, color: warmBrown),
+              label: const Text('전체 기능 프리뷰 보기'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: warmBrown,
+                side: BorderSide(color: warmBrown.withOpacity(0.6), width: 1.5),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNavigatorQuickCard(
+    BuildContext context,
+    HomeNavigatorCategory category,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            category.accentColor.withOpacity(0.16),
+            category.accentColor.withOpacity(0.07),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: category.accentColor.withOpacity(0.45),
+          width: 2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: category.accentColor.withOpacity(0.18),
+            blurRadius: 12,
+            offset: const Offset(0, 5),
+          ),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: category.accentColor.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  category.icon,
+                  color: category.accentColor,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  category.title,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: category.accentColor,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            category.description,
+            style: const TextStyle(
+              fontSize: 13,
+              height: 1.6,
+              color: Color(0xFF4E4E4E),
+            ),
+          ),
+          const SizedBox(height: 18),
+          ElevatedButton(
+            onPressed: () => _handleNavigatorAction(context, category),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: category.accentColor,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              elevation: 0,
+              padding: const EdgeInsets.symmetric(vertical: 12),
+            ),
+            child: const Text('바로 가기'),
+          ),
+          const SizedBox(height: 8),
+          OutlinedButton(
+            onPressed: () => _showNavigatorFlowDialog(context, category),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: const Color(0xFF8B7355),
+              side: const BorderSide(color: Color(0xFF8B7355), width: 1.4),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 12),
+            ),
+            child: const Text('경로 보기'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _handleNavigatorAction(
+    BuildContext context,
+    HomeNavigatorCategory category,
+  ) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => category.targetBuilder()),
+    );
+  }
+
+  void _showNavigatorFlowDialog(
+    BuildContext context,
+    HomeNavigatorCategory category,
+  ) {
+    showDialog<void>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text('${category.title} 경로 안내'),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (final step in category.flowSteps)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('• '),
+                      Expanded(
+                        child: Text(
+                          step,
+                          style: const TextStyle(height: 1.6),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('닫기'),
+          ),
+        ],
+      ),
     );
   }
 
