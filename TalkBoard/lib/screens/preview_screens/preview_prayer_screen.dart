@@ -159,14 +159,22 @@ class PreviewPrayerScreen extends StatelessWidget {
             const SizedBox(height: 12),
             Row(
               children: [
-                Text(
-                  '작성자: $author',
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                Flexible(
+                  child: Text(
+                    '작성자: $author',
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  '작성 시간: $time',
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                Flexible(
+                  child: Text(
+                    '작성 시간: $time',
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ],
             ),
@@ -175,9 +183,13 @@ class PreviewPrayerScreen extends StatelessWidget {
               children: [
                 Icon(Icons.favorite, color: gentlePink, size: 20),
                 const SizedBox(width: 4),
-                Text(
-                  '$count명이 함께 기도하고 있습니다',
-                  style: const TextStyle(fontSize: 14, color: Color(0xFF5C5C5C)),
+                Flexible(
+                  child: Text(
+                    '$count명이 함께 기도하고 있습니다',
+                    style: const TextStyle(fontSize: 14, color: Color(0xFF5C5C5C)),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ],
             ),
@@ -275,12 +287,16 @@ class PreviewPrayerScreen extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text(
-                author,
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xFF8B7355),
+              Flexible(
+                child: Text(
+                  author,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF8B7355),
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               const SizedBox(width: 8),

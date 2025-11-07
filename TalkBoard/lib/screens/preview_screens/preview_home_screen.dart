@@ -129,13 +129,17 @@ class PreviewHomeScreen extends StatelessWidget {
                           children: [
                             Icon(Icons.people, color: warmBrown, size: 18),
                             const SizedBox(width: 8),
-                            Text(
-                              '함께하는 추모, 함께하는 위로',
-                              style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                                color: warmBrown.withOpacity(0.8),
-                                fontStyle: FontStyle.italic,
+                            Flexible(
+                              child: Text(
+                                '함께하는 추모, 함께하는 위로',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                  color: warmBrown.withOpacity(0.8),
+                                  fontStyle: FontStyle.italic,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ],
@@ -207,13 +211,16 @@ class PreviewHomeScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           '[고인 이름]님의 [기념일]',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w500,
                             color: Color(0xFF8B7355),
                           ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 8),
                         const Text(
@@ -222,6 +229,8 @@ class PreviewHomeScreen extends StatelessWidget {
                             fontSize: 14,
                             color: Color(0xFF5C5C5C),
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 12),
                         Container(
@@ -450,6 +459,12 @@ class PreviewHomeScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
+            // 애완동물 추모관 안내 섹션
+            _buildPetMemorialSection(),
+            const SizedBox(height: 24),
+            // 감사 혜택 배너
+            _buildEventBanner(),
+            const SizedBox(height: 24),
             // 최근 등록된 추모관
             const Text(
               '📚 최근 등록된 추모관',
@@ -477,6 +492,336 @@ class PreviewHomeScreen extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: _buildBottomNav(),
+    );
+  }
+
+  Widget _buildPetMemorialSection() {
+    const Color warmBrown = Color(0xFF8B7355);
+    const Color warmBeige = Color(0xFFF5F1E8);
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            const Color(0xFFE8F5E9),
+            const Color(0xFFF1F8E9),
+            warmBeige.withOpacity(0.8),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF81C784).withOpacity(0.2),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+        border: Border.all(
+          color: const Color(0xFF81C784).withOpacity(0.4),
+          width: 2,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF81C784).withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: const Color(0xFF81C784).withOpacity(0.4),
+                    width: 2,
+                  ),
+                ),
+                child: const Icon(
+                  Icons.pets,
+                  size: 32,
+                  color: Color(0xFF4CAF50),
+                ),
+              ),
+              const SizedBox(width: 16),
+              const Expanded(
+                child: Text(
+                  '🐾 애완동물과의 추억도 함께',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF2C2C2C),
+                    letterSpacing: 0.3,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.7),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: warmBrown.withOpacity(0.2),
+                width: 1,
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  '"사랑하는 반려동물도\n여기서 기억할 수 있습니다"',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF2C2C2C),
+                    height: 1.6,
+                    letterSpacing: 0.2,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    _buildPetIcon('🐕', '강아지'),
+                    const SizedBox(width: 12),
+                    _buildPetIcon('🐈', '고양이'),
+                    const SizedBox(width: 12),
+                    _buildPetIcon('🐹', '햄스터'),
+                    const SizedBox(width: 12),
+                    _buildPetIcon('🐰', '토끼'),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  '강아지, 고양이, 새, 햄스터, 토끼...\n함께했던 모든 순간을 소중히 간직하세요',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Color(0xFF5C5C5C),
+                    height: 1.5,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton(
+                    onPressed: () {},
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      side: const BorderSide(
+                        color: Color(0xFF4CAF50),
+                        width: 2,
+                      ),
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.add_circle_outline,
+                          size: 20,
+                          color: Color(0xFF4CAF50),
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          '애완동물 추모관 만들기',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF4CAF50),
+                            letterSpacing: 0.3,
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          size: 14,
+                          color: Color(0xFF4CAF50),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPetIcon(String emoji, String label) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          color: const Color(0xFFE8F5E9).withOpacity(0.5),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: const Color(0xFF81C784).withOpacity(0.3),
+            width: 1,
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              emoji,
+              style: const TextStyle(fontSize: 24),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 11,
+                color: Color(0xFF5C5C5C),
+                fontWeight: FontWeight.w500,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEventBanner() {
+    const Color warmBrown = Color(0xFF8B7355);
+    const Color warmBeige = Color(0xFFF5F1E8);
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.purple.withOpacity(0.2),
+            Colors.pink.withOpacity(0.15),
+            Colors.orange.withOpacity(0.1),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.purple.withOpacity(0.2),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+        border: Border.all(
+          color: Colors.purple.withOpacity(0.4),
+          width: 2,
+        ),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {},
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: Colors.purple.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: Colors.purple.withOpacity(0.4),
+                      width: 2,
+                    ),
+                  ),
+                  child: const Icon(
+                    Icons.card_giftcard,
+                    size: 32,
+                    color: Colors.purple,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        '🎁 초기 가입자 감사 혜택',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF2C2C2C),
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 4),
+                      const Text(
+                        '프리미엄 3개월 무료!',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Color(0xFF5C5C5C),
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.calendar_today,
+                            size: 12,
+                            color: Color(0xFF5C5C5C),
+                          ),
+                          const SizedBox(width: 4),
+                          const Flexible(
+                            child: Text(
+                              '~2024.03.31',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Color(0xFF5C5C5C),
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const Spacer(),
+                          const Icon(
+                            Icons.arrow_forward_ios,
+                            size: 14,
+                            color: warmBrown,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -575,6 +920,8 @@ class PreviewHomeScreen extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                       color: Color(0xFF8B7355),
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   Flexible(
@@ -755,28 +1102,38 @@ class PreviewHomeScreen extends StatelessWidget {
                           color: Color(0xFF8B7355),
                           letterSpacing: 0.3,
                         ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 4),
                       Row(
                         children: [
                           Icon(Icons.edit, size: 12, color: warmBrown.withOpacity(0.7)),
                           const SizedBox(width: 4),
-                          Text(
-                            author,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: warmBrown.withOpacity(0.8),
-                              fontWeight: FontWeight.w500,
+                          Flexible(
+                            child: Text(
+                              author,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: warmBrown.withOpacity(0.8),
+                                fontWeight: FontWeight.w500,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                           const SizedBox(width: 12),
                           Icon(Icons.access_time, size: 12, color: warmBrown.withOpacity(0.7)),
                           const SizedBox(width: 4),
-                          Text(
-                            time,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: warmBrown.withOpacity(0.7),
+                          Flexible(
+                            child: Text(
+                              time,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: warmBrown.withOpacity(0.7),
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],

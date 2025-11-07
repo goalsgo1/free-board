@@ -17,7 +17,9 @@
 - **[USER_FLOW.md](./USER_FLOW.md)** - 사용자 플로우 및 기능 흐름도
 - **[INITIAL_DATA.md](./INITIAL_DATA.md)** - AI를 활용한 초기 데이터 생성 가이드
 - **[PUSH_NOTIFICATIONS.md](./PUSH_NOTIFICATIONS.md)** - 푸시 알림 시스템 기획서
+- **[SETTINGS.md](./SETTINGS.md)** - 설정 화면 기획서
 - **[RESPONSIVE_LAYOUT.md](./RESPONSIVE_LAYOUT.md)** - 반응형 레이아웃 가이드라인
+- **[MODALS_AND_POPUPS.md](./MODALS_AND_POPUPS.md)** - 모달 및 팝업 화면 분석 및 디자인
 - **[REMAINING_TASKS.md](./REMAINING_TASKS.md)** - 남은 작업 및 기능 구현 가이드
 
 ## 🎯 앱의 목적

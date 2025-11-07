@@ -14,6 +14,10 @@ import 'preview_screens/preview_profile_edit_screen.dart';
 import 'preview_screens/preview_memorial_share_screen.dart';
 import 'preview_screens/preview_memorial_stats_screen.dart';
 import 'preview_screens/preview_memorial_backup_screen.dart';
+import 'preview_screens/preview_will_screen.dart';
+import 'preview_screens/preview_matching_screen.dart';
+import 'preview_screens/preview_events_screen.dart';
+import 'preview_screens/preview_modals_screen.dart';
 
 class UIPreviewListScreen extends StatelessWidget {
   const UIPreviewListScreen({super.key});
@@ -222,6 +226,57 @@ class UIPreviewListScreen extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) => const PreviewMemorialBackupScreen(),
+              ),
+            ),
+          ),
+          _buildPreviewCard(
+            context,
+            '16. 유언장',
+            '유언 작성, 공개/비공개 설정, 템플릿 제공',
+            Icons.article,
+            () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const PreviewWillScreen(),
+              ),
+            ),
+          ),
+          _buildPreviewCard(
+            context,
+            '17. 상호 위로 매칭',
+            '프로필 등록, 매칭 신청, 채팅, 신고',
+            Icons.favorite_border,
+            () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const PreviewMatchingScreen(),
+              ),
+            ),
+          ),
+          _buildPreviewCard(
+            context,
+            '18. 감사 혜택',
+            '감사 혜택 목록, 참여, 내 혜택 조회',
+            Icons.card_giftcard,
+            () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const PreviewEventsScreen(),
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+          const Divider(),
+          const SizedBox(height: 24),
+          _buildPreviewCard(
+            context,
+            '19. 팝업/모달 프리뷰',
+            '모든 팝업 및 모달 UI 미리보기',
+            Icons.window,
+            () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const PreviewModalsScreen(),
               ),
             ),
           ),

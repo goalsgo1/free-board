@@ -138,14 +138,34 @@ class PreviewMemorialCreateScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            Row(
-              children: [
-                _buildImagePreview(),
-                const SizedBox(width: 12),
-                _buildImagePreview(),
-                const SizedBox(width: 12),
-                _buildImagePreview(),
-              ],
+            LayoutBuilder(
+              builder: (context, constraints) {
+                // 화면 크기에 따라 이미지 크기와 간격 조정
+                double imageSize;
+                double spacing;
+                
+                if (constraints.maxWidth < 360) {
+                  // 작은 화면: 이미지 크기와 간격을 줄임
+                  spacing = 8.0;
+                  // 사용 가능한 너비에서 간격 제외 후 3으로 나눔
+                  imageSize = (constraints.maxWidth - (spacing * 2)) / 3;
+                  imageSize = imageSize.clamp(80.0, 110.0); // 최소 80px, 최대 110px
+                } else {
+                  // 큰 화면: 기본 크기
+                  spacing = 12.0;
+                  imageSize = 110.0;
+                }
+                
+                return Row(
+                  children: [
+                    _buildImagePreview(size: imageSize),
+                    SizedBox(width: spacing),
+                    _buildImagePreview(size: imageSize),
+                    SizedBox(width: spacing),
+                    _buildImagePreview(size: imageSize),
+                  ],
+                );
+              },
             ),
             const SizedBox(height: 12),
             Container(
@@ -393,9 +413,13 @@ class PreviewMemorialCreateScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  '공개/비공개:',
-                  style: TextStyle(fontSize: 16),
+                Flexible(
+                  child: Text(
+                    '공개/비공개:',
+                    style: const TextStyle(fontSize: 16),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
                 Switch(value: true, onChanged: (_) {}),
               ],
@@ -473,11 +497,11 @@ class PreviewMemorialCreateScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildImagePreview() {
+  Widget _buildImagePreview({double size = 110}) {
     const Color warmBrown = Color(0xFF8B7355);
     return Container(
-      width: 110,
-      height: 110,
+      width: size,
+      height: size,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -500,12 +524,16 @@ class PreviewMemorialCreateScreen extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          const Center(
-            child: Icon(Icons.image, size: 45, color: Colors.grey),
+          Center(
+            child: Icon(
+              Icons.image,
+              size: size * 0.4, // 이미지 크기의 40%
+              color: Colors.grey,
+            ),
           ),
           Positioned(
-            top: 6,
-            right: 6,
+            top: size * 0.05,
+            right: size * 0.05,
             child: Container(
               decoration: BoxDecoration(
                 color: Colors.red[700],
@@ -519,7 +547,7 @@ class PreviewMemorialCreateScreen extends StatelessWidget {
                 ],
               ),
               child: IconButton(
-                icon: const Icon(Icons.close, size: 18),
+                icon: Icon(Icons.close, size: size * 0.16), // 이미지 크기의 16%
                 color: Colors.white,
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),

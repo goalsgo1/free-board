@@ -244,6 +244,53 @@ class PreviewMypageScreen extends StatelessWidget {
                     border: Border.all(color: warmBrown.withOpacity(0.3), width: 1),
                   ),
                   child: ListTile(
+                    leading: Icon(Icons.card_giftcard, color: warmBrown),
+                    title: Row(
+                      children: [
+                        const Flexible(
+                          child: Text(
+                            '감사 혜택',
+                            style: TextStyle(fontWeight: FontWeight.w500),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Text(
+                            '3',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.card_giftcard, size: 16, color: Colors.orange),
+                        const SizedBox(width: 4),
+                        const Icon(Icons.arrow_forward_ios, size: 16, color: warmBrown),
+                      ],
+                    ),
+                    onTap: () {},
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(color: warmBrown.withOpacity(0.3), width: 1),
+                  ),
+                  child: ListTile(
                     leading: Icon(Icons.restore, color: warmBrown),
                     title: const Text(
                       '삭제된 추모관 복원',
@@ -337,13 +384,25 @@ class PreviewMypageScreen extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(fontSize: 14)),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: Color(0xFF8B7355),
+          Flexible(
+            child: Text(
+              label,
+              style: const TextStyle(fontSize: 14),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          Flexible(
+            child: Text(
+              value,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: Color(0xFF8B7355),
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.end,
             ),
           ),
         ],

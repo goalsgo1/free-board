@@ -147,29 +147,37 @@ class PreviewBookshelfScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(Icons.arrow_back, size: 16, color: warmBrown),
-                              const SizedBox(width: 4),
-                              const Text(
-                                '과거',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                  color: Color(0xFF8B7355),
+                      Flexible(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(Icons.arrow_back, size: 16, color: warmBrown),
+                                const SizedBox(width: 4),
+                                Flexible(
+                                  child: Text(
+                                    '과거',
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                      color: Color(0xFF8B7355),
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 4),
-                          const Text(
-                            '추억을 되돌아보는 시간',
-                            style: TextStyle(fontSize: 11, color: Color(0xFF5C5C5C)),
-                          ),
-                        ],
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              '추억을 되돌아보는 시간',
+                              style: const TextStyle(fontSize: 11, color: Color(0xFF5C5C5C)),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
                       ),
                       Container(
                         width: 60,

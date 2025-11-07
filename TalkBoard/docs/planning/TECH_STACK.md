@@ -43,10 +43,12 @@
 - **url_launcher**: ^6.2.0+ - URL 열기
 - **share_plus**: ^7.0.0+ - 공유 기능
 
-#### AI (초기 데이터 생성용, 선택)
+#### AI (초기 데이터 생성 및 답장 생성)
 - **http**: ^1.1.0 - HTTP 요청 (AI API 호출)
 - **openai_dart**: ^0.3.0 - OpenAI API 클라이언트 (선택)
 - 또는 **anthropic_dart**: ^0.1.0 - Claude API 클라이언트 (선택)
+- **flutter_tts**: ^4.0.0 - 텍스트 음성 변환 (TTS)
+- **google_mlkit_text_recognition**: ^0.11.0 - 이미지 텍스트 인식 (OCR)
 
 #### 개발 도구
 - **flutter_lints**: ^5.0.0 - 린터 규칙
@@ -76,6 +78,7 @@
   - 이미지 리사이징
   - 푸시 알림 전송
   - AI를 활용한 초기 데이터 생성 (선택)
+  - AI 기억 기반 답장 생성 (OCR, NLP, TTS 포함)
 
 #### Cloud Messaging
 - **푸시 알림**: 기념일 알림, 댓글 알림
@@ -132,7 +135,9 @@ lib/
   │   ├── storage_service.dart
   │   ├── payment_service.dart
   │   ├── notification_service.dart
-  │   └── ai_data_generator.dart  # AI 초기 데이터 생성 (선택)
+  │   ├── ai_data_generator.dart  # AI 초기 데이터 생성 (선택)
+  │   ├── ai_memory_service.dart  # AI 기억 분석 서비스
+  │   └── ai_reply_service.dart   # AI 답장 생성 서비스
   ├── screens/              # 화면
   │   ├── home_screen.dart
   │   ├── memorial_list_screen.dart
@@ -196,6 +201,72 @@ class MemorialService {
     // 결과 반환
   }
 }
+```
+
+## 🤖 AI 기능 상세
+
+### AI 기억 기반 답장 생성
+
+#### 기술 스택
+- **OCR (이미지 텍스트 추출)**:
+  - Firebase ML Kit Text Recognition (온디바이스)
+  - 또는 Google Cloud Vision API (서버)
+  - 또는 Tesseract OCR
+- **NLP (자연어 처리)**:
+  - OpenAI GPT-4 또는 Claude API (말투·감정·관계 분석)
+  - 또는 Google Cloud Natural Language API
+- **답장 생성**:
+  - OpenAI GPT-4 또는 Claude API (답장 생성)
+  - 프롬프트 엔지니어링으로 고인의 말투 재현
+- **음성 변환 (TTS)**:
+  - Google Cloud Text-to-Speech
+  - 또는 AWS Polly
+  - 또는 Flutter TTS 패키지
+
+#### 구현 방법
+1. **대화 업로드**:
+   - 이미지 업로드: Firebase Storage에 저장 후 OCR 처리
+   - 텍스트 입력: 직접 Firestore에 저장
+2. **AI 분석**:
+   - Cloud Functions에서 OpenAI/Claude API 호출
+   - 대화 내용을 분석하여 말투·관계·감정 추출
+   - 분석 결과를 `aiMemories` 컬렉션에 저장
+3. **답장 생성**:
+   - 사용자 메시지 + 분석된 말투 정보를 프롬프트로 구성
+   - OpenAI/Claude API로 답장 생성
+   - 생성된 답장을 `aiReplies` 컬렉션에 저장
+4. **음성 변환**:
+   - 생성된 답장 텍스트를 TTS API로 음성 변환
+   - 음성 파일을 Firebase Storage에 저장
+   - 음성 파일 URL을 `aiReplies`에 저장
+
+#### 프리미엄 기능
+- **무료 사용자**: 월 5회 답장 생성 제한
+- **프리미엄 사용자**: 무제한 답장 생성, 음성 변환 무제한
+
+#### 프롬프트 예시
+```plaintext
+[기능 이름] AI 기억 기반 답장 생성
+
+[입력]
+- 고인과의 대화 캡처 텍스트:
+  "엄마: 해민아, 밥은 꼭 챙겨 먹고 다녀야 해.  
+   해민: 응 엄마, 오늘은 김밥 먹었어."
+
+- 사용자 메시지:
+  "엄마, 오늘은 너무 힘들었어."
+
+[요청]
+- 고인의 말투와 관계성을 반영해, 엄마가 해민에게 답장하는 방식으로 텍스트를 생성해주세요.
+
+[출력]
+- "해민아, 그런 날도 있는 거야.  
+   엄마는 네가 잘 이겨낼 거라고 믿어.  
+   오늘은 푹 쉬고 내일 다시 웃자."
+
+[스타일]
+- 따뜻하고 위로하는 말투
+- 고인의 말투와 표현을 최대한 반영
 ```
 
 ## 🔒 보안

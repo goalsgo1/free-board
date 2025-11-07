@@ -201,15 +201,21 @@ class PreviewMemorialListScreen extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                       color: Color(0xFF8B7355),
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   Text(
                     '생일: $birthday',
                     style: const TextStyle(fontSize: 12, color: Color(0xFF5C5C5C)),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   Text(
                     '기일: $memorialDay',
                     style: const TextStyle(fontSize: 12, color: Color(0xFF5C5C5C)),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   Text(

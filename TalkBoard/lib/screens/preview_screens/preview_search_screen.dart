@@ -229,9 +229,13 @@ class PreviewSearchScreen extends StatelessWidget {
                     children: [
                       const Icon(Icons.people, size: 16, color: Colors.grey),
                       const SizedBox(width: 4),
-                      Text(
-                        '방문 수: $visits명',
-                        style: const TextStyle(fontSize: 12, color: Colors.grey),
+                      Flexible(
+                        child: Text(
+                          '방문 수: $visits명',
+                          style: const TextStyle(fontSize: 12, color: Colors.grey),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ],
                   ),

@@ -36,25 +36,29 @@ class PreviewMemorialDetailScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // 고인 정보
-            const Center(
+            Center(
               child: Text(
                 '고인 이름',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.w300,
                   color: Color(0xFF8B7355),
                 ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             const SizedBox(height: 8),
-            const Center(
+            Center(
               child: Text(
                 '생애 요약...',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 14,
                   color: Color(0xFF5C5C5C),
                 ),
                 textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             const SizedBox(height: 24),
@@ -101,27 +105,33 @@ class PreviewMemorialDetailScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 12),
-                  const Text(
+                  Text(
                     '새로운 삶의 시간:',
-                    style: TextStyle(fontSize: 14, color: Color(0xFF5C5C5C)),
+                    style: const TextStyle(fontSize: 14, color: Color(0xFF5C5C5C)),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
-                  const Text(
+                  Text(
                     '2년 3개월 15일 8시간 23분',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
                       color: Color(0xFF8B7355),
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 8),
-                  const Text(
+                  Text(
                     '"영원한 시간이 흐르고 있습니다"',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 12,
                       fontStyle: FontStyle.italic,
                       color: Color(0xFF5C5C5C),
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
@@ -462,19 +472,27 @@ class PreviewMemorialDetailScreen extends StatelessWidget {
           children: [
             Row(
               children: [
-                Text(
-                  author,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF8B7355),
+                Flexible(
+                  child: Text(
+                    author,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFF8B7355),
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  time,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey,
+                Flexible(
+                  child: Text(
+                    time,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
@@ -483,6 +501,8 @@ class PreviewMemorialDetailScreen extends StatelessWidget {
             Text(
               content,
               style: const TextStyle(fontSize: 14, color: Color(0xFF5C5C5C)),
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),

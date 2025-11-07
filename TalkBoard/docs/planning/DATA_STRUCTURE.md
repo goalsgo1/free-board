@@ -212,7 +212,309 @@
 }
 ```
 
-### 10. visits (방문 기록)
+### 10. regretLetters (후회 없는 편지)
+
+```javascript
+{
+  letterId: string,          // 편지 고유 ID
+  userId: string,            // 작성자 ID (익명 공개 시에도 저장하되 표시하지 않음)
+  userName: string,          // 작성자 이름 (익명 공개 시 "익명"으로 표시)
+  isAnonymous: boolean,      // 익명 공개 여부
+  title: string,             // 편지 제목 (선택)
+  content: string,           // 편지 내용
+  category: 'family' | 'friend' | 'lover' | 'work' | 'faith', // 관계 유형
+  visibility: 'public' | 'anonymous' | 'private', // 공개 여부
+  linkedMemorialId: string,  // 연결된 추모관 ID (선택)
+  likeCount: number,         // 공감 수
+  commentCount: number,      // 댓글 수
+  viewCount: number,         // 조회 수
+  isAIGenerated: boolean,    // AI 생성 편지 여부 (초기 데이터 식별용)
+  aiGeneratedAt: timestamp,  // AI 생성 일시 (isAIGenerated가 true일 때)
+  createdAt: timestamp,      // 작성 일시
+  updatedAt: timestamp,      // 수정 일시
+  deletedAt: timestamp       // 삭제 일시 (소프트 삭제)
+}
+```
+
+### 11. regretLetterLikes (후회 없는 편지 공감)
+
+```javascript
+{
+  letterId: string,          // 편지 ID
+  userId: string,           // 공감한 사용자 ID
+  likedAt: timestamp        // 공감 일시
+}
+```
+
+### 12. regretLetterComments (후회 없는 편지 댓글)
+
+```javascript
+{
+  commentId: string,         // 댓글 고유 ID
+  letterId: string,         // 편지 ID
+  userId: string,           // 작성자 ID
+  userName: string,         // 작성자 이름
+  content: string,          // 댓글 내용
+  isAIGenerated: boolean,   // AI 생성 댓글 여부 (초기 데이터 식별용)
+  aiGeneratedAt: timestamp,  // AI 생성 일시
+  createdAt: timestamp,      // 작성 일시
+  updatedAt: timestamp,      // 수정 일시
+  deletedAt: timestamp       // 삭제 일시 (소프트 삭제)
+}
+```
+
+### 13. aiMemories (AI 기억 분석)
+
+```javascript
+{
+  memoryId: string,          // 분석 고유 ID
+  memorialId: string,        // 추모관 ID
+  userId: string,            // 사용자 ID
+  conversations: [           // 업로드된 대화 목록
+    {
+      type: 'image' | 'text', // 대화 타입
+      content: string,        // 이미지 URL 또는 텍스트 내용
+      uploadedAt: timestamp
+    }
+  ],
+  analysisResult: {
+    tone: string,            // 말투 (존댓말/반말 등)
+    relationship: string,    // 관계 유형 (가족/연인/친구 등)
+    emotionKeywords: [string], // 감정 키워드 배열
+    conversationPattern: {   // 대화 패턴
+      structure: string,     // 질문/응답 구조
+      humor: boolean,        // 유머 사용 여부
+      nickname: string       // 애칭
+    },
+    commonPhrases: [string]  // 자주 쓰는 표현
+  },
+  analyzedAt: timestamp,     // 분석 완료 일시
+  createdAt: timestamp       // 생성 일시
+}
+```
+
+### 14. aiReplies (AI 답장)
+
+```javascript
+{
+  replyId: string,           // 답장 고유 ID
+  memorialId: string,        // 추모관 ID
+  memoryId: string,          // AI 기억 분석 ID
+  userId: string,            // 사용자 ID
+  userMessage: string,       // 사용자가 입력한 메시지
+  aiReply: string,           // AI가 생성한 답장
+  audioUrl: string,          // 음성 변환 파일 URL (선택)
+  isSaved: boolean,          // 저장 여부
+  createdAt: timestamp,      // 생성 일시
+  savedAt: timestamp         // 저장 일시
+}
+```
+
+### 15. wills (유언장)
+
+```javascript
+{
+  willId: string,            // 유언 고유 ID
+  userId: string,            // 작성자 ID
+  userName: string,          // 작성자 이름 (익명 작성 시 "익명")
+  isAnonymous: boolean,      // 익명 작성 여부
+  category: 'family' | 'friend' | 'estate' | 'farewell' | 'special', // 카테고리
+  title: string,             // 유언 제목 (선택)
+  content: string,           // 유언 내용
+  visibility: 'public' | 'private', // 공개 여부
+  likeCount: number,         // 공감 수
+  commentCount: number,      // 댓글 수
+  viewCount: number,         // 조회 수
+  isTemplate: boolean,       // 템플릿 여부 (시스템 제공 템플릿)
+  createdAt: timestamp,      // 작성 일시
+  updatedAt: timestamp,      // 수정 일시
+  deletedAt: timestamp       // 삭제 일시 (소프트 삭제)
+}
+```
+
+### 16. willLikes (유언 공감)
+
+```javascript
+{
+  willId: string,           // 유언 ID
+  userId: string,           // 공감한 사용자 ID
+  likedAt: timestamp        // 공감 일시
+}
+```
+
+### 17. willComments (유언 댓글)
+
+```javascript
+{
+  commentId: string,         // 댓글 고유 ID
+  willId: string,           // 유언 ID
+  userId: string,           // 작성자 ID
+  userName: string,         // 작성자 이름
+  content: string,          // 댓글 내용
+  createdAt: timestamp,      // 작성 일시
+  updatedAt: timestamp,      // 수정 일시
+  deletedAt: timestamp       // 삭제 일시 (소프트 삭제)
+}
+```
+
+### 18. matchingProfiles (매칭 프로필)
+
+```javascript
+{
+  profileId: string,          // 프로필 고유 ID
+  userId: string,            // 사용자 ID
+  type: 'seeking' | 'offering', // 구인(seeking) 또는 구직(offering)
+  lostRelationship: 'mother' | 'father' | 'daughter' | 'son' | 'friend' | 'sibling', // 상실한 관계
+  seekingRelationship: 'mother' | 'father' | 'daughter' | 'son' | 'friend' | 'sibling', // 찾는 관계
+  displayName: string,        // 표시 이름 (익명 가능)
+  ageRange: string,          // 나이대 (예: "30-40대")
+  region: string,            // 지역 (선택)
+  introduction: string,      // 자기소개
+  profileImageUrl: string,   // 프로필 사진 URL (선택)
+  isAnonymous: boolean,      // 익명 여부
+  isVerified: boolean,       // 검증 여부 (실명 인증 또는 추모관 연동)
+  matchingConditions: {     // 매칭 조건
+    preferredAgeRange: string, // 선호 나이대
+    preferredRegion: string,   // 선호 지역 (선택)
+    personalityType: string,   // 성격 유형 (선택)
+    lossPeriod: string,        // 상실 경과 시간 (선택)
+  },
+  status: 'active' | 'paused' | 'matched' | 'closed', // 프로필 상태
+  createdAt: timestamp,      // 등록 일시
+  updatedAt: timestamp,      // 수정 일시
+  deletedAt: timestamp       // 삭제 일시 (소프트 삭제)
+}
+```
+
+### 19. matchingRequests (매칭 신청)
+
+```javascript
+{
+  requestId: string,          // 신청 고유 ID
+  senderProfileId: string,   // 신청자 프로필 ID
+  receiverProfileId: string, // 수신자 프로필 ID
+  message: string,           // 신청 메시지
+  status: 'pending' | 'accepted' | 'rejected' | 'cancelled', // 신청 상태
+  createdAt: timestamp,      // 신청 일시
+  respondedAt: timestamp,    // 응답 일시
+}
+```
+
+### 20. matchings (매칭 관계)
+
+```javascript
+{
+  matchingId: string,         // 매칭 고유 ID
+  profileId1: string,        // 프로필 1 ID
+  profileId2: string,        // 프로필 2 ID
+  requestId: string,         // 매칭 신청 ID
+  status: 'active' | 'ended', // 매칭 상태
+  matchedAt: timestamp,      // 매칭 성사 일시
+  endedAt: timestamp,        // 매칭 종료 일시 (선택)
+}
+```
+
+### 21. matchingChats (매칭 채팅)
+
+```javascript
+{
+  chatId: string,            // 채팅 고유 ID
+  matchingId: string,        // 매칭 ID
+  senderId: string,          // 발신자 ID
+  message: string,           // 메시지 내용
+  createdAt: timestamp,      // 발신 일시
+  isRead: boolean,           // 읽음 여부
+}
+```
+
+### 22. matchingReports (매칭 신고)
+
+```javascript
+{
+  reportId: string,          // 신고 고유 ID
+  reporterId: string,        // 신고자 ID
+  reportedProfileId: string, // 신고된 프로필 ID
+  reportedUserId: string,    // 신고된 사용자 ID
+  reason: string,            // 신고 사유
+  description: string,       // 신고 상세 내용
+  status: 'pending' | 'processed' | 'rejected', // 신고 처리 상태
+  createdAt: timestamp,      // 신고 일시
+}
+```
+
+### 23. gratitudeBenefits (감사 혜택)
+
+```javascript
+{
+  benefitId: string,          // 감사 혜택 고유 ID
+  title: string,            // 감사 혜택 제목
+  description: string,      // 감사 혜택 설명
+  bannerImageUrl: string,   // 배너 이미지 URL
+  type: 'signup' | 'activity' | 'special' | 'coupon', // 감사 혜택 유형
+  startDate: timestamp,     // 시작 일시
+  endDate: timestamp,       // 종료 일시
+  isActive: boolean,        // 활성화 여부
+  conditions: {            // 참여 조건
+    minSignupOrder: number,  // 최소 가입 순위 (예: 1000명 이내)
+    minEmpathyCount: number, // 최소 공감 수
+    minMemorialCount: number, // 최소 추모관 수
+    requireFirstMemorial: boolean, // 첫 추모관 생성 필수
+    minDonationCount: number, // 최소 추모금 전달 횟수
+    minLoginDays: number,     // 최소 로그인 일수
+    requireReview: boolean,   // 리뷰 작성 필수
+  },
+  rewards: {               // 혜택
+    premiumMonths: number,  // 프리미엄 무료 개월 수
+    premiumDays: number,    // 프리미엄 무료 일수
+    discountPercent: number, // 할인율 (%)
+    itemIds: string[],      // 무료 제공 아이템 ID 목록
+  },
+  maxParticipants: number, // 최대 참여자 수 (null: 제한 없음)
+  currentParticipants: number, // 현재 참여자 수
+  isAutomatic: boolean,    // 자동 지급 여부
+  createdAt: timestamp,    // 생성 일시
+  updatedAt: timestamp,    // 수정 일시
+}
+```
+
+### 24. benefitParticipants (감사 혜택 참여자)
+
+```javascript
+{
+  participantId: string,   // 참여자 고유 ID
+  benefitId: string,         // 감사 혜택 ID
+  userId: string,          // 사용자 ID
+  participatedAt: timestamp, // 참여 일시
+  rewardReceived: boolean, // 혜택 수령 여부
+  rewardReceivedAt: timestamp, // 혜택 수령 일시
+  rewardType: string,      // 혜택 유형 (premium, coupon, item)
+  rewardData: object,      // 혜택 상세 데이터
+}
+```
+
+### 25. userRewards (사용자 혜택)
+
+```javascript
+{
+  rewardId: string,        // 혜택 고유 ID
+  userId: string,          // 사용자 ID
+  type: 'premium' | 'coupon' | 'item', // 혜택 유형
+  source: 'gratitude' | 'manual' | 'promotion', // 혜택 출처
+  sourceId: string,        // 출처 ID (benefitId 등)
+  premiumMonths: number,   // 프리미엄 무료 개월 수
+  premiumDays: number,     // 프리미엄 무료 일수
+  startDate: timestamp,    // 시작 일시
+  endDate: timestamp,      // 종료 일시
+  isUsed: boolean,         // 사용 여부
+  usedAt: timestamp,       // 사용 일시
+  couponCode: string,      // 쿠폰 코드 (쿠폰인 경우)
+  discountPercent: number, // 할인율 (%)
+  itemIds: string[],       // 무료 제공 아이템 ID 목록
+  createdAt: timestamp,    // 생성 일시
+}
+```
+
+### 26. visits (방문 기록)
 
 ```javascript
 {
@@ -358,6 +660,93 @@
 - isAIGenerated (ascending) + createdAt (descending)  // AI 데이터 제거용
 - likeCount (descending)
 
+// regretLetters 컬렉션 (후회 없는 편지)
+- visibility (ascending) + createdAt (descending)
+- category (ascending) + createdAt (descending)
+- linkedMemorialId (ascending) + createdAt (descending)
+- userId (ascending) + createdAt (descending)  // 내 편지 조회용
+- likeCount (descending)  // 공감순 정렬용
+- isAIGenerated (ascending) + createdAt (descending)  // AI 데이터 제거용
+- visibility (ascending) + category (ascending) + createdAt (descending)
+- visibility (ascending) + likeCount (descending)
+
+// regretLetterLikes 컬렉션
+- letterId (ascending) + userId (ascending)  // 중복 공감 방지
+- letterId (ascending) + likedAt (descending)
+- userId (ascending) + likedAt (descending)  // 내가 공감한 편지
+
+// regretLetterComments 컬렉션
+- letterId (ascending) + createdAt (descending)
+- isAIGenerated (ascending) + createdAt (descending)  // AI 데이터 제거용
+
+// aiMemories 컬렉션 (AI 기억 분석)
+- memorialId (ascending) + createdAt (descending)
+- userId (ascending) + createdAt (descending)
+- memorialId (ascending) + analyzedAt (descending)
+
+// aiReplies 컬렉션 (AI 답장)
+- memorialId (ascending) + createdAt (descending)
+- memoryId (ascending) + createdAt (descending)
+- userId (ascending) + createdAt (descending)
+- isSaved (ascending) + createdAt (descending)
+
+// wills 컬렉션 (유언장)
+- visibility (ascending) + createdAt (descending)
+- category (ascending) + createdAt (descending)
+- userId (ascending) + createdAt (descending)  // 내 유언 조회용
+- likeCount (descending)  // 공감순 정렬용
+- visibility (ascending) + category (ascending) + createdAt (descending)
+- visibility (ascending) + likeCount (descending)
+- isTemplate (ascending) + category (ascending)  // 템플릿 조회용
+
+// willLikes 컬렉션
+- willId (ascending) + userId (ascending)  // 중복 공감 방지
+- willId (ascending) + likedAt (descending)
+- userId (ascending) + likedAt (descending)  // 내가 공감한 유언
+
+// willComments 컬렉션
+- willId (ascending) + createdAt (descending)
+
+// matchingProfiles 컬렉션 (매칭 프로필)
+- type (ascending) + createdAt (descending)  // 구인/구직 구분
+- type (ascending) + lostRelationship (ascending) + seekingRelationship (ascending) + createdAt (descending)
+- userId (ascending) + status (ascending)  // 내 프로필 조회
+- status (ascending) + createdAt (descending)  // 활성 프로필 조회
+- isVerified (ascending) + createdAt (descending)  // 검증된 프로필
+
+// matchingRequests 컬렉션 (매칭 신청)
+- senderProfileId (ascending) + status (ascending) + createdAt (descending)  // 내가 보낸 신청
+- receiverProfileId (ascending) + status (ascending) + createdAt (descending)  // 내가 받은 신청
+- senderProfileId (ascending) + receiverProfileId (ascending)  // 중복 신청 방지
+
+// matchings 컬렉션 (매칭 관계)
+- profileId1 (ascending) + status (ascending) + matchedAt (descending)
+- profileId2 (ascending) + status (ascending) + matchedAt (descending)
+- matchingId (ascending)  // 채팅 조회용
+
+// matchingChats 컬렉션 (매칭 채팅)
+- matchingId (ascending) + createdAt (descending)
+- matchingId (ascending) + isRead (ascending) + createdAt (descending)
+
+// matchingReports 컬렉션 (매칭 신고)
+- reportedProfileId (ascending) + status (ascending) + createdAt (descending)
+- reportedUserId (ascending) + status (ascending) + createdAt (descending)
+
+// gratitudeBenefits 컬렉션 (감사 혜택)
+- isActive (ascending) + startDate (descending) + endDate (ascending)
+- type (ascending) + isActive (ascending) + startDate (descending)
+- startDate (ascending) + endDate (ascending)  // 예정된 감사 혜택 조회
+
+// benefitParticipants 컬렉션 (감사 혜택 참여자)
+- benefitId (ascending) + participatedAt (descending)
+- userId (ascending) + participatedAt (descending)  // 내 참여 감사 혜택
+- benefitId (ascending) + userId (ascending)  // 중복 참여 방지
+
+// userRewards 컬렉션 (사용자 혜택)
+- userId (ascending) + isUsed (ascending) + endDate (descending)
+- userId (ascending) + type (ascending) + isUsed (ascending)
+- endDate (ascending) + isUsed (ascending)  // 만료된 혜택 조회
+
 // visits 컬렉션
 - memorialId (ascending) + date (ascending)
 - memorialId (ascending) + visitedAt (descending)
@@ -440,6 +829,157 @@ service cloud.firestore {
                                resource.data.userId == request.auth.uid;
     }
     
+    // 후회 없는 편지
+    match /regretLetters/{letterId} {
+      allow read: if request.auth != null && 
+                     (resource.data.visibility == 'public' || 
+                      resource.data.visibility == 'anonymous' ||
+                      (resource.data.visibility == 'private' && 
+                       resource.data.userId == request.auth.uid));
+      allow create: if request.auth != null && 
+                       request.auth.uid == request.resource.data.userId;
+      allow update, delete: if request.auth != null && 
+                               resource.data.userId == request.auth.uid;
+    }
+    
+    // 후회 없는 편지 공감
+    match /regretLetterLikes/{likeId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && 
+                       request.auth.uid == request.resource.data.userId;
+      allow delete: if request.auth != null && 
+                       resource.data.userId == request.auth.uid;
+    }
+    
+    // 후회 없는 편지 댓글
+    match /regretLetterComments/{commentId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && 
+                       request.auth.uid == request.resource.data.userId;
+      allow update, delete: if request.auth != null && 
+                               resource.data.userId == request.auth.uid;
+    }
+    
+    // AI 기억 분석
+    match /aiMemories/{memoryId} {
+      allow read: if request.auth != null && 
+                     (resource.data.userId == request.auth.uid ||
+                      resource.data.memorialId exists);
+      allow create: if request.auth != null && 
+                       request.auth.uid == request.resource.data.userId;
+      allow update, delete: if request.auth != null && 
+                               resource.data.userId == request.auth.uid;
+    }
+    
+    // AI 답장
+    match /aiReplies/{replyId} {
+      allow read: if request.auth != null && 
+                     resource.data.userId == request.auth.uid;
+      allow create: if request.auth != null && 
+                       request.auth.uid == request.resource.data.userId;
+      allow update: if request.auth != null && 
+                       resource.data.userId == request.auth.uid;
+      allow delete: if request.auth != null && 
+                       resource.data.userId == request.auth.uid;
+    }
+    
+    // 유언장
+    match /wills/{willId} {
+      allow read: if request.auth != null && 
+                     (resource.data.visibility == 'public' ||
+                      (resource.data.visibility == 'private' && 
+                       resource.data.userId == request.auth.uid));
+      allow create: if request.auth != null && 
+                       request.auth.uid == request.resource.data.userId;
+      allow update, delete: if request.auth != null && 
+                               resource.data.userId == request.auth.uid;
+    }
+    
+    // 유언 공감
+    match /willLikes/{likeId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && 
+                       request.auth.uid == request.resource.data.userId;
+      allow delete: if request.auth != null && 
+                       resource.data.userId == request.auth.uid;
+    }
+    
+    // 유언 댓글
+    match /willComments/{commentId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && 
+                       request.auth.uid == request.resource.data.userId;
+      allow update, delete: if request.auth != null && 
+                               resource.data.userId == request.auth.uid;
+    }
+    
+    // 매칭 프로필
+    match /matchingProfiles/{profileId} {
+      allow read: if request.auth != null && 
+                     resource.data.status == 'active';
+      allow create: if request.auth != null && 
+                       request.auth.uid == request.resource.data.userId;
+      allow update, delete: if request.auth != null && 
+                               resource.data.userId == request.auth.uid;
+    }
+    
+    // 매칭 신청
+    match /matchingRequests/{requestId} {
+      allow read: if request.auth != null && 
+                     (resource.data.senderProfileId exists ||
+                      resource.data.receiverProfileId exists);
+      allow create: if request.auth != null;
+      allow update: if request.auth != null && 
+                       resource.data.receiverProfileId exists;
+    }
+    
+    // 매칭 관계
+    match /matchings/{matchingId} {
+      allow read: if request.auth != null && 
+                     (resource.data.profileId1 exists ||
+                      resource.data.profileId2 exists);
+      allow create: if request.auth != null;  // 서버에서만 생성
+      allow update: if request.auth != null;
+    }
+    
+    // 매칭 채팅
+    match /matchingChats/{chatId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && 
+                       request.auth.uid == request.resource.data.senderId;
+    }
+    
+    // 매칭 신고
+    match /matchingReports/{reportId} {
+      allow read: if request.auth != null && 
+                     resource.data.reporterId == request.auth.uid;
+      allow create: if request.auth != null && 
+                       request.auth.uid == request.resource.data.reporterId;
+    }
+    
+    // 감사 혜택
+    match /gratitudeBenefits/{benefitId} {
+      allow read: if request.auth != null;
+      allow create, update, delete: if false;  // 서버에서만 관리
+    }
+    
+    // 감사 혜택 참여자
+    match /benefitParticipants/{participantId} {
+      allow read: if request.auth != null && 
+                     resource.data.userId == request.auth.uid;
+      allow create: if request.auth != null && 
+                       request.auth.uid == request.resource.data.userId;
+    }
+    
+    // 사용자 혜택
+    match /userRewards/{rewardId} {
+      allow read: if request.auth != null && 
+                     resource.data.userId == request.auth.uid;
+      allow create: if false;  // 서버에서만 생성
+      allow update: if request.auth != null && 
+                       resource.data.userId == request.auth.uid;
+    }
+    
     // 추모관 공유 기록
     match /shares/{shareId} {
       allow read: if request.auth != null;
@@ -489,6 +1029,12 @@ memorials/
       {videoId}.mp4
     letters/
       {letterId}.mp3 (음성 편지)
+    ai_memories/
+      conversations/
+        {conversationId}.jpg (대화 캡처 이미지)
+    ai_replies/
+      {replyId}/
+        audio.mp3 (음성 답장 파일)
     backups/
       {backupId}/
         {backupType}/

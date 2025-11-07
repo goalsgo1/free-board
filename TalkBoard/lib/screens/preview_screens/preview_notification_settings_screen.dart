@@ -84,19 +84,28 @@ class PreviewNotificationSettingsScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
-                        '알림 수신 시간',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Color(0xFF5C5C5C),
+                      Flexible(
+                        child: Text(
+                          '알림 수신 시간',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Color(0xFF5C5C5C),
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      Text(
-                        '09:00 ~ 22:00',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: warmBrown,
+                      Flexible(
+                        child: Text(
+                          '09:00 ~ 22:00',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: warmBrown,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.end,
                         ),
                       ),
                     ],

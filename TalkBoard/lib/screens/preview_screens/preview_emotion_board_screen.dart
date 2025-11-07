@@ -124,14 +124,22 @@ class PreviewEmotionBoardScreen extends StatelessWidget {
             const SizedBox(height: 12),
             Row(
               children: [
-                Text(
-                  '작성자: $author',
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                Flexible(
+                  child: Text(
+                    '작성자: $author',
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  '작성 시간: $time',
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                Flexible(
+                  child: Text(
+                    '작성 시간: $time',
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ],
             ),
@@ -140,11 +148,25 @@ class PreviewEmotionBoardScreen extends StatelessWidget {
               children: [
                 Icon(Icons.favorite, color: Colors.red, size: 20),
                 const SizedBox(width: 4),
-                Text('$likes', style: const TextStyle(fontSize: 14)),
+                Flexible(
+                  child: Text(
+                    '$likes',
+                    style: const TextStyle(fontSize: 14),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
                 const SizedBox(width: 16),
                 Icon(Icons.chat_bubble_outline, color: warmBrown, size: 20),
                 const SizedBox(width: 4),
-                Text('$comments', style: const TextStyle(fontSize: 14)),
+                Flexible(
+                  child: Text(
+                    '$comments',
+                    style: const TextStyle(fontSize: 14),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
               ],
             ),
           ],
