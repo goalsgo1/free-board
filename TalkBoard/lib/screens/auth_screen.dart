@@ -143,7 +143,7 @@ class _AuthScreenState extends State<AuthScreen> {
             children: [
               // 타이틀
               Text(
-                _isLogin ? '톡보드' : '회원가입',
+                _isLogin ? '기억의 정원' : '회원가입',
                 style: const TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
@@ -153,7 +153,7 @@ class _AuthScreenState extends State<AuthScreen> {
               const SizedBox(height: 8),
               Text(
                 _isLogin
-                    ? '로그인하여 톡보드를 이용하세요'
+                    ? '로그인하여 기억의 정원을 이용하세요'
                     : '새 계정을 만들어 시작하세요',
                 style: TextStyle(
                   fontSize: 16,

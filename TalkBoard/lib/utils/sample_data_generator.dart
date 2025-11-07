@@ -7,8 +7,8 @@ class SampleDataGenerator {
 
   // 샘플 데이터 제목 목록 (삭제 시 식별용)
   static const List<String> _samplePostTitles = [
-    '톡보드에 오신 것을 환영합니다!',
-    'Flutter와 Firebase로 만든 게시판 앱',
+    '기억의 정원에 오신 것을 환영합니다!',
+    'Flutter와 Firebase로 만든 추모관 앱',
     '댓글 기능 사용 방법',
     '게시글 작성 팁',
     '안드로이드와 iOS 모두 지원',
@@ -86,8 +86,8 @@ class SampleDataGenerator {
     // 샘플 게시글 목록
     final samplePosts = [
       {
-        'title': '톡보드에 오신 것을 환영합니다!',
-        'content': '''안녕하세요! 톡보드는 Firebase 기반의 실시간 게시판 애플리케이션입니다.
+        'title': '기억의 정원에 오신 것을 환영합니다!',
+        'content': '''안녕하세요! 기억의 정원은 Firebase 기반의 디지털 추모관 애플리케이션입니다.
 
 주요 기능:
 • 게시글 작성, 수정, 삭제
@@ -145,7 +145,7 @@ class SampleDataGenerator {
       },
       {
         'title': '안드로이드와 iOS 모두 지원',
-        'content': '''톡보드는 크로스 플랫폼 앱입니다.
+        'content': '''기억의 정원은 크로스 플랫폼 앱입니다.
 
 • Android에서 사용 가능
 • iOS에서 사용 가능

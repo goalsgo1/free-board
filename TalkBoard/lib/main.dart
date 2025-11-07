@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => CommentProvider()),
       ],
       child: MaterialApp(
-        title: '톡보드',
+        title: '기억의 정원',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(

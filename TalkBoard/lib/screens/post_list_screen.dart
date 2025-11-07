@@ -197,7 +197,7 @@ class PostListScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('톡보드'),
+        title: const Text('기억의 정원'),
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
         elevation: 2,
