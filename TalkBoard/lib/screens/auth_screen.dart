@@ -6,6 +6,10 @@ import 'package:free_board/screens/privacy_policy_screen.dart';
 import 'package:free_board/screens/components_guide_screen.dart';
 import 'package:free_board/screens/ui_preview_screen.dart';
 import 'package:free_board/screens/database_structure_screen.dart';
+import 'package:free_board/widgets/components/app_buttons.dart';
+import 'package:free_board/widgets/components/app_card.dart';
+import 'package:free_board/widgets/components/app_inputs.dart';
+import 'package:free_board/widgets/components/app_palette.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -225,12 +229,13 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppPalette.softCream,
       appBar: AppBar(
         title: Text(_isLogin ? '로그인' : '회원가입'),
-        backgroundColor: Colors.blue,
+        backgroundColor: AppPalette.warmBrown,
         foregroundColor: Colors.white,
+        elevation: 0,
         actions: [
-          // 디버그 모드에서만 샘플 데이터 입력 버튼 표시
           if (kDebugMode)
             IconButton(
               icon: const Icon(Icons.auto_fix_high),
@@ -239,252 +244,225 @@ class _AuthScreenState extends State<AuthScreen> {
             ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // 타이틀
-              Text(
-                _isLogin ? '기억의 정원' : '회원가입',
-                style: const TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                _isLogin
-                    ? '로그인하여 기억의 정원을 이용하세요'
-                    : '새 계정을 만들어 시작하세요',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[600],
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 48),
-              // 회원가입 시에만 표시되는 이름 필드
-              if (!_isLogin) ...[
-                TextFormField(
-                  controller: _displayNameController,
-                  focusNode: _displayNameFocusNode,
-                  decoration: const InputDecoration(
-                    labelText: '이름',
-                    hintText: '이름을 입력하세요',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.person),
-                  ),
-                  textInputAction: TextInputAction.next,
-                  onFieldSubmitted: (_) {
-                    _emailFocusNode.requestFocus();
-                  },
-                  validator: (value) {
-                    if (!_isLogin && (value == null || value.trim().isEmpty)) {
-                      return '이름을 입력해주세요';
-                    }
-                    return null;
-                  },
-                  textCapitalization: TextCapitalization.words,
-                ),
-                const SizedBox(height: 16),
-              ],
-              // 이메일 필드
-              TextFormField(
-                controller: _emailController,
-                focusNode: _emailFocusNode,
-                decoration: const InputDecoration(
-                  labelText: '이메일',
-                  hintText: 'example@email.com',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.email),
-                ),
-                keyboardType: TextInputType.emailAddress,
-                textInputAction: TextInputAction.next,
-                onFieldSubmitted: (_) {
-                  _passwordFocusNode.requestFocus();
-                },
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return '이메일을 입력해주세요';
-                  }
-                  if (!value.contains('@')) {
-                    return '올바른 이메일 형식이 아닙니다';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              // 비밀번호 필드
-              TextFormField(
-                controller: _passwordController,
-                focusNode: _passwordFocusNode,
-                decoration: InputDecoration(
-                  labelText: '비밀번호',
-                  hintText: '비밀번호를 입력하세요',
-                  border: const OutlineInputBorder(),
-                  prefixIcon: const Icon(Icons.lock),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscurePassword
-                          ? Icons.visibility
-                          : Icons.visibility_off,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _obscurePassword = !_obscurePassword;
-                      });
-                    },
-                  ),
-                ),
-                obscureText: _obscurePassword,
-                textInputAction: TextInputAction.done,
-                onFieldSubmitted: (_) {
-                  // Enter 키를 누르면 폼 제출
-                  _submit();
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return '비밀번호를 입력해주세요';
-                  }
-                  if (value.length < 6) {
-                    return '비밀번호는 최소 6자 이상이어야 합니다';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 32),
-              // 로그인/회원가입 버튼
-              Consumer<AuthProvider>(
-                builder: (context, authProvider, child) {
-                  return ElevatedButton(
-                    onPressed: authProvider.isLoading ? null : _submit,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: authProvider.isLoading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                            ),
-                          )
-                        : Text(
-                            _isLogin ? '로그인' : '회원가입',
-                            style: const TextStyle(fontSize: 16),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 32),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 480),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                AppSurfaceCard(
+                  title: _isLogin ? '기억의 정원 로그인' : '새 계정 만들기',
+                  subtitle: _isLogin
+                      ? '로그인하여 기억의 정원을 이용하세요.'
+                      : '소중한 추억을 간직할 새 계정을 생성하세요.',
+                  icon: _isLogin ? Icons.lock_open_rounded : Icons.person_add_alt_1,
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        if (!_isLogin) ...[
+                          AppTextField(
+                            controller: _displayNameController,
+                            focusNode: _displayNameFocusNode,
+                            label: '이름',
+                            hint: '이름을 입력하세요',
+                            textInputAction: TextInputAction.next,
+                            prefixIcon: const Icon(Icons.person_outline),
+                            validator: (value) {
+                              if (!_isLogin && (value == null || value.trim().isEmpty)) {
+                                return '이름을 입력해주세요';
+                              }
+                              return null;
+                            },
+                            onFieldSubmitted: (_) => _emailFocusNode.requestFocus(),
                           ),
-                  );
-                },
-              ),
-              const SizedBox(height: 16),
-              if (_isLogin) ...[
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: _showPasswordResetDialog,
-                    child: const Text('비밀번호를 잊으셨나요?'),
+                          const SizedBox(height: 16),
+                        ],
+                        AppTextField(
+                          controller: _emailController,
+                          focusNode: _emailFocusNode,
+                          label: '이메일',
+                          hint: 'example@email.com',
+                          keyboardType: TextInputType.emailAddress,
+                          textInputAction: TextInputAction.next,
+                          prefixIcon: const Icon(Icons.email_outlined),
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return '이메일을 입력해주세요';
+                            }
+                            if (!value.contains('@')) {
+                              return '올바른 이메일 형식이 아닙니다';
+                            }
+                            return null;
+                          },
+                          onFieldSubmitted: (_) => _passwordFocusNode.requestFocus(),
+                        ),
+                        const SizedBox(height: 16),
+                        AppTextField(
+                          controller: _passwordController,
+                          focusNode: _passwordFocusNode,
+                          label: '비밀번호',
+                          hint: '비밀번호를 입력하세요',
+                          obscureText: _obscurePassword,
+                          textInputAction: TextInputAction.done,
+                          prefixIcon: const Icon(Icons.lock_outline),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscurePassword
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: AppPalette.warmBrown,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _obscurePassword = !_obscurePassword;
+                              });
+                            },
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return '비밀번호를 입력해주세요';
+                            }
+                            if (value.length < 6) {
+                              return '비밀번호는 최소 6자 이상이어야 합니다';
+                            }
+                            return null;
+                          },
+                          onFieldSubmitted: (_) => _submit(),
+                        ),
+                        const SizedBox(height: 24),
+                        Consumer<AuthProvider>(
+                          builder: (context, authProvider, child) {
+                            return AppPrimaryButton(
+                              label: _isLogin ? '로그인' : '회원가입',
+                              icon: _isLogin ? Icons.login_rounded : Icons.person_add_alt_1,
+                              onPressed: authProvider.isLoading ? null : _submit,
+                              isLoading: authProvider.isLoading,
+                              accentColor: AppPalette.warmBrown,
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 12),
+                        if (_isLogin)
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton(
+                              onPressed: _showPasswordResetDialog,
+                              style: TextButton.styleFrom(
+                                foregroundColor: AppPalette.warmBrown,
+                              ),
+                              child: const Text('비밀번호를 잊으셨나요?'),
+                            ),
+                          ),
+                        Consumer<AuthProvider>(
+                          builder: (context, authProvider, child) {
+                            return TextButton(
+                              onPressed: authProvider.isLoading ? null : _handleResendVerification,
+                              style: TextButton.styleFrom(
+                                foregroundColor: AppPalette.warmBrown,
+                              ),
+                              child: const Text('이메일 인증 메일 다시 보내기'),
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        const Divider(),
+                        const SizedBox(height: 12),
+                        const Center(
+                          child: Text(
+                            '소셜 계정으로 계속하기',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: AppPalette.warmBrown,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Consumer<AuthProvider>(
+                          builder: (context, authProvider, child) {
+                            return Column(
+                              children: [
+                                AppOutlinedButton(
+                                  label: 'Google로 계속하기',
+                                  leadingIcon: Icons.g_mobiledata,
+                                  badgeText: '준비 중',
+                                  onPressed: authProvider.isLoading
+                                      ? null
+                                      : () => _handleSocialLogin('Google'),
+                                ),
+                                const SizedBox(height: 8),
+                                AppOutlinedButton(
+                                  label: 'Apple로 계속하기',
+                                  leadingIcon: Icons.apple,
+                                  badgeText: '준비 중',
+                                  onPressed: authProvider.isLoading
+                                      ? null
+                                      : () => _handleSocialLogin('Apple'),
+                                ),
+                                const SizedBox(height: 8),
+                                AppOutlinedButton(
+                                  label: '전화번호로 계속하기',
+                                  leadingIcon: Icons.phone,
+                                  badgeText: '준비 중',
+                                  onPressed: authProvider.isLoading
+                                      ? null
+                                      : () => _handleSocialLogin('전화번호 로그인'),
+                                ),
+                                const SizedBox(height: 8),
+                                AppOutlinedButton(
+                                  label: '게스트로 둘러보기',
+                                  leadingIcon: Icons.person_outline,
+                                  badgeText: '준비 중',
+                                  onPressed: authProvider.isLoading
+                                      ? null
+                                      : () => _handleSocialLogin('익명 로그인'),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                        AppHelperText(
+                          icon: Icons.info_outline,
+                          text: _isLogin
+                              ? '로그인 후 이메일 인증이 완료되지 않은 계정은 주요 기능이 제한됩니다.'
+                              : '회원가입 직후 이메일 인증 메일이 전송되며, 인증 완료 전까지 일부 기능이 제한됩니다.',
+                        ),
+                        const SizedBox(height: 16),
+                        Consumer<AuthProvider>(
+                          builder: (context, authProvider, child) {
+                            return TextButton(
+                              onPressed: authProvider.isLoading
+                                  ? null
+                                  : () {
+                                      setState(() {
+                                        _isLogin = !_isLogin;
+                                        _formKey.currentState?.reset();
+                                      });
+                                    },
+                              style: TextButton.styleFrom(
+                                foregroundColor: AppPalette.deepBlue,
+                                textStyle: const TextStyle(fontWeight: FontWeight.w600),
+                              ),
+                              child: Text(
+                                _isLogin
+                                    ? '계정이 없으신가요? 회원가입'
+                                    : '이미 계정이 있으신가요? 로그인',
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                const SizedBox(height: 8),
-              ],
-              Consumer<AuthProvider>(
-                builder: (context, authProvider, child) {
-                  return TextButton(
-                    onPressed: authProvider.isLoading
-                        ? null
-                        : _handleResendVerification,
-                    child: const Text('이메일 인증 메일 다시 보내기'),
-                  );
-                },
-              ),
-              const SizedBox(height: 12),
-              Consumer<AuthProvider>(
-                builder: (context, authProvider, child) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      const Divider(height: 32),
-                      const Text(
-                        '소셜 계정으로 계속하기',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      OutlinedButton.icon(
-                        onPressed: authProvider.isLoading
-                            ? null
-                            : () => _handleSocialLogin('Google'),
-                        icon: const Icon(Icons.g_mobiledata),
-                        label: const Text('Google로 계속하기 (준비 중)'),
-                      ),
-                      const SizedBox(height: 8),
-                      OutlinedButton.icon(
-                        onPressed: authProvider.isLoading
-                            ? null
-                            : () => _handleSocialLogin('Apple'),
-                        icon: const Icon(Icons.apple),
-                        label: const Text('Apple로 계속하기 (준비 중)'),
-                      ),
-                      const SizedBox(height: 8),
-                      OutlinedButton.icon(
-                        onPressed: authProvider.isLoading
-                            ? null
-                            : () => _handleSocialLogin('전화번호 로그인'),
-                        icon: const Icon(Icons.phone),
-                        label: const Text('전화번호로 계속하기 (준비 중)'),
-                      ),
-                      const SizedBox(height: 8),
-                      OutlinedButton.icon(
-                        onPressed: authProvider.isLoading
-                            ? null
-                            : () => _handleSocialLogin('익명 로그인'),
-                        icon: const Icon(Icons.person_outline),
-                        label: const Text('게스트로 둘러보기 (준비 중)'),
-                      ),
-                    ],
-                  );
-                },
-              ),
-              const SizedBox(height: 16),
-              // 로그인/회원가입 전환 버튼
-              Consumer<AuthProvider>(
-                builder: (context, authProvider, child) {
-                  return TextButton(
-                    onPressed: authProvider.isLoading
-                        ? null
-                        : () {
-                            setState(() {
-                              _isLogin = !_isLogin;
-                              _formKey.currentState?.reset();
-                            });
-                          },
-                    child: Text(
-                      _isLogin
-                          ? '계정이 없으신가요? 회원가입'
-                          : '이미 계정이 있으신가요? 로그인',
-                      style: TextStyle(color: Colors.blue[700]),
-                    ),
-                  );
-                },
-              ),
-              const SizedBox(height: 16),
-              // 개인정보처리방침 링크
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TextButton(
+                const SizedBox(height: 20),
+                Align(
+                  alignment: Alignment.center,
+                  child: TextButton(
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -493,76 +471,71 @@ class _AuthScreenState extends State<AuthScreen> {
                         ),
                       );
                     },
-                    child: Text(
-                      '개인정보처리방침',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.blue[700],
-                        decoration: TextDecoration.underline,
-                      ),
+                    style: TextButton.styleFrom(
+                      foregroundColor: AppPalette.warmBrown,
+                      textStyle: const TextStyle(decoration: TextDecoration.underline),
+                    ),
+                    child: const Text('개인정보처리방침'),
+                  ),
+                ),
+                if (kDebugMode) ...[
+                  const SizedBox(height: 24),
+                  OutlinedButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ComponentsGuideScreen(),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.widgets),
+                    label: const Text('공통 컴포넌트 가이드'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppPalette.caption,
+                      side: const BorderSide(color: AppPalette.warmBeige),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
                   ),
                 ],
-              ),
-              // 디버그 모드에서만 공통 컴포넌트 가이드 버튼 표시
-              if (kDebugMode) ...[
-                const SizedBox(height: 24),
+                const SizedBox(height: 16),
                 OutlinedButton.icon(
                   onPressed: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const ComponentsGuideScreen(),
+                        builder: (context) => const UIPreviewScreen(),
                       ),
                     );
                   },
-                  icon: const Icon(Icons.widgets),
-                  label: const Text('공통 컴포넌트 가이드'),
+                  icon: const Icon(Icons.visibility),
+                  label: const Text('UI 프리뷰'),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.grey[700],
-                    side: BorderSide(color: Colors.grey[300]!),
+                    foregroundColor: AppPalette.deepBlue,
+                    side: const BorderSide(color: Color(0xFF90CAF9)),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                OutlinedButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const DatabaseStructureScreen(),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.storage),
+                  label: const Text('데이터베이스 구조'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.green.shade700,
+                    side: const BorderSide(color: Color(0xFFA5D6A7)),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
                 ),
               ],
-              // UI 프리뷰 버튼 (항상 표시)
-              const SizedBox(height: 16),
-              OutlinedButton.icon(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const UIPreviewScreen(),
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.visibility),
-                label: const Text('UI 프리뷰'),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.blue[700],
-                  side: BorderSide(color: Colors.blue[300]!),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                ),
-              ),
-              // 데이터베이스 구조 버튼 (항상 표시)
-              const SizedBox(height: 16),
-              OutlinedButton.icon(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const DatabaseStructureScreen(),
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.storage),
-                label: const Text('데이터베이스 구조'),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.green[700],
-                  side: BorderSide(color: Colors.green[300]!),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),
