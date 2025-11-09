@@ -241,16 +241,23 @@ class HomeScreen extends StatelessWidget {
             subtitle: '가장 많이 사용하는 기능을 한 번에 이동하세요.',
             icon: Icons.rocket_launch_outlined,
             accentColor: const Color(0xFF5C6BC0),
-            child: Wrap(
-              spacing: 16,
-              runSpacing: 16,
-              children: _shortcuts
-                  .map(
-                    (shortcut) => _HomeShortcutTile(
-                      shortcut: shortcut,
-                    ),
-                  )
-                  .toList(),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: _shortcuts
+                      .map(
+                        (shortcut) => Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: _HomeShortcutTile(
+                            shortcut: shortcut,
+                            width: constraints.maxWidth,
+                          ),
+                        ),
+                      )
+                      .toList(),
+                );
+              },
             ),
           ),
           const SizedBox(height: 24),
@@ -564,9 +571,13 @@ class _MemorialHighlightCard extends StatelessWidget {
 }
 
 class _HomeShortcutTile extends StatelessWidget {
-  const _HomeShortcutTile({required this.shortcut});
+  const _HomeShortcutTile({
+    required this.shortcut,
+    required this.width,
+  });
 
   final _HomeQuickShortcut shortcut;
+  final double width;
 
   @override
   Widget build(BuildContext context) {
@@ -577,11 +588,11 @@ class _HomeShortcutTile extends StatelessWidget {
         }
       },
       child: Container(
-        width: 150,
+        width: width,
         decoration: BoxDecoration(
-          color: _colorWithOpacity(shortcut.accentColor, 0.08),
+          color: _colorWithOpacity(AppPalette.softCream, 0.9),
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: _colorWithOpacity(shortcut.accentColor, 0.2), width: 1.5),
+          border: Border.all(color: _colorWithOpacity(shortcut.accentColor, 0.35), width: 1.2),
         ),
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -594,7 +605,7 @@ class _HomeShortcutTile extends StatelessWidget {
               style: TextStyle(
                 fontSize: 14.5,
                 fontWeight: FontWeight.w600,
-                color: shortcut.accentColor,
+                color: AppPalette.warmBrown,
               ),
             ),
             const SizedBox(height: 8),
