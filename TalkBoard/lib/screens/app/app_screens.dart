@@ -5,6 +5,10 @@ import 'package:free_board/widgets/components/app_buttons.dart';
 import 'package:free_board/widgets/components/app_card.dart';
 import 'package:free_board/widgets/components/app_palette.dart';
 
+Color _colorWithOpacity(Color color, double opacity) {
+  return color.withAlpha((opacity.clamp(0.0, 1.0) * 255).round());
+}
+
 class AppPageInfo {
   const AppPageInfo({
     required this.title,
@@ -298,6 +302,7 @@ class _HomeSectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -311,18 +316,27 @@ class _HomeSectionHeader extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 4),
-            Text(
-              subtitle,
-              style: const TextStyle(
-                fontSize: 13,
-                color: AppPalette.caption,
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.55,
+              child: Text(
+                subtitle,
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: AppPalette.caption,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
         ),
-        IconButton(
-          icon: const Icon(Icons.arrow_forward_ios, size: 16, color: AppPalette.warmBrown),
-          onPressed: () {},
+        Column(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.arrow_forward_ios, size: 16, color: AppPalette.warmBrown),
+              onPressed: () {},
+            ),
+          ],
         ),
       ],
     );
@@ -841,8 +855,4 @@ final List<AppPageInfo> appPageInfos = [
 final Map<String, WidgetBuilder> appRouteBuilders = {
   for (final info in appPageInfos) info.route: info.builder,
 };
-
-Color _colorWithOpacity(Color color, double opacity) {
-  return color.withAlpha((opacity.clamp(0.0, 1.0) * 255).round());
-}
 
