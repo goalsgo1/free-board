@@ -175,6 +175,18 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
+          SizedBox(
+            width: double.infinity,
+            child: AppOutlinedButton(
+              label: '기억의 탐험 가이드로 이동',
+              leadingIcon: Icons.map_outlined,
+              onPressed: () {
+                Navigator.pushNamed(context, '/home-navigator');
+              },
+              color: AppPalette.warmBrown,
+            ),
+          ),
+          const SizedBox(height: 24),
           AppSurfaceCard(
             title: '오늘의 기념일',
             subtitle: '오늘 기억해야 할 소중한 분들을 모았어요.',
