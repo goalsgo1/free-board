@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+import 'package:free_board/widgets/accessibility_button.dart';
 
 class DatabaseDiagramScreen extends StatefulWidget {
   const DatabaseDiagramScreen({super.key});
@@ -43,6 +44,8 @@ class _DatabaseDiagramScreenState extends State<DatabaseDiagramScreen> {
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
         actions: [
+          const AccessibilityButton(),
+          const SizedBox(width: 8),
           IconButton(
             icon: const Icon(Icons.zoom_out),
             tooltip: '축소',

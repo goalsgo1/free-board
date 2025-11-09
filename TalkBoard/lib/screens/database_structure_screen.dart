@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:free_board/screens/database_diagram_screen.dart';
+import 'package:free_board/widgets/accessibility_button.dart';
 
 class DatabaseStructureScreen extends StatelessWidget {
   const DatabaseStructureScreen({super.key});
@@ -12,6 +13,8 @@ class DatabaseStructureScreen extends StatelessWidget {
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
         actions: [
+          const AccessibilityButton(),
+          const SizedBox(width: 8),
           IconButton(
             icon: const Icon(Icons.account_tree),
             tooltip: '다이어그램 보기',

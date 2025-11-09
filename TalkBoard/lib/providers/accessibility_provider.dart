@@ -22,9 +22,8 @@ class AccessibilityProvider extends ChangeNotifier {
   }
 
   TextTheme modifyTextTheme(TextTheme base) {
-    final scaled = base.apply(fontSizeFactor: _textScale);
     if (!_boldText) {
-      return scaled;
+      return base;
     }
 
     TextStyle? applyWeight(TextStyle? style) {
@@ -32,22 +31,22 @@ class AccessibilityProvider extends ChangeNotifier {
       return style.copyWith(fontWeight: FontWeight.w600);
     }
 
-    return scaled.copyWith(
-      displayLarge: applyWeight(scaled.displayLarge),
-      displayMedium: applyWeight(scaled.displayMedium),
-      displaySmall: applyWeight(scaled.displaySmall),
-      headlineLarge: applyWeight(scaled.headlineLarge),
-      headlineMedium: applyWeight(scaled.headlineMedium),
-      headlineSmall: applyWeight(scaled.headlineSmall),
-      titleLarge: applyWeight(scaled.titleLarge),
-      titleMedium: applyWeight(scaled.titleMedium),
-      titleSmall: applyWeight(scaled.titleSmall),
-      bodyLarge: applyWeight(scaled.bodyLarge),
-      bodyMedium: applyWeight(scaled.bodyMedium),
-      bodySmall: applyWeight(scaled.bodySmall),
-      labelLarge: applyWeight(scaled.labelLarge),
-      labelMedium: applyWeight(scaled.labelMedium),
-      labelSmall: applyWeight(scaled.labelSmall),
+    return base.copyWith(
+      displayLarge: applyWeight(base.displayLarge),
+      displayMedium: applyWeight(base.displayMedium),
+      displaySmall: applyWeight(base.displaySmall),
+      headlineLarge: applyWeight(base.headlineLarge),
+      headlineMedium: applyWeight(base.headlineMedium),
+      headlineSmall: applyWeight(base.headlineSmall),
+      titleLarge: applyWeight(base.titleLarge),
+      titleMedium: applyWeight(base.titleMedium),
+      titleSmall: applyWeight(base.titleSmall),
+      bodyLarge: applyWeight(base.bodyLarge),
+      bodyMedium: applyWeight(base.bodyMedium),
+      bodySmall: applyWeight(base.bodySmall),
+      labelLarge: applyWeight(base.labelLarge),
+      labelMedium: applyWeight(base.labelMedium),
+      labelSmall: applyWeight(base.labelSmall),
     );
   }
 }

@@ -33,22 +33,29 @@ class _AccessibilityIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final appBarColor =
+        theme.appBarTheme.backgroundColor ?? theme.colorScheme.primary;
+    final brightness = ThemeData.estimateBrightnessForColor(appBarColor);
+    final bool useLightForeground = brightness == Brightness.dark;
+    final Color textColor =
+        useLightForeground ? Colors.white : AppPalette.warmBrown;
+    final Color borderColor =
+        useLightForeground ? Colors.white70 : AppPalette.warmBrown.withAlpha((0.4 * 255).round());
+
     return Container(
       width: 32,
       height: 32,
       alignment: Alignment.center,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(
-          color: AppPalette.warmBrown.withAlpha((0.4 * 255).round()),
-          width: 1,
-        ),
+        border: Border.all(color: borderColor, width: 1),
       ),
-      child: const Text(
+      child: Text(
         '가',
         style: TextStyle(
           fontWeight: FontWeight.w700,
-          color: AppPalette.warmBrown,
+          color: textColor,
           fontSize: 16,
         ),
       ),

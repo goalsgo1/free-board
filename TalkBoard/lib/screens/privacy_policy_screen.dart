@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:free_board/widgets/accessibility_button.dart';
+import 'package:free_board/widgets/components/app_palette.dart';
 
 class PrivacyPolicyScreen extends StatelessWidget {
   const PrivacyPolicyScreen({super.key});
@@ -8,8 +10,9 @@ class PrivacyPolicyScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('개인정보처리방침'),
-        backgroundColor: Colors.blue,
+        backgroundColor: AppPalette.warmBrown,
         foregroundColor: Colors.white,
+        actions: const [AccessibilityButton()],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),

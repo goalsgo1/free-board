@@ -936,6 +936,9 @@ class PlaceholderScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
+        backgroundColor: AppPalette.warmBrown,
+        foregroundColor: Colors.white,
+        actions: const [AccessibilityButton()],
       ),
       body: Padding(
         padding: const EdgeInsets.all(24),

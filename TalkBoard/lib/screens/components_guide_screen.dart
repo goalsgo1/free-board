@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:free_board/widgets/accessibility_button.dart';
 
 class ComponentsGuideScreen extends StatelessWidget {
   const ComponentsGuideScreen({super.key});
@@ -22,6 +23,7 @@ class ComponentsGuideScreen extends StatelessWidget {
         backgroundColor: warmBrown,
         foregroundColor: Colors.white,
         elevation: 0,
+        actions: const [AccessibilityButton()],
       ),
       backgroundColor: softCream,
       body: SingleChildScrollView(
