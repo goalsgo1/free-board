@@ -380,76 +380,92 @@ class _AnniversaryTile extends StatelessWidget {
         ],
       ),
       padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final double contentWidth = constraints.maxWidth - 80;
+          return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image.network(
-                  memorial.imageUrl,
-                  width: 64,
-                  height: 64,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      memorial.title,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: AppPalette.warmBrown,
-                      ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.network(
+                      memorial.imageUrl,
+                      width: 64,
+                      height: 64,
+                      fit: BoxFit.cover,
                     ),
-                    const SizedBox(height: 6),
-                    Text(
-                      memorial.message,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        height: 1.4,
-                        color: AppPalette.caption,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
+                  ),
+                  const SizedBox(width: 16),
+                  SizedBox(
+                    width: contentWidth > 0 ? contentWidth : constraints.maxWidth,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(Icons.event, size: 14, color: AppPalette.warmBrown),
-                        const SizedBox(width: 6),
-                        Flexible(
-                          child: Text(
-                            memorial.dateLabel,
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: AppPalette.caption,
-                            ),
-                            overflow: TextOverflow.ellipsis,
+                        Text(
+                          memorial.title,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: AppPalette.warmBrown,
                           ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          memorial.message,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            height: 1.4,
+                            color: AppPalette.caption,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            const Icon(Icons.event, size: 14, color: AppPalette.warmBrown),
+                            const SizedBox(width: 6),
+                            Flexible(
+                              child: Text(
+                                memorial.dateLabel,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: AppPalette.caption,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 6,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: const [
+                  _BadgeChip(label: '추모관 방문 152명'),
+                  _BadgeChip(label: '댓글 24'),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Align(
+                alignment: Alignment.centerRight,
+                child: AppOutlinedButton(
+                  label: '추모하러 가기',
+                  leadingIcon: Icons.arrow_forward,
+                  onPressed: () {},
+                  color: AppPalette.warmBrown,
                 ),
               ),
             ],
-          ),
-          const SizedBox(height: 12),
-          Align(
-            alignment: Alignment.centerRight,
-            child: AppOutlinedButton(
-              label: '추모하러 가기',
-              leadingIcon: Icons.arrow_forward,
-              onPressed: () {},
-              color: AppPalette.warmBrown,
-            ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
@@ -675,6 +691,31 @@ class _HomeStat {
   final String value;
   final IconData icon;
   final Color color;
+}
+
+class _BadgeChip extends StatelessWidget {
+  const _BadgeChip({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: _colorWithOpacity(AppPalette.warmBrown, 0.1),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        label,
+        style: const TextStyle(
+          fontSize: 11,
+          color: AppPalette.warmBrown,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
 }
 
 class PlaceholderScreen extends StatelessWidget {
