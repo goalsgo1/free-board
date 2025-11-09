@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:free_board/providers/auth_provider.dart';
 import 'package:free_board/widgets/components/app_buttons.dart';
 import 'package:free_board/widgets/components/app_card.dart';
+import 'package:free_board/widgets/components/app_inputs.dart';
 import 'package:free_board/widgets/components/app_palette.dart';
 
 Color _colorWithOpacity(Color color, double opacity) {
@@ -716,6 +717,34 @@ class _HomeStat {
   final Color color;
 }
 
+class _NavigatorAction {
+  const _NavigatorAction({
+    required this.label,
+    this.routeName,
+  });
+
+  final String label;
+  final String? routeName;
+}
+
+class _NavigatorCategory {
+  const _NavigatorCategory({
+    required this.title,
+    required this.description,
+    required this.icon,
+    required this.accentColor,
+    required this.actions,
+    required this.tips,
+  });
+
+  final String title;
+  final String description;
+  final IconData icon;
+  final Color accentColor;
+  final List<_NavigatorAction> actions;
+  final List<String> tips;
+}
+
 class _BadgeChip extends StatelessWidget {
   const _BadgeChip({required this.label});
 
@@ -736,6 +765,154 @@ class _BadgeChip extends StatelessWidget {
           color: AppPalette.warmBrown,
           fontWeight: FontWeight.w600,
         ),
+      ),
+    );
+  }
+}
+
+class HomeNavigatorScreen extends StatelessWidget {
+  const HomeNavigatorScreen({super.key});
+
+  static final List<_NavigatorCategory> _categories = [
+    _NavigatorCategory(
+      title: '추모관 관리',
+      description: '추모관 생성부터 통계까지 한 번에 이동하세요.',
+      icon: Icons.auto_awesome_mosaic_outlined,
+      accentColor: const Color(0xFF8B7355),
+      actions: [
+        const _NavigatorAction(label: '추모관 목록', routeName: '/memorial-list'),
+        const _NavigatorAction(label: '추모관 생성/수정', routeName: '/memorial-edit'),
+        const _NavigatorAction(label: '추모관 통계 (준비 중)'),
+      ],
+      tips: const [
+        '홈 > 바로 가기 > 추모관 목록',
+        '추모관 상세에서 사진/영상/편지 관리',
+        '추모관 통계로 방문 수와 추모금을 확인',
+      ],
+    ),
+    _NavigatorCategory(
+      title: '공감 & 위로',
+      description: '기도, 감정 공유, 후회 없는 편지 등 위로 기능 모음입니다.',
+      icon: Icons.favorite_outline,
+      accentColor: const Color(0xFFFF6B81),
+      actions: [
+        const _NavigatorAction(label: '기도 요청', routeName: '/prayer-request'),
+        const _NavigatorAction(label: '감정 공유 게시판', routeName: '/emotion-board'),
+        const _NavigatorAction(label: '후회 없는 편지', routeName: '/regret-letter'),
+      ],
+      tips: const [
+        '기도글 작성 후 함께 기도 참여 알림 전송',
+        '감정 공유에서 좋아요/댓글로 위로 나누기',
+        '후회 없는 편지로 전하지 못한 마음 공유',
+      ],
+    ),
+    _NavigatorCategory(
+      title: 'AI & 특별 기능',
+      description: 'AI 기억 답장, 유언장, 상호 위로 매칭 기능을 안내합니다.',
+      icon: Icons.smart_toy_outlined,
+      accentColor: const Color(0xFF7E57C2),
+      actions: [
+        const _NavigatorAction(label: '상호 위로 매칭', routeName: '/matching'),
+        const _NavigatorAction(label: '유언장', routeName: '/will'),
+        const _NavigatorAction(label: 'AI 기억 답장 (준비 중)'),
+      ],
+      tips: const [
+        '프로필 등록 후 상호 위로 매칭 신청',
+        '유언장 템플릿으로 빠르게 초안 작성',
+        'AI 기억 답장은 향후 업데이트 예정',
+      ],
+    ),
+    _NavigatorCategory(
+      title: '검색·공유·혜택',
+      description: '공개 추모관 탐색과 감사 혜택, 데이터 백업 동선을 정리했습니다.',
+      icon: Icons.travel_explore,
+      accentColor: const Color(0xFF42A5F5),
+      actions: [
+        const _NavigatorAction(label: '공개 추모관 검색', routeName: '/public-search'),
+        const _NavigatorAction(label: '감사 혜택', routeName: '/gratitude-benefits'),
+        const _NavigatorAction(label: '추모관 백업 (준비 중)'),
+      ],
+      tips: const [
+        '공개 추모관을 검색해 감동 추모글 감상',
+        '감사 혜택에서 쿠폰과 이벤트 확인',
+        '추모관 백업으로 데이터를 안전하게 보관',
+      ],
+    ),
+    _NavigatorCategory(
+      title: '설정 & 계정 관리',
+      description: '마이페이지, 알림, 데이터 구조 문서를 빠르게 이동합니다.',
+      icon: Icons.settings_outlined,
+      accentColor: const Color(0xFF546E7A),
+      actions: [
+        const _NavigatorAction(label: '마이페이지', routeName: '/mypage'),
+        const _NavigatorAction(label: '알림 설정', routeName: '/settings'),
+        const _NavigatorAction(label: '데이터베이스 구조', routeName: '/database-structure'),
+      ],
+      tips: const [
+        '마이페이지에서 프로필/추모금/구독 관리',
+        '알림 설정에서 기념일·댓글 알림 조정',
+        '데이터 구조 문서로 정보 흐름 파악',
+      ],
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppPalette.softCream,
+      appBar: AppBar(
+        title: const Text('기억의 탐험 가이드'),
+        backgroundColor: AppPalette.warmBrown,
+        foregroundColor: Colors.white,
+        elevation: 0,
+      ),
+      body: ListView.separated(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+        itemBuilder: (context, index) {
+          final category = _categories[index];
+          return AppSurfaceCard(
+            title: category.title,
+            subtitle: category.description,
+            icon: category.icon,
+            accentColor: category.accentColor,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  children: category.actions
+                      .map(
+                        (action) => AppOutlinedButton(
+                          label: action.label,
+                          leadingIcon: Icons.arrow_forward,
+                          onPressed: action.routeName == null
+                              ? null
+                              : () {
+                                  Navigator.pushNamed(context, action.routeName!);
+                                },
+                          color: category.accentColor,
+                        ),
+                      )
+                      .toList(),
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  '추천 이동 경로',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: AppPalette.warmBrown,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                AppChecklist(items: category.tips),
+              ],
+            ),
+          );
+        },
+        separatorBuilder: (_, __) => const SizedBox(height: 18),
+        itemCount: _categories.length,
       ),
     );
   }
@@ -806,10 +983,7 @@ final List<AppPageInfo> appPageInfos = [
     route: '/home-navigator',
     icon: Icons.explore,
     description: '앱 전체 기능을 한눈에 보고 빠르게 이동할 수 있는 기능 지도.',
-    builder: (_) => const PlaceholderScreen(
-      title: '홈 내비게이터',
-      description: '앱의 주요 기능과 이동 경로를 안내하는 내비게이터 화면입니다.',
-    ),
+    builder: (_) => const HomeNavigatorScreen(),
   ),
   AppPageInfo(
     title: '추모관 목록',
