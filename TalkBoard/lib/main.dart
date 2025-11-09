@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'package:free_board/firebase_options.dart';
+import 'package:free_board/providers/accessibility_provider.dart';
 import 'package:free_board/providers/auth_provider.dart';
 import 'package:free_board/providers/post_provider.dart';
 import 'package:free_board/providers/comment_provider.dart';
@@ -24,28 +25,49 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final baseTheme = ThemeData(
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: Colors.blue,
+        brightness: Brightness.light,
+      ),
+      useMaterial3: true,
+      appBarTheme: const AppBarTheme(
+        centerTitle: true,
+        elevation: 2,
+      ),
+    );
+
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => AccessibilityProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => PostProvider()),
         ChangeNotifierProvider(create: (_) => CommentProvider()),
       ],
-      child: MaterialApp(
-        title: '기억의 정원',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.blue,
-            brightness: Brightness.light,
-          ),
-          useMaterial3: true,
-          appBarTheme: const AppBarTheme(
-            centerTitle: true,
-            elevation: 2,
-          ),
-        ),
-        routes: appRouteBuilders,
-        home: const AuthWrapper(),
+      child: Consumer<AccessibilityProvider>(
+        builder: (context, accessibility, child) {
+          final theme = baseTheme.copyWith(
+            textTheme: accessibility.modifyTextTheme(baseTheme.textTheme),
+          );
+
+          return MaterialApp(
+            title: '기억의 정원',
+            debugShowCheckedModeBanner: false,
+            theme: theme,
+            builder: (context, child) {
+              final mediaQuery = MediaQuery.of(context);
+              return MediaQuery(
+                data: mediaQuery.copyWith(
+                  textScaler: TextScaler.linear(accessibility.textScale),
+                  boldText: accessibility.boldText,
+                ),
+                child: child ?? const SizedBox.shrink(),
+              );
+            },
+            routes: appRouteBuilders,
+            home: const AuthWrapper(),
+          );
+        },
       ),
     );
   }

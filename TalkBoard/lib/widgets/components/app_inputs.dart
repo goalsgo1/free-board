@@ -71,11 +71,12 @@ class AppTextField extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: Colors.redAccent, width: 2),
         ),
-        labelStyle: const TextStyle(
-          fontWeight: FontWeight.w500,
-          color: AppPalette.ink,
-        ),
+        labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w500,
+              color: AppPalette.ink,
+            ),
       ),
+      style: Theme.of(context).textTheme.bodyMedium,
     );
   }
 }
@@ -108,11 +109,10 @@ class AppChecklist extends StatelessWidget {
                   Expanded(
                     child: Text(
                       item,
-                      style: const TextStyle(
-                        fontSize: 12.5,
-                        height: 1.5,
-                        color: AppPalette.caption,
-                      ),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            height: 1.5,
+                            color: AppPalette.caption,
+                          ),
                     ),
                   ),
                 ],

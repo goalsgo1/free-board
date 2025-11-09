@@ -74,21 +74,19 @@ class AppSurfaceCard extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                        color: accentColor,
-                      ),
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: accentColor,
+                          ),
                     ),
                     if (subtitle != null && subtitle!.isNotEmpty) ...[
                       const SizedBox(height: 6),
                       Text(
                         subtitle!,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          height: 1.45,
-                          color: AppPalette.caption,
-                        ),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              height: 1.45,
+                              color: AppPalette.caption,
+                            ),
                       ),
                     ],
                   ],

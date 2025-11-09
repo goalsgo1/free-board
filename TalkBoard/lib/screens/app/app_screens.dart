@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:free_board/providers/auth_provider.dart';
+import 'package:free_board/widgets/accessibility_button.dart';
 import 'package:free_board/widgets/components/app_buttons.dart';
 import 'package:free_board/widgets/components/app_card.dart';
 import 'package:free_board/widgets/components/app_inputs.dart';
@@ -134,6 +135,7 @@ class HomeScreen extends StatelessWidget {
         foregroundColor: Colors.white,
         elevation: 0,
         actions: [
+          const AccessibilityButton(),
           IconButton(
             icon: const Icon(Icons.notifications_outlined),
             tooltip: '알림 보기',
@@ -865,6 +867,7 @@ class HomeNavigatorScreen extends StatelessWidget {
         backgroundColor: AppPalette.warmBrown,
         foregroundColor: Colors.white,
         elevation: 0,
+        actions: const [AccessibilityButton()],
       ),
       body: ListView.separated(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),

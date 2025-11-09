@@ -55,15 +55,15 @@ class AppPrimaryButton extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   if (icon != null) ...[
-                    Icon(icon, size: 18),
+                    Icon(icon, size: 18, color: Colors.white),
                     const SizedBox(width: 8),
                   ],
                   Text(
                     label,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
                   ),
                 ],
               ),
@@ -105,16 +105,16 @@ class AppOutlinedButton extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (leadingIcon != null) ...[
-            Icon(leadingIcon, size: 20),
+            Icon(leadingIcon, size: 20, color: color),
             const SizedBox(width: 10),
           ],
           Flexible(
             child: Text(
               label,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    fontWeight: FontWeight.w500,
+                    color: color,
+                  ),
             ),
           ),
           if (badgeText != null) ...[
@@ -127,11 +127,10 @@ class AppOutlinedButton extends StatelessWidget {
               ),
               child: Text(
                 badgeText!,
-                style: const TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF5E35B1),
-                ),
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF5E35B1),
+                    ),
               ),
             ),
           ],
@@ -165,11 +164,10 @@ class AppHelperText extends StatelessWidget {
           Expanded(
             child: Text(
               text,
-              style: const TextStyle(
-                fontSize: 12.5,
-                height: 1.5,
-                color: AppPalette.caption,
-              ),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    height: 1.5,
+                    color: AppPalette.caption,
+                  ),
             ),
           ),
         ],

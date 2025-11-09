@@ -10,6 +10,7 @@ import 'package:free_board/widgets/components/app_buttons.dart';
 import 'package:free_board/widgets/components/app_card.dart';
 import 'package:free_board/widgets/components/app_inputs.dart';
 import 'package:free_board/widgets/components/app_palette.dart';
+import 'package:free_board/widgets/accessibility_button.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -236,6 +237,7 @@ class _AuthScreenState extends State<AuthScreen> {
         foregroundColor: Colors.white,
         elevation: 0,
         actions: [
+          const AccessibilityButton(),
           if (kDebugMode)
             IconButton(
               icon: const Icon(Icons.auto_fix_high),
