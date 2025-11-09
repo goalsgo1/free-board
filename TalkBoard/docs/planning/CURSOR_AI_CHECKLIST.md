@@ -1,6 +1,6 @@
-# 🚀 Cursor AI 개발 체크리스트 & 프롬프트 가이드
+# 🚀 GPT-5 Codex 개발 체크리스트 & 프롬프트 가이드
 
-기억의 정원 앱을 Cursor AI로 구현할 때 필요한 준비, 단계별 체크리스트, 추천 프롬프트, 테스트 방법, 출시 및 수익화까지의 전체 흐름을 한 곳에 정리했습니다. 각 단계별 체크 항목을 순차적으로 진행하면서, 제시된 프롬프트를 Cursor에 전달하면 개발 속도를 높이고 일관된 품질을 유지할 수 있습니다.
+기억의 정원 앱을 GPT-5 Codex로 구현할 때 필요한 준비, 단계별 체크리스트, 추천 프롬프트, 테스트 방법, 출시 및 수익화까지의 전체 흐름을 한 곳에 정리했습니다. 각 단계별 체크 항목을 순차적으로 진행하면서, 제시된 프롬프트를 GPT-5 Codex에 전달하면 개발 속도를 높이고 일관된 품질을 유지할 수 있습니다.
 
 ---
 
@@ -9,7 +9,7 @@
 - **한 번에 한 작업**만 요청하고, 완료 후 다음 단계로 이동한다.
 - **체크리스트 항목을 먼저 준비**한 뒤 프롬프트를 입력한다.
 - 모든 변경 사항은 **git으로 관리**하고, 주요 마일스톤마다 커밋한다.
-- 프롬프트에는 항상 **맥락(파일 경로, 목적, 제약 조건)**을 포함한다.
+- GPT-5 Codex에 전달할 프롬프트에는 항상 **맥락(파일 경로, 목적, 제약 조건)**을 포함한다.
 - 답변을 그대로 믿지 말고, **코드 리뷰 & 테스트**로 검증한다.
 
 ---
@@ -18,19 +18,19 @@
 
 | 체크 | 항목 |
 |:---:|:-----|
-| ☐ | Flutter/Dart SDK 버전 확인 (현재 기획 기준 Flutter 3.24+/Dart 3.8+) |
-| ☐ | `firebase_options.dart` 갱신 (Firebase 콘솔에서 다시 다운로드) |
-| ☐ | `.env` 또는 비밀 키 관리 전략 확립 (로컬/CI 분리) |
-| ☐ | Firebase 프로젝트에 Authentication/Firestore/Storage/Functions 활성화 |
-| ☐ | `flutterfire configure`로 플랫폼(ios/android/web) 설정 |
-| ☐ | `pubspec.yaml` 의존성 최신화 (`flutter pub upgrade --major-versions`) |
-| ☐ | VSCode 기준 필수 확장: Flutter, Dart, GitLens, Error Lens |
-| ☐ | Cursor AI와 GitHub 연결, repo writable 상태 확인 |
+| ☑ | **완료** Flutter/Dart SDK 버전 확인 (현재 기획 기준 Flutter 3.24+/Dart 3.8+) — 설치: Flutter 3.32.6 / Dart 3.8.1 |
+| ☑ | **완료** `firebase_options.dart` 갱신 (Firebase 콘솔에서 다시 다운로드) — `lib/firebase_options.dart`(talkboard-b93dd) 확인 |
+| ☐ | `.env` 또는 비밀 키 관리 전략 확립 (로컬/CI 분리) — 미설정: `.env.example` 작성 및 CI 비밀 분리 필요 |
+| ☐ | Firebase 프로젝트에 Authentication/Firestore/Storage/Functions 활성화 — 콘솔에서 상태 확인 필요 |
+| ☑ | **완료** `flutterfire configure`로 플랫폼(ios/android/web) 설정 — `firebase.json`에 android/ios/web 매핑 확인 |
+| ☐ | `pubspec.yaml` 의존성 최신화 (`flutter pub upgrade --major-versions`) — cloud_firestore 6.x, firebase_auth 6.x 등 업데이트 가능 |
+| ☐ | VSCode 기준 필수 확장: Flutter, Dart, GitLens, Error Lens — 로컬 IDE 확장 설치 여부 확인 필요 |
+| ☐ | GPT-5 Codex와 GitHub 연결, repo writable 상태 확인 — GitHub PAT/앱 권한 점검 필요 |
 
-**추천 프롬프트**
+**완료 추천 프롬프트**
 
 ```
-Cursor, 현재 프로젝트의 Flutter SDK와 Firebase 설정을 점검하는 체크리스트를 실행하고 부족한 부분이 있으면 알려줘. 관련 문서나 커맨드가 필요한 경우 제안해줘.
+GPT-5 Codex, 현재 프로젝트의 Flutter SDK와 Firebase 설정을 점검하는 체크리스트를 실행하고 부족한 부분이 있으면 알려줘. 관련 문서나 커맨드가 필요한 경우 제안해줘.
 ```
 
 ---
@@ -41,31 +41,31 @@ Cursor, 현재 프로젝트의 Flutter SDK와 Firebase 설정을 점검하는 �
 
 | 체크 | 항목 |
 |:---:|:-----|
-| ☐ | `lib/` 하위 도메인 기반 구조 설계 (`core/`, `features/`, `widgets/`, `services/`, `providers/`) |
-| ☐ | 공통 테마/색상/타이포 설정 (`core/theme/`) |
-| ☐ | 라우팅 구조 (`core/router/app_router.dart`) |
-| ☐ | 상태관리 패턴 확정 (Provider → Riverpod/Bloc 대체 고려) |
-| ☐ | Firebase 초기화 로직 통일 (`bootstrap.dart`) |
-| ☐ | 환경별 설정 (dev/prod) 분리 전략 수립 |
+| ☐ | `lib/` 하위 도메인 기반 구조 설계 (`core/`, `features/`, `widgets/`, `services/`, `providers/`) — 현재 `models/`, `providers/`, `screens/`, `services/` 등 1단계 디렉터리만 존재 |
+| ☐ | 공통 테마/색상/타이포 설정 (`core/theme/`) — `main.dart`에서 ThemeData 직접 정의, 전용 모듈 미구현 |
+| ☐ | 라우팅 구조 (`core/router/app_router.dart`) — 전역 라우터 부재, `MaterialApp`에서 `home`만 지정 |
+| ☑ | **완료** 상태관리 패턴 확정 (Provider → Riverpod/Bloc 대체 고려) — 현재 `AuthProvider` `PostProvider` `CommentProvider` 사용 |
+| ☐ | Firebase 초기화 로직 통일 (`bootstrap.dart`) — `main.dart`에서 직접 `Firebase.initializeApp` 호출 |
+| ☐ | 환경별 설정 (dev/prod) 분리 전략 수립 — 별도 구성 없음 |
 
-**추천 프롬프트**
+**완료 추천 프롬프트**
 
 ```
-Cursor, 기억의 정원 Flutter 앱을 위한 폴더 구조와 초기 부트스트랩 코드를 제안해줘. Provider를 기본으로 사용하되, 향후 Riverpod이나 Bloc으로 확장 가능한 형태면 좋겠어. 필요한 파일 목록과 각 파일의 책임 범위를 알려줘.
+GPT-5 Codex, 기억의 정원 Flutter 앱을 위한 폴더 구조와 초기 부트스트랩 코드를 제안해줘. Provider를 기본으로 사용하되, 향후 Riverpod이나 Bloc으로 확장 가능한 형태면 좋겠어. 필요한 파일 목록과 각 파일의 책임 범위를 알려줘.
 ```
 
 ### 3.2 코드 스타일 & 린트
 
 | 체크 | 항목 |
 |:---:|:-----|
-| ☐ | `analysis_options.yaml` 커스터마이징 (불필요 경고 제거, 프로젝트 규칙 반영) |
+| ☑ | **완료** `analysis_options.yaml` 커스터마이징 (불필요 경고 제거, 프로젝트 규칙 반영) — 네이밍/const/print 규칙 추가, 프리뷰 스크린 제외 |
 | ☐ | `flutter_lints` → `very_good_analysis` 등 검토 |
 | ☐ | 커밋 전 자동 포맷 & 린트 훅 구성 (`pre-commit`, `dart format`) |
 
 **추천 프롬프트**
 
 ```
-Cursor, 우리 프로젝트에 맞는 Dart 분석 옵션을 만들어줘. 네이밍 규칙, avoid_print, prefer_const_constructors 등의 룰을 포함하고, 불필요한 경고는 비활성화하고 싶어.
+GPT-5 Codex, 우리 프로젝트에 맞는 Dart 분석 옵션을 만들어줘. 네이밍 규칙, avoid_print, prefer_const_constructors 등의 룰을 포함하고, 불필요한 경고는 비활성화하고 싶어.
 ```
 
 ---
@@ -76,16 +76,18 @@ Cursor, 우리 프로젝트에 맞는 Dart 분석 옵션을 만들어줘. 네이
 
 | 체크 | 항목 |
 |:---:|:-----|
-| ☐ | 이메일/비밀번호 가입 & 로그인 |
-| ☐ | Firebase Auth 예외 메시지 한글화 |
-| ☐ | 소셜 로그인 (추후 확장용 추상화) |
-| ☐ | 로그인 상태 관찰 → `AuthProvider` 또는 `AuthController` |
-| ☐ | 비밀번호 재설정/이메일 인증 흐름 |
+| ☑ | **완료** 이메일/비밀번호 가입 & 로그인 — `AuthProvider.signUp/signIn` + `AuthService` 구현 |
+| ☑ | **완료** Firebase Auth 예외 메시지 한글화 — `_getErrorMessage`에서 주요 에러 코드 매핑 |
+| ☑ | **완료** 소셜 로그인 (추후 확장용 추상화) — AuthScreen에 Google/Apple 준비 중 버튼 추가 |
+| ☑ | **완료** 로그인 상태 관찰 → `AuthProvider` 또는 `AuthController` — `authStateChanges` 스트림 구독 |
+| ☑ | **완료** 비밀번호 재설정/이메일 인증 흐름 — 재설정 다이얼로그 & 인증 메일 재전송 지원 |
+
+> **UI 프리뷰 참고:** `lib/screens/preview_screens/preview_auth_screen.dart` — 로그인/회원가입 화면 시안을 확인할 수 있으며, 공통 컴포넌트는 `lib/screens/preview_screens/widgets/preview_auth_components.dart`에 정리돼 있습니다.
 
 **추천 프롬프트**
 
 ```
-Cursor, Firebase Auth를 사용하는 이메일/비밀번호 로그인 흐름을 구현해줘. 예외 처리를 한국어 메시지로 매핑하고, AuthProvider에서 상태를 노출하도록 해. 필요한 위젯과 Provider 코드를 제안하고, auth_screen.dart에 반영해줘.
+GPT-5 Codex, Firebase Auth를 사용하는 이메일/비밀번호 로그인 흐름을 구현해줘. 예외 처리를 한국어 메시지로 매핑하고, AuthProvider에서 상태를 노출하도록 해. 필요한 위젯과 Provider 코드를 제안하고, auth_screen.dart에 반영해줘.
 ```
 
 ### 4.2 메인 홈 & 추모관 핵심 기능
@@ -102,13 +104,13 @@ Cursor, Firebase Auth를 사용하는 이메일/비밀번호 로그인 흐름을
 **추천 프롬프트**
 
 ```
-Cursor, preview_home_screen.dart 구성요소를 실제 기능 구현용 위젯들로 리팩터링해줘. 공통 위젯을 widgets/common/ 아래에 두고, 홈 화면에 필요한 Provider 구조와 Firestore 쿼리 구조를 함께 제안해줘.
+GPT-5 Codex, preview_home_screen.dart 구성요소를 실제 기능 구현용 위젯들로 리팩터링해줘. 공통 위젯을 widgets/common/ 아래에 두고, 홈 화면에 필요한 Provider 구조와 Firestore 쿼리 구조를 함께 제안해줘.
 ```
 
 **홈 내비게이터 전용 프롬프트 예시**
 
 ```
-Cursor, 홈 내비게이터(기억의 탐험 가이드) 화면을 구현하려고 해. 
+GPT-5 Codex, 홈 내비게이터(기억의 탐험 가이드) 화면을 구현하려고 해. 
 
 요구사항:
 1. 7개 카테고리로 기능 그룹화 (추모관 관리, 공감 및 위로, AI 기능, 특별 기능, 검색 및 공유, 감사 혜택, 설정 및 관리)
@@ -131,12 +133,12 @@ preview_home_navigator_screen.dart를 참고하여 실제 기능 구현 버전�
 
 | 기능 | 프롬프트 |
 |------|----------|
-| 감정 공유 게시판 | `Cursor, 감정 공유 게시판을 Firestore 기반으로 구현하려고 해. 목록/상세/작성/댓글 구조를 분석해서 필요한 데이터 모델, Provider, UI 위젯을 설계해줘.` |
-| 후회 없는 편지 | `Cursor, 후회 없는 편지를 위한 Firestore 컬렉션 구조와 위젯 흐름을 제안해줘. 공개/비공개/익명 옵션을 고려하고, 공감/댓글 기능도 포함해줘.` |
-| AI 기억 기반 답장 | `Cursor, 대화 캡처 업로드 → OCR → AI 분석 → 답장 생성의 흐름을 구현하는 데 필요한 서비스 계층과 UI를 정리해줘. ML Kit/OCR, OpenAI API 사용 예시 코드를 포함해줘.` |
-| 유언장 | `Cursor, 유언장 기능의 목록/상세/작성 화면을 작성하고, 공개 설정/템플릿 선택/공감 기능을 포함한 상태관리 구조를 제안해줘.` |
-| 상호 위로 매칭 | `Cursor, 매칭 시스템을 위해 matchingProfiles/matchingRequests/ matchings 콜렉션을 활용하는 서비스와 UI 흐름을 설계해줘. 민감한 정보 처리와 신고/차단 기능도 고려해줘.` |
-| 감사 혜택 | `Cursor, 감사 혜택(혜택/내 혜택) 화면을 구현할 때 필요한 데이터 모델, 진행률 표시, 쿠폰 발급 로직을 제안해줘.` |
+| 감정 공유 게시판 | `GPT-5 Codex, 감정 공유 게시판을 Firestore 기반으로 구현하려고 해. 목록/상세/작성/댓글 구조를 분석해서 필요한 데이터 모델, Provider, UI 위젯을 설계해줘.` |
+| 후회 없는 편지 | `GPT-5 Codex, 후회 없는 편지를 위한 Firestore 컬렉션 구조와 위젯 흐름을 제안해줘. 공개/비공개/익명 옵션을 고려하고, 공감/댓글 기능도 포함해줘.` |
+| AI 기억 기반 답장 | `GPT-5 Codex, 대화 캡처 업로드 → OCR → AI 분석 → 답장 생성의 흐름을 구현하는 데 필요한 서비스 계층과 UI를 정리해줘. ML Kit/OCR, OpenAI API 사용 예시 코드를 포함해줘.` |
+| 유언장 | `GPT-5 Codex, 유언장 기능의 목록/상세/작성 화면을 작성하고, 공개 설정/템플릿 선택/공감 기능을 포함한 상태관리 구조를 제안해줘.` |
+| 상호 위로 매칭 | `GPT-5 Codex, 매칭 시스템을 위해 matchingProfiles/matchingRequests/ matchings 콜렉션을 활용하는 서비스와 UI 흐름을 설계해줘. 민감한 정보 처리와 신고/차단 기능도 고려해줘.` |
+| 감사 혜택 | `GPT-5 Codex, 감사 혜택(혜택/내 혜택) 화면을 구현할 때 필요한 데이터 모델, 진행률 표시, 쿠폰 발급 로직을 제안해줘.` |
 
 ---
 
@@ -153,7 +155,7 @@ preview_home_navigator_screen.dart를 참고하여 실제 기능 구현 버전�
 **프롬프트**
 
 ```
-Cursor, EternalClock 유틸 함수에 대한 단위 테스트를 작성해줘. 사망일 입력 시 흐른 시간을 연/월/주/일 단위로 계산하고, 경계 조건(오늘, 미래 날짜)에 대한 테스트도 포함해줘.
+GPT-5 Codex, EternalClock 유틸 함수에 대한 단위 테스트를 작성해줘. 사망일 입력 시 흐른 시간을 연/월/주/일 단위로 계산하고, 경계 조건(오늘, 미래 날짜)에 대한 테스트도 포함해줘.
 ```
 
 ### 5.2 위젯 테스트
@@ -167,7 +169,7 @@ Cursor, EternalClock 유틸 함수에 대한 단위 테스트를 작성해줘. �
 **프롬프트**
 
 ```
-Cursor, 홈 화면 위젯 테스트를 만들어줘. 로그인 상태에서 앱 목적 텍스트, 추모글 리스트, 펫 안내 섹션이 모두 렌더링되는지 확인하고, 공감순 필터를 탭했을 때 상태가 변하는지 검사해줘.
+GPT-5 Codex, 홈 화면 위젯 테스트를 만들어줘. 로그인 상태에서 앱 목적 텍스트, 추모글 리스트, 펫 안내 섹션이 모두 렌더링되는지 확인하고, 공감순 필터를 탭했을 때 상태가 변하는지 검사해줘.
 ```
 
 ### 5.3 통합 테스트 & QA 체크
@@ -182,7 +184,7 @@ Cursor, 홈 화면 위젯 테스트를 만들어줘. 로그인 상태에서 앱 
 **프롬프트**
 
 ```
-Cursor, Firebase Emulator를 이용한 통합 테스트 시나리오를 작성해줘. 인증 후 추모관 생성 → 댓글 → 알림 트리거 순서를 자동화해서 검증하는 테스트 코드를 생산해.
+GPT-5 Codex, Firebase Emulator를 이용한 통합 테스트 시나리오를 작성해줘. 인증 후 추모관 생성 → 댓글 → 알림 트리거 순서를 자동화해서 검증하는 테스트 코드를 생산해.
 ```
 
 ---
@@ -202,7 +204,7 @@ Cursor, Firebase Emulator를 이용한 통합 테스트 시나리오를 작성�
 **프롬프트**
 
 ```
-Cursor, iOS와 Android 출시를 위한 최종 체크리스트를 만들어줘. 스토어 심사 시 주의사항과 메타데이터 준비 항목을 포함해줘.
+GPT-5 Codex, iOS와 Android 출시를 위한 최종 체크리스트를 만들어줘. 스토어 심사 시 주의사항과 메타데이터 준비 항목을 포함해줘.
 ```
 
 ### 6.2 수익화 준비
@@ -218,7 +220,7 @@ Cursor, iOS와 Android 출시를 위한 최종 체크리스트를 만들어줘. 
 **프롬프트**
 
 ```
-Cursor, 감사 혜택/프리미엄 구독 수익 모델을 구현하기 위한 결제 플로우를 설계해줘. Stripe + Firebase Functions를 사용하는 예시 코드와 보안 유의사항을 알려줘.
+GPT-5 Codex, 감사 혜택/프리미엄 구독 수익 모델을 구현하기 위한 결제 플로우를 설계해줘. Stripe + Firebase Functions를 사용하는 예시 코드와 보안 유의사항을 알려줘.
 ```
 
 —
@@ -236,12 +238,12 @@ Cursor, 감사 혜택/프리미엄 구독 수익 모델을 구현하기 위한 �
 **프롬프트**
 
 ```
-Cursor, AI로 생성한 초기 데이터를 추적하고 삭제할 수 있는 Firestore Cloud Functions 스크립트를 만들어줘. isAIGenerated 플래그를 사용하는 컬렉션을 전부 체크하고, 관리자 권한으로 삭제할 수 있도록 해줘.
+GPT-5 Codex, AI로 생성한 초기 데이터를 추적하고 삭제할 수 있는 Firestore Cloud Functions 스크립트를 만들어줘. isAIGenerated 플래그를 사용하는 컬렉션을 전부 체크하고, 관리자 권한으로 삭제할 수 있도록 해줘.
 ```
 
 ---
 
-## 8. 커서 프롬프트 작성 팁
+## 8. GPT-5 Codex 프롬프트 작성 팁
 
 1. **맥락 우선**: 파일 경로, 현재 진행 상황, 원하는 결과를 구체적으로 전달하세요.
 2. **제약 조건 명확화**: 디자인 톤(각지고 무거움), 언어(한국어 UI), 데이터 소스(Firestore) 등 필수 요구사항을 명시하세요.
@@ -256,7 +258,7 @@ Cursor, AI로 생성한 초기 데이터를 추적하고 삭제할 수 있는 Fi
 ### 9.1 기능 개발 풀 패키지 프롬프트
 
 ```
-Cursor, 기억의 정원 앱의 [기능명] 기능을 처음부터 끝까지 구현하고 싶어.
+GPT-5 Codex, 기억의 정원 앱의 [기능명] 기능을 처음부터 끝까지 구현하고 싶어.
 
 1. Firestore 데이터 모델 정의
 2. Service/Repository/Provider 레이어 설계
@@ -270,13 +272,13 @@ Cursor, 기억의 정원 앱의 [기능명] 기능을 처음부터 끝까지 구
 ### 9.2 QA 스프린트 프롬프트
 
 ```
-Cursor, QA 스프린트를 진행할게. 구체적인 테스트 시나리오(기능별/엣지 케이스/반응형/알림/AI)를 나열하고, 가능한 자동화 테스트와 수동 테스트를 구분해서 제안해줘. 각 테스트마다 체크리스트 형식으로 정리해줘.
+GPT-5 Codex, QA 스프린트를 진행할게. 구체적인 테스트 시나리오(기능별/엣지 케이스/반응형/알림/AI)를 나열하고, 가능한 자동화 테스트와 수동 테스트를 구분해서 제안해줘. 각 테스트마다 체크리스트 형식으로 정리해줘.
 ```
 
 ### 9.3 출시 & 마케팅 준비 프롬프트
 
 ```
-Cursor, 기억의 정원 출시 준비를 위한 마케팅/운영 체크리스트를 만들어줘. 앱 스토어 스크린샷, 랜딩 페이지, 블로그 포스트, 공감 사연 이벤트, 감사 혜택 배너 운영 계획 등을 포함해줘.
+GPT-5 Codex, 기억의 정원 출시 준비를 위한 마케팅/운영 체크리스트를 만들어줘. 앱 스토어 스크린샷, 랜딩 페이지, 블로그 포스트, 공감 사연 이벤트, 감사 혜택 배너 운영 계획 등을 포함해줘.
 ```
 
 ---
@@ -284,11 +286,11 @@ Cursor, 기억의 정원 출시 준비를 위한 마케팅/운영 체크리스�
 ## 10. 다음 액션 제안
 
 1. **현재 문서에 맞춰 프로젝트 진입 체크리스트부터 수행**
-2. 각 기능 구현 시 해당 섹션 프롬프트를 Cursor에 전달
+2. 각 기능 구현 시 해당 섹션 프롬프트를 GPT-5 Codex에 전달
 3. 테스트/QA/릴리즈 단계마다 전용 프롬프트를 활용
 4. 진행 상황을 `docs/planning/REMAINING_TASKS.md`와 동기화
 
-모든 체크리스트가 완료되면, 구현 → 테스트 → 출시 → 운영까지 Cursor AI 기반으로 빠르게 반복 개선할 수 있습니다.
+모든 체크리스트가 완료되면, 구현 → 테스트 → 출시 → 운영까지 GPT-5 Codex 기반으로 빠르게 반복 개선할 수 있습니다.
 
 행복한 개발 되세요 🕊️
 

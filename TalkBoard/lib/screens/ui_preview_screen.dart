@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'ui_preview_list_screen.dart';
+import 'package:free_board/screens/ui_preview_list_screen.dart';
 
 class UIPreviewScreen extends StatelessWidget {
   const UIPreviewScreen({super.key});

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import '../providers/post_provider.dart';
-import '../providers/auth_provider.dart';
-import '../utils/sample_data_generator.dart';
-import 'post_detail_screen.dart';
-import 'post_create_screen.dart';
-import 'deleted_posts_screen.dart';
-import 'privacy_policy_screen.dart';
+import 'package:free_board/providers/auth_provider.dart';
+import 'package:free_board/providers/post_provider.dart';
+import 'package:free_board/screens/post_detail_screen.dart';
+import 'package:free_board/screens/post_create_screen.dart';
+import 'package:free_board/screens/deleted_posts_screen.dart';
+import 'package:free_board/screens/privacy_policy_screen.dart';
+import 'package:free_board/utils/sample_data_generator.dart';
 
 class PostListScreen extends StatelessWidget {
   const PostListScreen({super.key});

@@ -1,11 +1,11 @@
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/auth_provider.dart';
-import 'privacy_policy_screen.dart';
-import 'components_guide_screen.dart';
-import 'ui_preview_screen.dart';
-import 'database_structure_screen.dart';
+import 'package:free_board/providers/auth_provider.dart';
+import 'package:free_board/screens/privacy_policy_screen.dart';
+import 'package:free_board/screens/components_guide_screen.dart';
+import 'package:free_board/screens/ui_preview_screen.dart';
+import 'package:free_board/screens/database_structure_screen.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -60,6 +60,17 @@ class _AuthScreenState extends State<AuthScreen> {
               backgroundColor: Colors.red,
             ),
           );
+        } else if (success && mounted) {
+          final message = authProvider.isEmailVerified
+              ? '로그인되었습니다.'
+              : '로그인되었습니다. 이메일 인증을 완료하면 모든 기능을 이용할 수 있어요.';
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(message),
+              backgroundColor:
+                  authProvider.isEmailVerified ? Colors.green : Colors.orange,
+            ),
+          );
         }
       } else {
         // 회원가입
@@ -93,7 +104,7 @@ class _AuthScreenState extends State<AuthScreen> {
         } else if (success && mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('회원가입이 완료되었습니다.'),
+              content: Text('회원가입이 완료되었습니다. 이메일 인증 메일을 확인해주세요.'),
               backgroundColor: Colors.green,
             ),
           );
@@ -115,6 +126,100 @@ class _AuthScreenState extends State<AuthScreen> {
       _passwordController.text = 'password123';
     }
     setState(() {});
+  }
+
+  Future<void> _showPasswordResetDialog() async {
+    final emailController =
+        TextEditingController(text: _emailController.text.trim());
+    final enteredEmail = await showDialog<String>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('비밀번호 재설정'),
+          content: TextField(
+            controller: emailController,
+            keyboardType: TextInputType.emailAddress,
+            autofocus: true,
+            decoration: const InputDecoration(
+              labelText: '이메일',
+              hintText: 'example@email.com',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('취소'),
+            ),
+            TextButton(
+              onPressed: () =>
+                  Navigator.pop(context, emailController.text.trim()),
+              child: const Text('재설정 메일 보내기'),
+            ),
+          ],
+        );
+      },
+    );
+    emailController.dispose();
+
+    if (!mounted || enteredEmail == null || enteredEmail.isEmpty) {
+      return;
+    }
+
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final success =
+        await authProvider.sendPasswordResetEmail(enteredEmail.trim());
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          success
+              ? '비밀번호 재설정 이메일을 전송했습니다.'
+              : authProvider.errorMessage ??
+                  '비밀번호 재설정 이메일 전송에 실패했습니다.',
+        ),
+        backgroundColor: success ? Colors.green : Colors.red,
+      ),
+    );
+  }
+
+  Future<void> _handleResendVerification() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    if (authProvider.currentUser == null) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('이메일 인증 메일을 보내려면 먼저 로그인해주세요.'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    final success = await authProvider.sendEmailVerification();
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          success
+              ? '이메일 인증 메일을 전송했습니다.'
+              : authProvider.errorMessage ??
+                  '이메일 인증 메일 전송에 실패했습니다.',
+        ),
+        backgroundColor: success ? Colors.green : Colors.red,
+      ),
+    );
+  }
+
+  Future<void> _handleSocialLogin(String providerName) async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final message = await authProvider.signInWithSocial(providerName);
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.blueGrey[700],
+      ),
+    );
   }
 
   @override
@@ -278,6 +383,77 @@ class _AuthScreenState extends State<AuthScreen> {
                             _isLogin ? '로그인' : '회원가입',
                             style: const TextStyle(fontSize: 16),
                           ),
+                  );
+                },
+              ),
+              const SizedBox(height: 16),
+              if (_isLogin) ...[
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: _showPasswordResetDialog,
+                    child: const Text('비밀번호를 잊으셨나요?'),
+                  ),
+                ),
+                const SizedBox(height: 8),
+              ],
+              Consumer<AuthProvider>(
+                builder: (context, authProvider, child) {
+                  return TextButton(
+                    onPressed: authProvider.isLoading
+                        ? null
+                        : _handleResendVerification,
+                    child: const Text('이메일 인증 메일 다시 보내기'),
+                  );
+                },
+              ),
+              const SizedBox(height: 12),
+              Consumer<AuthProvider>(
+                builder: (context, authProvider, child) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const Divider(height: 32),
+                      const Text(
+                        '소셜 계정으로 계속하기',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      OutlinedButton.icon(
+                        onPressed: authProvider.isLoading
+                            ? null
+                            : () => _handleSocialLogin('Google'),
+                        icon: const Icon(Icons.g_mobiledata),
+                        label: const Text('Google로 계속하기 (준비 중)'),
+                      ),
+                      const SizedBox(height: 8),
+                      OutlinedButton.icon(
+                        onPressed: authProvider.isLoading
+                            ? null
+                            : () => _handleSocialLogin('Apple'),
+                        icon: const Icon(Icons.apple),
+                        label: const Text('Apple로 계속하기 (준비 중)'),
+                      ),
+                      const SizedBox(height: 8),
+                      OutlinedButton.icon(
+                        onPressed: authProvider.isLoading
+                            ? null
+                            : () => _handleSocialLogin('전화번호 로그인'),
+                        icon: const Icon(Icons.phone),
+                        label: const Text('전화번호로 계속하기 (준비 중)'),
+                      ),
+                      const SizedBox(height: 8),
+                      OutlinedButton.icon(
+                        onPressed: authProvider.isLoading
+                            ? null
+                            : () => _handleSocialLogin('익명 로그인'),
+                        icon: const Icon(Icons.person_outline),
+                        label: const Text('게스트로 둘러보기 (준비 중)'),
+                      ),
+                    ],
                   );
                 },
               ),

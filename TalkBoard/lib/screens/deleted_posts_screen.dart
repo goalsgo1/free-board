@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import '../models/post.dart';
-import '../providers/post_provider.dart';
-import '../providers/auth_provider.dart';
+import 'package:free_board/models/post.dart';
+import 'package:free_board/providers/auth_provider.dart';
+import 'package:free_board/providers/post_provider.dart';
 
 class DeletedPostsScreen extends StatefulWidget {
   const DeletedPostsScreen({super.key});

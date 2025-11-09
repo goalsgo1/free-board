@@ -56,20 +56,21 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDEjewknPeEhdICNnFrIlFdaA_ASlgjHAw',
-    appId: '1:389872967993:android:96ccc791723034c504c8e8',
-    messagingSenderId: '389872967993',
-    projectId: 'talkboard-b93dd',
-    storageBucket: 'talkboard-b93dd.firebasestorage.app',
+    apiKey: 'AIzaSyAPpRlMS0K9uLZtU0nlKuLNIDxXZnYnC_c',
+    appId: '1:45493208263:android:06168ab71f52c0c2e56ae2',
+    messagingSenderId: '45493208263',
+    projectId: 'memory-garden-app',
+    storageBucket: 'memory-garden-app.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAiBrZA02XUWXIWjyOO-W5qeNlDih8fH7U',
-    appId: '1:389872967993:ios:a7d3ebec1b51435004c8e8',
-    messagingSenderId: '389872967993',
-    projectId: 'talkboard-b93dd',
-    storageBucket: 'talkboard-b93dd.firebasestorage.app',
-    iosBundleId: 'com.talkboard.app',
+    apiKey: 'AIzaSyBzo2kPEBAwtPSDH570QoDWaTtwNixzgt8',
+    appId: '1:45493208263:ios:8f0aa82cb61411b4e56ae2',
+    messagingSenderId: '45493208263',
+    projectId: 'memory-garden-app',
+    storageBucket: 'memory-garden-app.firebasestorage.app',
+    iosClientId: '45493208263-75vk0o56175bpgvpociaomq2qa4ehir2.apps.googleusercontent.com',
+    iosBundleId: 'com.memorygarden.app',
   );
 
 }

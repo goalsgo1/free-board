@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../models/post.dart';
-import '../models/comment.dart';
-import '../services/firestore_service.dart';
-import '../services/auth_service.dart';
-import 'post_edit_screen.dart';
+import 'package:free_board/models/comment.dart';
+import 'package:free_board/models/post.dart';
+import 'package:free_board/screens/post_edit_screen.dart';
+import 'package:free_board/services/auth_service.dart';
+import 'package:free_board/services/firestore_service.dart';
 
 class PostDetailScreen extends StatefulWidget {
   final String postId;

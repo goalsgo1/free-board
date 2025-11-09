@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'database_diagram_screen.dart';
+import 'package:free_board/screens/database_diagram_screen.dart';
 
 class DatabaseStructureScreen extends StatelessWidget {
   const DatabaseStructureScreen({super.key});

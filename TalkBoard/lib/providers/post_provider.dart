@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
-import '../models/post.dart';
-import '../services/firestore_service.dart';
+import 'package:free_board/models/post.dart';
+import 'package:free_board/services/firestore_service.dart';
 
 class PostProvider extends ChangeNotifier {
   final FirestoreService _firestoreService = FirestoreService();
@@ -184,7 +184,7 @@ class PostProvider extends ChangeNotifier {
         await loadPost(postId);
       }
     } catch (e) {
-      print('Error incrementing views: $e');
+      debugPrint('Error incrementing views: $e');
     }
   }
 

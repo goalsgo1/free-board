@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../models/post.dart';
-import '../services/firestore_service.dart';
+import 'package:free_board/models/post.dart';
+import 'package:free_board/services/firestore_service.dart';
 
 class PostEditScreen extends StatefulWidget {
   final Post post;

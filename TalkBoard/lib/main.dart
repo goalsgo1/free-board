@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
-import 'firebase_options.dart';
-import 'providers/auth_provider.dart';
-import 'providers/post_provider.dart';
-import 'providers/comment_provider.dart';
-import 'screens/post_list_screen.dart';
-import 'screens/auth_screen.dart';
+import 'package:free_board/firebase_options.dart';
+import 'package:free_board/providers/auth_provider.dart';
+import 'package:free_board/providers/post_provider.dart';
+import 'package:free_board/providers/comment_provider.dart';
+import 'package:free_board/screens/app/app_screens.dart';
+import 'package:free_board/screens/auth_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,6 +44,7 @@ class MyApp extends StatelessWidget {
             elevation: 2,
           ),
         ),
+        routes: appRouteBuilders,
         home: const AuthWrapper(),
       ),
     );
@@ -67,12 +68,9 @@ class AuthWrapper extends StatelessWidget {
         
         // 로그인 여부 확인
         if (authProvider.isAuthenticated) {
-          // 로그인됨 - 게시글 목록 화면
-          return const PostListScreen();
-        } else {
-          // 로그인 안 됨 - 로그인 화면
-          return const AuthScreen();
+          return const HomeScreen();
         }
+        return const AuthScreen();
       },
     );
   }

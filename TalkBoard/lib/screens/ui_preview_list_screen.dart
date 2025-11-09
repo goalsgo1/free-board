@@ -1,31 +1,31 @@
 import 'package:flutter/material.dart';
-import 'preview_screens/preview_home_screen.dart';
-import 'preview_screens/preview_home_navigator_screen.dart';
-import 'preview_screens/preview_memorial_list_screen.dart';
-import 'preview_screens/preview_memorial_detail_screen.dart';
-import 'preview_screens/preview_memorial_create_screen.dart';
-import 'preview_screens/preview_prayer_screen.dart';
-import 'preview_screens/preview_emotion_board_screen.dart';
-import 'preview_screens/preview_mypage_screen.dart';
-import 'preview_screens/preview_search_screen.dart';
-import 'preview_screens/preview_bookshelf_screen.dart';
-import 'preview_screens/preview_donation_history_screen.dart';
-import 'preview_screens/preview_notification_settings_screen.dart';
-import 'preview_screens/preview_profile_edit_screen.dart';
-import 'preview_screens/preview_memorial_share_screen.dart';
-import 'preview_screens/preview_memorial_stats_screen.dart';
-import 'preview_screens/preview_memorial_backup_screen.dart';
-import 'preview_screens/preview_will_screen.dart';
-import 'preview_screens/preview_matching_screen.dart';
-import 'preview_screens/preview_events_screen.dart';
-import 'preview_screens/preview_modals_screen.dart';
+import 'package:free_board/screens/preview_screens/preview_auth_screen.dart';
+import 'package:free_board/screens/preview_screens/preview_home_screen.dart';
+import 'package:free_board/screens/preview_screens/preview_home_navigator_screen.dart';
+import 'package:free_board/screens/preview_screens/preview_memorial_list_screen.dart';
+import 'package:free_board/screens/preview_screens/preview_memorial_detail_screen.dart';
+import 'package:free_board/screens/preview_screens/preview_memorial_create_screen.dart';
+import 'package:free_board/screens/preview_screens/preview_prayer_screen.dart';
+import 'package:free_board/screens/preview_screens/preview_emotion_board_screen.dart';
+import 'package:free_board/screens/preview_screens/preview_mypage_screen.dart';
+import 'package:free_board/screens/preview_screens/preview_search_screen.dart';
+import 'package:free_board/screens/preview_screens/preview_bookshelf_screen.dart';
+import 'package:free_board/screens/preview_screens/preview_donation_history_screen.dart';
+import 'package:free_board/screens/preview_screens/preview_notification_settings_screen.dart';
+import 'package:free_board/screens/preview_screens/preview_profile_edit_screen.dart';
+import 'package:free_board/screens/preview_screens/preview_memorial_share_screen.dart';
+import 'package:free_board/screens/preview_screens/preview_memorial_stats_screen.dart';
+import 'package:free_board/screens/preview_screens/preview_memorial_backup_screen.dart';
+import 'package:free_board/screens/preview_screens/preview_will_screen.dart';
+import 'package:free_board/screens/preview_screens/preview_matching_screen.dart';
+import 'package:free_board/screens/preview_screens/preview_events_screen.dart';
+import 'package:free_board/screens/preview_screens/preview_modals_screen.dart';
 
 class UIPreviewListScreen extends StatelessWidget {
   const UIPreviewListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    const Color warmBrown = Color(0xFF8B7355);
     const Color softCream = Color(0xFFFFF8F0);
 
     return Container(
@@ -50,6 +50,18 @@ class UIPreviewListScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
+          _buildPreviewCard(
+            context,
+            '0. 로그인 & 회원가입',
+            '이메일 로그인/가입, 비밀번호 재설정, 인증, 소셜 버튼',
+            Icons.lock_open_rounded,
+            () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const PreviewAuthScreen(),
+              ),
+            ),
+          ),
           _buildPreviewCard(
             context,
             '1. 홈 화면',

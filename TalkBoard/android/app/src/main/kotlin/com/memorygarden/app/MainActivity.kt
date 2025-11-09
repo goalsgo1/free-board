@@ -1,4 +1,4 @@
-package com.talkboard.app
+package com.memorygarden.app
 
 import io.flutter.embedding.android.FlutterActivity
 

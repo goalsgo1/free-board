@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
-import '../models/comment.dart';
-import '../services/firestore_service.dart';
+import 'package:free_board/models/comment.dart';
+import 'package:free_board/services/firestore_service.dart';
 
 class CommentProvider extends ChangeNotifier {
   final FirestoreService _firestoreService = FirestoreService();

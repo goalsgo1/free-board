@@ -1,6 +1,8 @@
+import 'dart:developer' as developer;
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../models/post.dart';
-import '../models/comment.dart';
+import 'package:free_board/models/comment.dart';
+import 'package:free_board/models/post.dart';
 
 class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -54,8 +56,13 @@ class FirestoreService {
         return post;
       }
       return null;
-    } catch (e) {
-      print('Error getting post: $e');
+    } catch (e, stackTrace) {
+      developer.log(
+        'Error getting post: $e',
+        name: 'FirestoreService',
+        error: e,
+        stackTrace: stackTrace,
+      );
       return null;
     }
   }
@@ -85,8 +92,13 @@ class FirestoreService {
       postData['isDeleted'] = false;
       final docRef = await _firestore.collection(_collection).add(postData);
       return docRef.id;
-    } catch (e) {
-      print('Error creating post: $e');
+    } catch (e, stackTrace) {
+      developer.log(
+        'Error creating post: $e',
+        name: 'FirestoreService',
+        error: e,
+        stackTrace: stackTrace,
+      );
       return null;
     }
   }
@@ -122,8 +134,13 @@ class FirestoreService {
         'updatedAtHistory': history.map((date) => Timestamp.fromDate(date)).toList(),
       });
       return true;
-    } catch (e) {
-      print('Error updating post: $e');
+    } catch (e, stackTrace) {
+      developer.log(
+        'Error updating post: $e',
+        name: 'FirestoreService',
+        error: e,
+        stackTrace: stackTrace,
+      );
       return false;
     }
   }
@@ -163,8 +180,13 @@ class FirestoreService {
       }
       
       return true;
-    } catch (e) {
-      print('Error deleting post: $e');
+    } catch (e, stackTrace) {
+      developer.log(
+        'Error deleting post: $e',
+        name: 'FirestoreService',
+        error: e,
+        stackTrace: stackTrace,
+      );
       return false;
     }
   }
@@ -234,8 +256,13 @@ class FirestoreService {
       }
       
       return true;
-    } catch (e) {
-      print('Error restoring post: $e');
+    } catch (e, stackTrace) {
+      developer.log(
+        'Error restoring post: $e',
+        name: 'FirestoreService',
+        error: e,
+        stackTrace: stackTrace,
+      );
       return false;
     }
   }
@@ -246,8 +273,13 @@ class FirestoreService {
       await _firestore.collection(_collection).doc(postId).update({
         'views': FieldValue.increment(1),
       });
-    } catch (e) {
-      print('Error incrementing views: $e');
+    } catch (e, stackTrace) {
+      developer.log(
+        'Error incrementing views: $e',
+        name: 'FirestoreService',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -309,8 +341,13 @@ class FirestoreService {
           .collection(_commentCollection)
           .add(commentData);
       return docRef.id;
-    } catch (e) {
-      print('Error creating comment: $e');
+    } catch (e, stackTrace) {
+      developer.log(
+        'Error creating comment: $e',
+        name: 'FirestoreService',
+        error: e,
+        stackTrace: stackTrace,
+      );
       return null;
     }
   }
@@ -351,8 +388,13 @@ class FirestoreService {
       }
       
       return true;
-    } catch (e) {
-      print('Error deleting comment: $e');
+    } catch (e, stackTrace) {
+      developer.log(
+        'Error deleting comment: $e',
+        name: 'FirestoreService',
+        error: e,
+        stackTrace: stackTrace,
+      );
       return false;
     }
   }
@@ -413,8 +455,13 @@ class FirestoreService {
       }
       
       return true;
-    } catch (e) {
-      print('Error restoring comment: $e');
+    } catch (e, stackTrace) {
+      developer.log(
+        'Error restoring comment: $e',
+        name: 'FirestoreService',
+        error: e,
+        stackTrace: stackTrace,
+      );
       return false;
     }
   }
@@ -453,8 +500,13 @@ class FirestoreService {
             history.map((date) => Timestamp.fromDate(date)).toList(),
       });
       return true;
-    } catch (e) {
-      print('Error updating comment: $e');
+    } catch (e, stackTrace) {
+      developer.log(
+        'Error updating comment: $e',
+        name: 'FirestoreService',
+        error: e,
+        stackTrace: stackTrace,
+      );
       return false;
     }
   }
