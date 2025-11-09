@@ -332,9 +332,25 @@ class _HomeSectionHeader extends StatelessWidget {
         ),
         Column(
           children: [
-            IconButton(
-              icon: const Icon(Icons.arrow_forward_ios, size: 16, color: AppPalette.warmBrown),
+            TextButton(
               onPressed: () {},
+              style: TextButton.styleFrom(
+                foregroundColor: AppPalette.warmBrown,
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                minimumSize: const Size(0, 32),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  Text(
+                    '전체 보기',
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                  ),
+                  SizedBox(width: 4),
+                  Icon(Icons.arrow_forward_ios, size: 14),
+                ],
+              ),
             ),
           ],
         ),
@@ -364,63 +380,74 @@ class _AnniversaryTile extends StatelessWidget {
         ],
       ),
       padding: const EdgeInsets.all(16),
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: Image.network(
-              memorial.imageUrl,
-              width: 64,
-              height: 64,
-              fit: BoxFit.cover,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  memorial.title,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: AppPalette.warmBrown,
-                  ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.network(
+                  memorial.imageUrl,
+                  width: 64,
+                  height: 64,
+                  fit: BoxFit.cover,
                 ),
-                const SizedBox(height: 6),
-                Text(
-                  memorial.message,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    height: 1.4,
-                    color: AppPalette.caption,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Row(
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(Icons.event, size: 14, color: AppPalette.warmBrown),
-                    const SizedBox(width: 6),
                     Text(
-                      memorial.dateLabel,
+                      memorial.title,
                       style: const TextStyle(
-                        fontSize: 12,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: AppPalette.warmBrown,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      memorial.message,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        height: 1.4,
                         color: AppPalette.caption,
                       ),
                     ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        const Icon(Icons.event, size: 14, color: AppPalette.warmBrown),
+                        const SizedBox(width: 6),
+                        Flexible(
+                          child: Text(
+                            memorial.dateLabel,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: AppPalette.caption,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-          const SizedBox(width: 12),
-          AppOutlinedButton(
-            label: '추모하러 가기',
-            leadingIcon: Icons.arrow_forward,
-            onPressed: () {},
-            color: AppPalette.warmBrown,
+          const SizedBox(height: 12),
+          Align(
+            alignment: Alignment.centerRight,
+            child: AppOutlinedButton(
+              label: '추모하러 가기',
+              leadingIcon: Icons.arrow_forward,
+              onPressed: () {},
+              color: AppPalette.warmBrown,
+            ),
           ),
         ],
       ),
