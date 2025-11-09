@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:free_board/providers/auth_provider.dart';
+import 'package:free_board/widgets/components/app_buttons.dart';
+import 'package:free_board/widgets/components/app_card.dart';
+import 'package:free_board/widgets/components/app_palette.dart';
 
 class AppPageInfo {
   const AppPageInfo({
@@ -23,16 +26,114 @@ class HomeScreen extends StatelessWidget {
 
   static const routeName = '/home';
 
+  static final List<_MemorialHighlight> _todayMemorials = [
+    const _MemorialHighlight(
+      title: '박정윤님 1주기',
+      message: '오늘은 첫 번째 기일입니다. 함께했던 미소를 기억해요.',
+      dateLabel: '오늘 · 3월 15일',
+      imageUrl: 'https://picsum.photos/seed/memory1/420/520',
+    ),
+    const _MemorialHighlight(
+      title: '고양이 감자 2주기',
+      message: '따뜻한 품을 그리워하며 작은 간식을 준비했습니다.',
+      dateLabel: '오늘 · 3월 15일',
+      imageUrl: 'https://picsum.photos/seed/memory2/420/520',
+    ),
+    const _MemorialHighlight(
+      title: '한지우님 생신',
+      message: '생전 좋아하시던 노래로 추억을 꺼내보는 건 어떨까요?',
+      dateLabel: '오늘 · 3월 15일',
+      imageUrl: 'https://picsum.photos/seed/memory3/420/520',
+    ),
+  ];
+
+  static final List<_MemorialHighlight> _recentMemorials = [
+    const _MemorialHighlight(
+      title: '이수진님 추모관',
+      message: '가족과 친구들이 남긴 24개의 추모 편지',
+      dateLabel: '최근 등록 · 2시간 전',
+      imageUrl: 'https://picsum.photos/seed/memory4/420/520',
+    ),
+    const _MemorialHighlight(
+      title: '반려견 모카 추억집',
+      message: '산책 사진과 영상을 모아둔 따뜻한 공간',
+      dateLabel: '최근 등록 · 5시간 전',
+      imageUrl: 'https://picsum.photos/seed/memory5/420/520',
+    ),
+    const _MemorialHighlight(
+      title: '김은호님 기념 추억첩',
+      message: '아버지를 그리워하는 가족의 마음을 담았습니다.',
+      dateLabel: '최근 등록 · 어제',
+      imageUrl: 'https://picsum.photos/seed/memory6/420/520',
+    ),
+  ];
+
+  static final List<_HomeQuickShortcut> _shortcuts = [
+    _HomeQuickShortcut(
+      title: '추모관 목록',
+      description: '내가 만든 추모관을 살펴봐요',
+      icon: Icons.auto_awesome_mosaic_outlined,
+      accentColor: const Color(0xFF8B7355),
+      routeName: '/memorial-list',
+    ),
+    _HomeQuickShortcut(
+      title: '기도 요청',
+      description: '함께 기도하며 위로 나누기',
+      icon: Icons.favorite_outline,
+      accentColor: const Color(0xFFFF6B81),
+      routeName: '/prayer-request',
+    ),
+    _HomeQuickShortcut(
+      title: '감정 공유',
+      description: '감정을 나누고 공감받아요',
+      icon: Icons.forum_outlined,
+      accentColor: const Color(0xFF7E57C2),
+      routeName: '/emotion-board',
+    ),
+    _HomeQuickShortcut(
+      title: '감사 혜택',
+      description: '쿠폰과 혜택을 확인해요',
+      icon: Icons.card_giftcard,
+      accentColor: const Color(0xFFFFB74D),
+      routeName: '/gratitude-benefits',
+    ),
+    _HomeQuickShortcut(
+      title: '공개 추모관',
+      description: '다른 사람들의 추모 공간 보기',
+      icon: Icons.travel_explore,
+      accentColor: const Color(0xFF42A5F5),
+      routeName: '/public-search',
+    ),
+    _HomeQuickShortcut(
+      title: '설정 & 관리',
+      description: '프로필과 알림, 추모금 관리',
+      icon: Icons.settings_outlined,
+      accentColor: const Color(0xFF546E7A),
+      routeName: '/settings',
+    ),
+  ];
+
+  static final List<_HomeStat> _stats = [
+    const _HomeStat('추모관', '12곳', Icons.auto_awesome_outlined, Color(0xFF8D6E63)),
+    const _HomeStat('위로 받은 인원', '87명', Icons.volunteer_activism_outlined, Color(0xFF42A5F5)),
+    const _HomeStat('이번 주 추모금', '128,000원', Icons.savings_outlined, Color(0xFF66BB6A)),
+  ];
+
   @override
   Widget build(BuildContext context) {
-    final destinations = appPageInfos
-        .where((info) => info.route != HomeScreen.routeName)
-        .toList(growable: false);
-
     return Scaffold(
+      backgroundColor: AppPalette.softCream,
       appBar: AppBar(
-        title: const Text('기억의 정원 홈'),
+        title: const Text('기억의 정원'),
+        backgroundColor: AppPalette.warmBrown,
+        foregroundColor: Colors.white,
+        elevation: 0,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications_outlined),
+            tooltip: '알림 보기',
+            onPressed: () {},
+          ),
           IconButton(
             icon: const Icon(Icons.logout),
             tooltip: '로그아웃',
@@ -42,42 +143,410 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Padding(
+      body: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 28),
+        children: [
+          AppSurfaceCard(
+            title: '기억의 정원에 오신 것을 환영합니다',
+            subtitle: '함께 공감하고 위로하며 소중한 기억을 간직하세요.',
+            icon: Icons.favorite,
+            accentColor: AppPalette.warmBrown,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                Text(
+                  '슬픔은 나눌 때 치유됩니다. 오늘도 따뜻한 마음을 전해보세요.',
+                  style: TextStyle(
+                    fontSize: 14,
+                    height: 1.6,
+                    color: AppPalette.caption,
+                  ),
+                ),
+                SizedBox(height: 12),
+                AppHelperText(
+                  icon: Icons.tips_and_updates_outlined,
+                  text: '기념일 알림과 추천 추모글을 참고하여 소중한 추억을 함께 나눠보세요.',
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+          AppSurfaceCard(
+            title: '오늘의 기념일',
+            subtitle: '오늘 기억해야 할 소중한 분들을 모았어요.',
+            icon: Icons.cake_outlined,
+            accentColor: const Color(0xFFFF9AA2),
+            child: Column(
+              children: _todayMemorials
+                  .map(
+                    (memorial) => Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: _AnniversaryTile(memorial: memorial),
+                    ),
+                  )
+                  .toList(),
+            ),
+          ),
+          const SizedBox(height: 24),
+          const _HomeSectionHeader(
+            title: '오늘의 추모',
+            subtitle: '사람과 반려동물의 이야기를 둘러보세요.',
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            height: 230,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              itemCount: _todayMemorials.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 16),
+              itemBuilder: (context, index) {
+                return _MemorialHighlightCard(
+                  highlight: _todayMemorials[index],
+                  primaryAction: () {},
+                  accentColor: const Color(0xFF8B7355),
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: 28),
+          const _HomeSectionHeader(
+            title: '최근 등록된 추모관',
+            subtitle: '따끈한 추모 공간을 방문해보세요.',
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            height: 230,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              itemCount: _recentMemorials.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 16),
+              itemBuilder: (context, index) {
+                return _MemorialHighlightCard(
+                  highlight: _recentMemorials[index],
+                  primaryAction: () {},
+                  accentColor: const Color(0xFF6D4C41),
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: 28),
+          AppSurfaceCard(
+            title: '바로 가기',
+            subtitle: '가장 많이 사용하는 기능을 한 번에 이동하세요.',
+            icon: Icons.rocket_launch_outlined,
+            accentColor: const Color(0xFF5C6BC0),
+            child: Wrap(
+              spacing: 16,
+              runSpacing: 16,
+              children: _shortcuts
+                  .map(
+                    (shortcut) => _HomeShortcutTile(
+                      shortcut: shortcut,
+                    ),
+                  )
+                  .toList(),
+            ),
+          ),
+          const SizedBox(height: 24),
+          AppSurfaceCard(
+            title: '나의 기록 요약',
+            subtitle: '최근 일주일 기준으로 정리했어요.',
+            icon: Icons.insights_outlined,
+            accentColor: const Color(0xFF66BB6A),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: _stats
+                      .map(
+                        (stat) => Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 6),
+                            child: _HomeStatTile(stat: stat),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                ),
+                const SizedBox(height: 16),
+                const AppHelperText(
+                  text: '통계는 추모관 업데이트 및 기도 참여 현황에 따라 매일 오전 갱신됩니다.',
+                  icon: Icons.info_outline,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 32),
+        ],
+      ),
+    );
+  }
+}
+
+class _HomeSectionHeader extends StatelessWidget {
+  const _HomeSectionHeader({
+    required this.title,
+    required this.subtitle,
+  });
+
+  final String title;
+  final String subtitle;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: AppPalette.warmBrown,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              subtitle,
+              style: const TextStyle(
+                fontSize: 13,
+                color: AppPalette.caption,
+              ),
+            ),
+          ],
+        ),
+        IconButton(
+          icon: const Icon(Icons.arrow_forward_ios, size: 16, color: AppPalette.warmBrown),
+          onPressed: () {},
+        ),
+      ],
+    );
+  }
+}
+
+class _AnniversaryTile extends StatelessWidget {
+  const _AnniversaryTile({required this.memorial});
+
+  final _MemorialHighlight memorial;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppPalette.warmBeige, width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: _colorWithOpacity(Colors.black, 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Image.network(
+              memorial.imageUrl,
+              width: 64,
+              height: 64,
+              fit: BoxFit.cover,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  memorial.title,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: AppPalette.warmBrown,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  memorial.message,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    height: 1.4,
+                    color: AppPalette.caption,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    const Icon(Icons.event, size: 14, color: AppPalette.warmBrown),
+                    const SizedBox(width: 6),
+                    Text(
+                      memorial.dateLabel,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: AppPalette.caption,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          AppOutlinedButton(
+            label: '추모하러 가기',
+            leadingIcon: Icons.arrow_forward,
+            onPressed: () {},
+            color: AppPalette.warmBrown,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MemorialHighlightCard extends StatelessWidget {
+  const _MemorialHighlightCard({
+    required this.highlight,
+    required this.primaryAction,
+    required this.accentColor,
+  });
+
+  final _MemorialHighlight highlight;
+  final VoidCallback primaryAction;
+  final Color accentColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 220,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: _colorWithOpacity(accentColor, 0.3), width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: _colorWithOpacity(Colors.black, 0.08),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(16),
+              topRight: Radius.circular(16),
+            ),
+            child: Image.network(
+              highlight.imageUrl,
+              height: 120,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  highlight.title,
+                  style: TextStyle(
+                    fontSize: 14.5,
+                    fontWeight: FontWeight.w600,
+                    color: accentColor,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  highlight.message,
+                  style: const TextStyle(
+                    fontSize: 12.5,
+                    height: 1.4,
+                    color: AppPalette.caption,
+                  ),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  highlight.dateLabel,
+                  style: const TextStyle(
+                    fontSize: 11.5,
+                    color: AppPalette.caption,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                AppOutlinedButton(
+                  label: '살펴보기',
+                  leadingIcon: Icons.open_in_new,
+                  onPressed: primaryAction,
+                  color: accentColor,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _HomeShortcutTile extends StatelessWidget {
+  const _HomeShortcutTile({required this.shortcut});
+
+  final _HomeQuickShortcut shortcut;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        if (shortcut.routeName != null) {
+          Navigator.pushNamed(context, shortcut.routeName!);
+        }
+      },
+      child: Container(
+        width: 150,
+        decoration: BoxDecoration(
+          color: _colorWithOpacity(shortcut.accentColor, 0.08),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: _colorWithOpacity(shortcut.accentColor, 0.2), width: 1.5),
+        ),
         padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              '필요한 주요 화면으로 이동하세요.\n현재는 네비게이션에 집중한 플레이스홀더입니다.',
-              style: TextStyle(fontSize: 16),
+            Icon(shortcut.icon, color: shortcut.accentColor, size: 28),
+            const SizedBox(height: 12),
+            Text(
+              shortcut.title,
+              style: TextStyle(
+                fontSize: 14.5,
+                fontWeight: FontWeight.w600,
+                color: shortcut.accentColor,
+              ),
             ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: ListView.separated(
-                itemCount: destinations.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 12),
-                itemBuilder: (context, index) {
-                  final info = destinations[index];
-                  return Card(
-                    elevation: 2,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: ListTile(
-                      leading: Icon(info.icon, color: Colors.blue.shade700),
-                      title: Text(info.title),
-                      subtitle: Text(
-                        info.description,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                      onTap: () {
-                        Navigator.pushNamed(context, info.route);
-                      },
-                    ),
-                  );
-                },
+            const SizedBox(height: 8),
+            Text(
+              shortcut.description,
+              style: const TextStyle(
+                fontSize: 12,
+                height: 1.4,
+                color: AppPalette.caption,
               ),
             ),
           ],
@@ -85,6 +554,86 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+class _HomeStatTile extends StatelessWidget {
+  const _HomeStatTile({required this.stat});
+
+  final _HomeStat stat;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: _colorWithOpacity(stat.color, 0.08),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: _colorWithOpacity(stat.color, 0.2), width: 1.2),
+      ),
+      padding: const EdgeInsets.all(14),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(stat.icon, color: stat.color),
+          const SizedBox(height: 10),
+          Text(
+            stat.value,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: AppPalette.ink,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            stat.label,
+            style: const TextStyle(
+              fontSize: 12,
+              color: AppPalette.caption,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MemorialHighlight {
+  const _MemorialHighlight({
+    required this.title,
+    required this.message,
+    required this.dateLabel,
+    required this.imageUrl,
+  });
+
+  final String title;
+  final String message;
+  final String dateLabel;
+  final String imageUrl;
+}
+
+class _HomeQuickShortcut {
+  const _HomeQuickShortcut({
+    required this.title,
+    required this.description,
+    required this.icon,
+    required this.accentColor,
+    this.routeName,
+  });
+
+  final String title;
+  final String description;
+  final IconData icon;
+  final Color accentColor;
+  final String? routeName;
+}
+
+class _HomeStat {
+  const _HomeStat(this.label, this.value, this.icon, this.color);
+
+  final String label;
+  final String value;
+  final IconData icon;
+  final Color color;
 }
 
 class PlaceholderScreen extends StatelessWidget {
@@ -292,4 +841,8 @@ final List<AppPageInfo> appPageInfos = [
 final Map<String, WidgetBuilder> appRouteBuilders = {
   for (final info in appPageInfos) info.route: info.builder,
 };
+
+Color _colorWithOpacity(Color color, double opacity) {
+  return color.withAlpha((opacity.clamp(0.0, 1.0) * 255).round());
+}
 
