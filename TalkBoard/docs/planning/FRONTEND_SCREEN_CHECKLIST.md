@@ -13,7 +13,10 @@
 | **5** | **기도 목록** | `lib/screens/prayer_request_screen.dart` | **[x]** |
 | **5-1** | **기도 상세** | `lib/screens/prayer_request_detail_screen.dart` | **[x]** |
 | **5-2** | **기도 요청 작성** | `lib/screens/prayer_request_create_screen.dart` | **[x]** |
-| 6 | 감정 공유 게시판 | - | [ ] |
+| **6** | **감정 공유 게시판** | `lib/screens/emotion_board_screen.dart` | **[x]** |
+| **6-1** | **감정 글 작성** | `lib/screens/emotion_post_create_screen.dart` | **[x]** |
+| **6-2** | **후회 없는 편지** | `lib/screens/regret_letter_board_screen.dart` | **[x]** |
+| **6-3** | **후회 없는 편지 작성** | `lib/screens/regret_letter_create_screen.dart` | **[x]** |
 | 7 | 마이페이지 | - | [ ] |
 | 8 | 공개 추모관 검색 | - | [ ] |
 | 9 | 책장 디자인 | - | [ ] |

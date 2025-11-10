@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:free_board/screens/memorial_stats_screen.dart';
 import 'package:free_board/widgets/accessibility_button.dart';
 import 'package:free_board/widgets/components/app_buttons.dart';
 import 'package:free_board/widgets/components/app_card.dart';
@@ -213,35 +214,57 @@ class _ActionRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
+      child: Column(
         children: [
-          Expanded(
-            child: AppPrimaryButton(
-              label: '추모 편지 남기기',
-              icon: Icons.edit_outlined,
-              onPressed: () {
-                Navigator.pushNamed(
-                  context,
-                  '/memorial-letter',
-                  arguments: MemorialLetterArguments(
-                    memorialId: data.memorialId ?? 'memorial-001',
-                    memorialName: data.name,
-                    defaultAuthor: '작성자',
-                    defaultRelation: data.relation,
-                  ),
-                );
-              },
-              accentColor: AppPalette.warmBrown,
-            ),
+          Row(
+            children: [
+              Expanded(
+                child: AppPrimaryButton(
+                  label: '추모 편지 남기기',
+                  icon: Icons.edit_outlined,
+                  onPressed: () {
+                    Navigator.pushNamed(
+                      context,
+                      '/memorial-letter',
+                      arguments: MemorialLetterArguments(
+                        memorialId: data.memorialId ?? 'memorial-001',
+                        memorialName: data.name,
+                        defaultAuthor: '작성자',
+                        defaultRelation: data.relation,
+                      ),
+                    );
+                  },
+                  accentColor: AppPalette.warmBrown,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: AppOutlinedButton(
+                  label: '공유하기',
+                  leadingIcon: Icons.ios_share,
+                  onPressed: () {},
+                  color: AppPalette.warmBrown,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: AppOutlinedButton(
-              label: '공유하기',
-              leadingIcon: Icons.ios_share,
-              onPressed: () {},
-              color: AppPalette.warmBrown,
-            ),
+          const SizedBox(height: 12),
+          AppOutlinedButton(
+            label: '추모관 통계 보기',
+            leadingIcon: Icons.bar_chart_outlined,
+            onPressed: () {
+              Navigator.pushNamed(
+                context,
+                MemorialStatsScreen.routeName,
+                arguments: MemorialStatsArguments(
+                  memorialId: data.memorialId ?? 'memorial-001',
+                  memorialName: data.name,
+                  relationSummary: data.relationSummary,
+                  heroImageUrl: data.heroImageUrl,
+                ),
+              );
+            },
+            color: AppPalette.accentGold,
           ),
         ],
       ),

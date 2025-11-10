@@ -744,43 +744,52 @@ class PreviewHomeScreen extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           const Text(
-            '원하는 기능을 선택하면 해당 화면으로 바로 이동하거나, 단계별 경로 안내를 통해 흐름을 확인할 수 있습니다.',
+            '홈 화면에서 "기억의 정원 가이드" 버튼을 누르면 필요한 기능으로 바로 이동하거나 경로 안내를 확인할 수 있습니다.',
             style: TextStyle(
               fontSize: 13,
               height: 1.6,
               color: Color(0xFF5C5C5C),
             ),
           ),
-          const SizedBox(height: 20),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final double maxWidth = constraints.maxWidth;
-              const double spacing = 12;
-              final int crossAxisCount;
-              if (maxWidth < 360) {
-                crossAxisCount = 1;
-              } else if (maxWidth < 720) {
-                crossAxisCount = 2;
-              } else {
-                crossAxisCount = 3;
-              }
-              final double cardWidth =
-                  (maxWidth - spacing * (crossAxisCount - 1)) / crossAxisCount;
-
-              return Wrap(
-                spacing: spacing,
-                runSpacing: spacing,
-                children: [
-                  for (final category in homeNavigatorCategories)
-                    SizedBox(
-                      width: cardWidth,
-                      child: _buildNavigatorQuickCard(context, category),
+          const SizedBox(height: 16),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final category in homeNavigatorCategories.take(6))
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: category.accentColor.withOpacity(0.14),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: category.accentColor.withOpacity(0.4),
+                      width: 1.2,
                     ),
-                ],
-              );
-            },
+                  ),
+                  child: Text(
+                    category.title,
+                    style: const TextStyle(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF5C4033),
+                    ),
+                  ),
+                ),
+            ],
           ),
-          const SizedBox(height: 24),
+          if (homeNavigatorCategories.length > 6) ...[
+            const SizedBox(height: 12),
+            const Text(
+              '자세한 구성은 가이드 화면 전체 프리뷰에서 확인할 수 있습니다.',
+              style: TextStyle(
+                fontSize: 12.5,
+                height: 1.5,
+                color: Color(0xFF6D6D6D),
+              ),
+            ),
+          ],
+          const SizedBox(height: 16),
           Align(
             alignment: Alignment.centerRight,
             child: OutlinedButton.icon(
@@ -793,7 +802,7 @@ class PreviewHomeScreen extends StatelessWidget {
                 );
               },
               icon: Icon(Icons.slideshow, color: warmBrown),
-              label: const Text('전체 기능 프리뷰 보기'),
+              label: const Text('기억의 정원 가이드 전체 보기'),
               style: OutlinedButton.styleFrom(
                 foregroundColor: warmBrown,
                 side: BorderSide(color: warmBrown.withOpacity(0.6), width: 1.5),

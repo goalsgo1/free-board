@@ -8,6 +8,10 @@ import 'package:free_board/screens/memorial_list_screen.dart';
 import 'package:free_board/screens/prayer_request_screen.dart';
 import 'package:free_board/screens/prayer_request_detail_screen.dart';
 import 'package:free_board/screens/prayer_request_create_screen.dart';
+import 'package:free_board/screens/emotion_board_screen.dart';
+import 'package:free_board/screens/emotion_post_create_screen.dart';
+import 'package:free_board/screens/regret_letter_board_screen.dart';
+import 'package:free_board/screens/regret_letter_create_screen.dart';
 import 'package:free_board/screens/memorial_stats_screen.dart';
 import 'package:free_board/widgets/accessibility_button.dart';
 import 'package:free_board/widgets/components/app_buttons.dart';
@@ -859,8 +863,22 @@ class HomeNavigatorScreen extends StatelessWidget {
           label: '기도 요청 작성',
           routeName: PrayerRequestCreateScreen.routeName,
         ),
-        const _NavigatorAction(label: '감정 공유 게시판', routeName: '/emotion-board'),
-        const _NavigatorAction(label: '후회 없는 편지', routeName: '/regret-letter'),
+        const _NavigatorAction(
+          label: '감정 공유 게시판',
+          routeName: EmotionBoardScreen.routeName,
+        ),
+        const _NavigatorAction(
+          label: '감정 글 작성',
+          routeName: EmotionPostCreateScreen.routeName,
+        ),
+        const _NavigatorAction(
+          label: '후회 없는 편지',
+          routeName: RegretLetterBoardScreen.routeName,
+        ),
+        const _NavigatorAction(
+          label: '후회 없는 편지 작성',
+          routeName: RegretLetterCreateScreen.routeName,
+        ),
       ],
       tips: const [
         '기도글 작성 후 함께 기도 참여 알림 전송',
@@ -1109,23 +1127,31 @@ final List<AppPageInfo> appPageInfos = [
   ),
   AppPageInfo(
     title: '감정 공유 게시판',
-    route: '/emotion-board',
+    route: EmotionBoardScreen.routeName,
     icon: Icons.forum,
-    description: '감정 나눔 글과 댓글, 공감 기능을 제공하는 커뮤니티 게시판.',
-    builder: (_) => const PlaceholderScreen(
-      title: '감정 공유 게시판',
-      description: '감정 나눔 글 작성과 피드백 기능을 제공하는 게시판입니다.',
-    ),
+    description: '감사, 그리움, 위로 등의 감정을 나누고 공감하는 커뮤니티 게시판.',
+    builder: (_) => const EmotionBoardScreen(),
+  ),
+  AppPageInfo(
+    title: '감정 글 작성',
+    route: EmotionPostCreateScreen.routeName,
+    icon: Icons.edit_note,
+    description: '감정 나눔 글을 작성하고 태그와 공개 범위를 설정합니다.',
+    builder: (_) => const EmotionPostCreateScreen(),
   ),
   AppPageInfo(
     title: '후회 없는 편지',
-    route: '/regret-letter',
+    route: RegretLetterBoardScreen.routeName,
     icon: Icons.mail_outline,
     description: '전하지 못한 말을 편지로 남기고 공감/댓글로 위로받는 공간.',
-    builder: (_) => const PlaceholderScreen(
-      title: '후회 없는 편지',
-      description: '고인에게 전하지 못한 말을 공유하는 편지 콘텐츠 화면입니다.',
-    ),
+    builder: (_) => const RegretLetterBoardScreen(),
+  ),
+  AppPageInfo(
+    title: '후회 없는 편지 작성',
+    route: RegretLetterCreateScreen.routeName,
+    icon: Icons.create_outlined,
+    description: '후회 없는 편지를 작성하고 공개 범위 및 태그를 설정합니다.',
+    builder: (_) => const RegretLetterCreateScreen(),
   ),
   AppPageInfo(
     title: '유언장',
