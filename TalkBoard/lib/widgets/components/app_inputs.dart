@@ -9,9 +9,10 @@ int _alphaFromOpacity(double opacity) {
 class AppTextField extends StatelessWidget {
   const AppTextField({
     super.key,
-    required this.controller,
+    this.controller,
     required this.label,
     this.hint,
+    this.enabled = true,
     this.keyboardType,
     this.textInputAction,
     this.onFieldSubmitted,
@@ -24,9 +25,10 @@ class AppTextField extends StatelessWidget {
     this.maxLines = 1,
   });
 
-  final TextEditingController controller;
+  final TextEditingController? controller;
   final String label;
   final String? hint;
+  final bool enabled;
   final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
   final void Function(String value)? onFieldSubmitted;
@@ -43,6 +45,7 @@ class AppTextField extends StatelessWidget {
     return TextFormField(
       controller: controller,
       focusNode: focusNode,
+      enabled: enabled,
       keyboardType: keyboardType,
       textInputAction: textInputAction,
       onFieldSubmitted: onFieldSubmitted,

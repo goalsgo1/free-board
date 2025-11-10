@@ -17,6 +17,7 @@
 | **6-1** | **감정 글 작성** | `lib/screens/emotion_post_create_screen.dart` | **[x]** |
 | **6-2** | **후회 없는 편지** | `lib/screens/regret_letter_board_screen.dart` | **[x]** |
 | **6-3** | **후회 없는 편지 작성** | `lib/screens/regret_letter_create_screen.dart` | **[x]** |
+| **6-4** | **후회 없는 편지 상세** | `lib/screens/regret_letter_detail_screen.dart` | **[x]** |
 | 7 | 마이페이지 | - | [ ] |
 | 8 | 공개 추모관 검색 | - | [ ] |
 | 9 | 책장 디자인 | - | [ ] |

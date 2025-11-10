@@ -12,6 +12,7 @@ import 'package:free_board/screens/emotion_board_screen.dart';
 import 'package:free_board/screens/emotion_post_create_screen.dart';
 import 'package:free_board/screens/regret_letter_board_screen.dart';
 import 'package:free_board/screens/regret_letter_create_screen.dart';
+import 'package:free_board/screens/regret_letter_detail_screen.dart';
 import 'package:free_board/screens/memorial_stats_screen.dart';
 import 'package:free_board/widgets/accessibility_button.dart';
 import 'package:free_board/widgets/components/app_buttons.dart';
@@ -846,7 +847,6 @@ class HomeNavigatorScreen extends StatelessWidget {
       tips: const [
         '홈 > 바로 가기 > 추모관 목록',
         '특정 추모관 상세에서 사진/영상/편지 관리',
-        '추모관 통계에서 방문과 추모금 변화를 확인',
       ],
     ),
     _NavigatorCategory(
@@ -872,7 +872,7 @@ class HomeNavigatorScreen extends StatelessWidget {
           routeName: EmotionPostCreateScreen.routeName,
         ),
         const _NavigatorAction(
-          label: '후회 없는 편지',
+          label: '후회 없는 편지 게시판',
           routeName: RegretLetterBoardScreen.routeName,
         ),
         const _NavigatorAction(
@@ -903,19 +903,15 @@ class HomeNavigatorScreen extends StatelessWidget {
       ],
     ),
     _NavigatorCategory(
-      title: '검색·공유·혜택',
-      description: '공개 추모관 탐색과 감사 혜택, 데이터 백업 동선을 정리했습니다.',
-      icon: Icons.travel_explore,
+      title: '감사 혜택',
+      description: '감사 혜택과 이벤트 정보를 빠르게 확인합니다.',
+      icon: Icons.card_giftcard,
       accentColor: const Color(0xFF42A5F5),
       actions: [
-        const _NavigatorAction(label: '공개 추모관 검색', routeName: '/public-search'),
         const _NavigatorAction(label: '감사 혜택', routeName: '/gratitude-benefits'),
-        const _NavigatorAction(label: '추모관 백업 (준비 중)'),
       ],
       tips: const [
-        '공개 추모관을 검색해 감동 추모글 감상',
-        '감사 혜택에서 쿠폰과 이벤트 확인',
-        '추모관 백업으로 데이터를 안전하게 보관',
+        '감사 혜택 배너에서 최신 쿠폰과 이벤트를 확인하세요.',
       ],
     ),
     _NavigatorCategory(
@@ -1152,6 +1148,13 @@ final List<AppPageInfo> appPageInfos = [
     icon: Icons.create_outlined,
     description: '후회 없는 편지를 작성하고 공개 범위 및 태그를 설정합니다.',
     builder: (_) => const RegretLetterCreateScreen(),
+  ),
+  AppPageInfo(
+    title: '후회 없는 편지 자세히 보기',
+    route: RegretLetterDetailScreen.routeName,
+    icon: Icons.email_outlined,
+    description: '등록된 후회 없는 편지의 전문과 공감, 댓글 흐름을 확인합니다.',
+    builder: (_) => const RegretLetterDetailScreen(),
   ),
   AppPageInfo(
     title: '유언장',

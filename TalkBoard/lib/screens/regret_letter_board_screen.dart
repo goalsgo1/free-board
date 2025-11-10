@@ -5,6 +5,8 @@ import 'package:free_board/widgets/components/app_card.dart';
 import 'package:free_board/widgets/components/app_inputs.dart';
 import 'package:free_board/widgets/components/app_palette.dart';
 import 'package:free_board/screens/regret_letter_create_screen.dart';
+import 'package:free_board/screens/regret_letter_detail_screen.dart';
+import 'package:free_board/screens/regret_letter_create_screen.dart';
 
 class RegretLetterBoardScreen extends StatefulWidget {
   const RegretLetterBoardScreen({super.key});
@@ -28,6 +30,8 @@ class _RegretLetterBoardScreenState extends State<RegretLetterBoardScreen> {
       title: '조금 더 웃어줄걸',
       excerpt:
           '엄마, 마지막 순간에 더 밝은 얼굴로 당신을 안심시켜 드렸어야 했는데 자꾸 후회가 되네요. 그날 이후로 매일 당신이 좋아하던 국화를 선반 위에 올려두고 있어요.',
+      fullContent:
+          '엄마, 마지막 순간에 더 밝은 얼굴로 당신을 안심시켜 드렸어야 했는데 자꾸 후회가 돼. 그날 이후로 매일 당신이 좋아하던 국화를 선반 위에 올려두고 있어. 꽃향기를 맡으면 우리가 함께 나눴던 소소한 이야기들이 떠오르고, 당신이 웃으면서 “딸아, 괜찮다”고 하던 목소리가 귀에 맴돌아.\n\n지난주에는 당신이 앉아 계시던 창가 자리에 조용히 앉아서 편지를 써봤어. 아직 제대로 읽어드리지 못했지만, 오늘은 이 공간에 마음을 나눠봐. 만약 다시 시간을 돌릴 수 있다면, 더 자주 웃고 당신의 손을 잡아드리고 싶어. 당신이 걱정하지 않도록 더 밝은 모습으로 곁에 있을걸 하는 마음이 계속 남아. 그래도 이제는 이 후회를 오래 붙잡고 있지 않으려 해. 당신이 남겨준 따뜻함으로 오늘을 살아가볼게.\n\n다음 주에는 당신이 좋아하시던 흰색 카네이션을 챙겨갈게. 하늘에서 보고 계시면, 제가 괜찮게 지내고 있다는 걸 알아주면 좋겠어. 사랑하고 또 사랑해.',
       author: '김하늘',
       relation: '장녀',
       memorialName: '김은희님 추모관',
@@ -36,6 +40,7 @@ class _RegretLetterBoardScreenState extends State<RegretLetterBoardScreen> {
       likeCount: 128,
       commentCount: 42,
       shareCount: 17,
+      promiseNote: '매주 월요일마다 엄마가 좋아하시던 국화를 선반 위에 올려둘게요.',
       accentColor: AppPalette.accentLavender,
     ),
     const _RegretLetter(
@@ -43,6 +48,8 @@ class _RegretLetterBoardScreenState extends State<RegretLetterBoardScreen> {
       title: '끝까지 함께하지 못한 마음',
       excerpt:
           '아버지, 수술 전에 더 많은 이야기를 나눴다면 어땠을까 하는 생각이 매일 들어요. 대신 이제부터는 남은 가족들과 더 많은 시간을 보내려고 합니다.',
+      fullContent:
+          '아버지, 수술 전에 더 많은 이야기를 나눴다면 어땠을까 하는 생각이 매일 들어요. 병실에서 들려온 기계 소리 속에서도 당신의 목소리가 그렇게 또렷하게 느껴질 줄 몰랐어요. 지금이라도 늦지 않았다면, 당신이 늘 강조하시던 성실함과 따뜻함을 잊지 않겠다고 다짐하고 싶어요.\n\n마지막으로 남겨주신 “가족이 제일 중요하다”는 말, 마음에 깊이 새기고 있어요. 그래서 요즘은 형, 누나들과 더 자주 만나기로 했죠. 우리가 함께 모여 당신 이야기를 나누면 모두가 웃음이 나요. 당신이 우리에게 남겨준 사랑이 이렇게 컸다는 걸 다시 느끼게 됩니다.\n\n언젠가 아버지를 다시 만날 수 있는 날, “아버지 덕분에 잘 지냈다”고 말할 수 있도록 오늘도 최선을 다해볼게요.',
       author: '박지후',
       relation: '막내아들',
       memorialName: '박종현님 추모관',
@@ -51,6 +58,7 @@ class _RegretLetterBoardScreenState extends State<RegretLetterBoardScreen> {
       likeCount: 94,
       commentCount: 26,
       shareCount: 12,
+      promiseNote: '남은 가족과 매달 첫 주 토요일에 기념 식사를 이어갈게요.',
       accentColor: AppPalette.accentMint,
     ),
     const _RegretLetter(
@@ -58,6 +66,8 @@ class _RegretLetterBoardScreenState extends State<RegretLetterBoardScreen> {
       title: '당신에게 보내는 늦은 감사',
       excerpt:
           '사랑하는 당신, 늘 고마웠다는 말을 자주 하지 못했네요. 지금이라도 이렇게 글로 마음을 전합니다. 당신이 남긴 따뜻함을 잊지 않을게요.',
+      fullContent:
+          '사랑하는 당신, 늘 고마웠다는 말을 자주 하지 못했네요. 당신이 제게 보여준 배려와 웃음이 어느새 제 삶의 기준이 되어 있다는 걸, 당신이 떠난 뒤에야 깨달았어요. 매일 아침 당신이 내려주던 커피 향이 그리워서, 요즘은 그 레시피를 따라 만들어 보고 있어요. 아직 당신처럼 깊지 않지만, 그 향을 맡으면 당신의 미소가 떠올라서 참 좋아요.\n\n우리가 함께 했던 시간, 그리고 당신이 제게 남겨준 작은 메모 하나하나를 꺼내 읽어보며 오늘도 힘을 얻습니다. “힘들면 잠시 쉬어도 괜찮아”라는 말처럼, 저도 때로는 숨을 고르고 당신을 생각하며 하루를 마무리하고 있어요.\n\n당신이 남긴 따뜻함을 잊지 않고, 다른 사람들에게도 나누며 살게요. 당신이 늘 그랬던 것처럼요. 사랑해요, 언제나.',
       author: '이지은',
       relation: '배우자',
       memorialName: '이도현님 추모관',
@@ -66,6 +76,7 @@ class _RegretLetterBoardScreenState extends State<RegretLetterBoardScreen> {
       likeCount: 153,
       commentCount: 31,
       shareCount: 24,
+      promiseNote: '당신과 함께했던 기념일을 매년 가족들과 조용히 기념할게요.',
       accentColor: AppPalette.accentPink,
     ),
   ];
@@ -249,6 +260,7 @@ class _RegretLetter {
     required this.id,
     required this.title,
     required this.excerpt,
+    required this.fullContent,
     required this.author,
     required this.relation,
     required this.memorialName,
@@ -257,12 +269,14 @@ class _RegretLetter {
     required this.likeCount,
     required this.commentCount,
     required this.shareCount,
+    this.promiseNote,
     required this.accentColor,
   });
 
   final String id;
   final String title;
   final String excerpt;
+  final String fullContent;
   final String author;
   final String relation;
   final String memorialName;
@@ -271,6 +285,7 @@ class _RegretLetter {
   final int likeCount;
   final int commentCount;
   final int shareCount;
+  final String? promiseNote;
   final Color accentColor;
 }
 
@@ -362,11 +377,23 @@ class _RegretLetterCard extends StatelessWidget {
                   label: '편지 자세히 보기',
                   icon: Icons.arrow_forward,
                   onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          '"${letter.title}" 편지 상세 화면은 준비 중입니다.',
-                        ),
+                    Navigator.pushNamed(
+                      context,
+                      RegretLetterDetailScreen.routeName,
+                      arguments: RegretLetterDetailArguments(
+                        letterId: letter.id,
+                        title: letter.title,
+                        author: letter.author,
+                        relation: letter.relation,
+                        postedAgoLabel: letter.postedAgoLabel,
+                        memorialName: letter.memorialName,
+                        fullContent: letter.fullContent,
+                        categories: letter.categories,
+                        likeCount: letter.likeCount,
+                        commentCount: letter.commentCount,
+                        shareCount: letter.shareCount,
+                        promiseNote: letter.promiseNote,
+                        accentColor: letter.accentColor,
                       ),
                     );
                   },
