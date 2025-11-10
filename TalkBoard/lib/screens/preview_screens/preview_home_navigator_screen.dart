@@ -17,7 +17,7 @@ class PreviewHomeNavigatorScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          '기억의 탐험 가이드',
+          '기억의 정원 가이드',
           style: TextStyle(
             fontWeight: FontWeight.w300,
             fontSize: 18,
@@ -152,21 +152,6 @@ class PreviewHomeNavigatorScreen extends StatelessWidget {
                   Icons.attach_money,
                   warmBrown,
                   onTap: () {},
-                  onShowPath: () {},
-                ),
-                _buildFeatureCard(
-                  '추모 편지 남기기',
-                  '정성스러운 편지를 작성하고 가족과 공유',
-                  '추모관 상세 → 편지 작성 버튼',
-                  '편지 작성 화면 미리보기',
-                  Icons.edit_note_outlined,
-                  Colors.pink[300]!,
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const PreviewMemorialLetterWriteScreen(),
-                    ),
-                  ),
                   onShowPath: () {},
                 ),
               ],

@@ -40,7 +40,7 @@ final List<HomeNavigatorCategory> homeNavigatorCategories = [
     accentColor: Color(0xFF8B7355),
     targetBuilder: PreviewHomeNavigatorScreen.new,
     flowSteps: [
-      '홈 → 기억의 탐험 가이드',
+      '홈 → 기억의 정원 가이드',
       '📁 추모관 관리 카드 선택',
       '원하는 기능 카드에서 "바로 가기" 누르기',
     ],
@@ -52,7 +52,7 @@ final List<HomeNavigatorCategory> homeNavigatorCategories = [
     accentColor: Color(0xFFFF6B81),
     targetBuilder: PreviewHomeNavigatorScreen.new,
     flowSteps: [
-      '홈 → 기억의 탐험 가이드',
+      '홈 → 기억의 정원 가이드',
       '💬 공감 및 위로 카드 선택',
       '필요한 기능을 골라 "바로 가기" 실행',
     ],
@@ -64,7 +64,7 @@ final List<HomeNavigatorCategory> homeNavigatorCategories = [
     accentColor: Color(0xFF7E57C2),
     targetBuilder: PreviewHomeNavigatorScreen.new,
     flowSteps: [
-      '홈 → 기억의 탐험 가이드',
+      '홈 → 기억의 정원 가이드',
       '🤖 AI 기능 카드 선택',
       'AI 기억 답장 카드에서 "바로 가기" 누르기',
     ],
@@ -76,7 +76,7 @@ final List<HomeNavigatorCategory> homeNavigatorCategories = [
     accentColor: Color(0xFF5C6BC0),
     targetBuilder: PreviewHomeNavigatorScreen.new,
     flowSteps: [
-      '홈 → 기억의 탐험 가이드',
+      '홈 → 기억의 정원 가이드',
       '📜 특별 기능 카드 선택',
       '유언장/상호위로 매칭 기능으로 이동',
     ],
@@ -88,7 +88,7 @@ final List<HomeNavigatorCategory> homeNavigatorCategories = [
     accentColor: Color(0xFF42A5F5),
     targetBuilder: PreviewHomeNavigatorScreen.new,
     flowSteps: [
-      '홈 → 기억의 탐험 가이드',
+      '홈 → 기억의 정원 가이드',
       '🔍 검색 및 공유 카드 선택',
       '검색/공유/통계 기능으로 바로 이동',
     ],
@@ -100,7 +100,7 @@ final List<HomeNavigatorCategory> homeNavigatorCategories = [
     accentColor: Color(0xFF546E7A),
     targetBuilder: () => const PreviewHomeNavigatorScreen(),
     flowSteps: [
-      '홈 → 기억의 탐험 가이드',
+      '홈 → 기억의 정원 가이드',
       '⚙️ 설정 및 관리 카드 선택',
       '설정 항목 중 필요한 기능으로 이동',
     ],
@@ -731,7 +731,7 @@ class PreviewHomeScreen extends StatelessWidget {
               const SizedBox(width: 12),
               const Expanded(
                 child: Text(
-                  '기억의 탐험 가이드',
+                  '기억의 정원 가이드',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w600,

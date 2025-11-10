@@ -189,7 +189,7 @@ class HomeScreen extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: AppOutlinedButton(
-              label: '기억의 탐험 가이드로 이동',
+              label: '기억의 정원 가이드로 이동',
               leadingIcon: Icons.map_outlined,
               onPressed: () {
                 Navigator.pushNamed(context, '/home-navigator');
@@ -818,13 +818,11 @@ class HomeNavigatorScreen extends StatelessWidget {
       actions: [
         const _NavigatorAction(label: '추모관 목록', routeName: '/memorial-list'),
         const _NavigatorAction(label: '추모관 생성/수정', routeName: '/memorial-edit'),
-        const _NavigatorAction(label: '추모 편지 남기기', routeName: '/memorial-letter'),
         const _NavigatorAction(label: '추모관 통계 (준비 중)'),
       ],
       tips: const [
         '홈 > 바로 가기 > 추모관 목록',
-        '추모관 상세에서 사진/영상/편지 관리',
-        '추모 편지로 가족과 위로의 메시지 공유',
+        '특정 추모관 상세에서 사진/영상/편지 관리',
         '추모관 통계로 방문 수와 추모금을 확인',
       ],
     ),
@@ -899,7 +897,7 @@ class HomeNavigatorScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppPalette.softCream,
       appBar: AppBar(
-        title: const Text('기억의 탐험 가이드'),
+        title: const Text('기억의 정원 가이드'),
         backgroundColor: AppPalette.warmBrown,
         foregroundColor: Colors.white,
         elevation: 0,
