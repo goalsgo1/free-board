@@ -15,6 +15,7 @@ class AppTextField extends StatelessWidget {
     this.keyboardType,
     this.textInputAction,
     this.onFieldSubmitted,
+    this.onChanged,
     this.validator,
     this.obscureText = false,
     this.prefixIcon,
@@ -29,6 +30,7 @@ class AppTextField extends StatelessWidget {
   final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
   final void Function(String value)? onFieldSubmitted;
+  final void Function(String value)? onChanged;
   final String? Function(String? value)? validator;
   final bool obscureText;
   final Widget? prefixIcon;
@@ -44,6 +46,7 @@ class AppTextField extends StatelessWidget {
       keyboardType: keyboardType,
       textInputAction: textInputAction,
       onFieldSubmitted: onFieldSubmitted,
+      onChanged: onChanged,
       validator: validator,
       obscureText: obscureText,
       maxLines: obscureText ? 1 : maxLines,

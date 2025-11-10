@@ -4,13 +4,15 @@
 
 | 프리뷰 ID | 화면 이름 | 실제 화면/경로 | 상태 |
 |-----------|-----------|----------------|------|
-| 0 | 로그인 & 회원가입 | `lib/screens/auth_screen.dart` | [x] |
-| 1 | 홈 화면 | `lib/screens/app/app_screens.dart` (`HomeScreen`) | [x] |
-| 1-1 | 홈 내비게이터 | `lib/screens/app/app_screens.dart` (`HomeNavigatorScreen`) | [x] |
-| 2 | 추모관 목록 | `lib/screens/memorial_list_screen.dart` | [x] |
-| 3 | 추모관 상세 | `lib/screens/memorial_detail_screen.dart` | [x] |
-| 4 | 추모관 생성/수정 | `lib/screens/memorial_edit_screen.dart` | [x] |
-| 5 | 기도 요청 | - | [ ] |
+| **0** | **로그인 & 회원가입** | `lib/screens/auth_screen.dart` | **[x]** |
+| **1** | **홈 화면** | `lib/screens/app/app_screens.dart` (`HomeScreen`) | **[x]** |
+| **1-1** | **홈 내비게이터** | `lib/screens/app/app_screens.dart` (`HomeNavigatorScreen`) | **[x]** |
+| **2** | **추모관 목록** | `lib/screens/memorial_list_screen.dart` | **[x]** |
+| **3** | **추모관 상세** | `lib/screens/memorial_detail_screen.dart` | **[x]** |
+| **4** | **추모관 생성/수정** | `lib/screens/memorial_edit_screen.dart` | **[x]** |
+| **5** | **기도 목록** | `lib/screens/prayer_request_screen.dart` | **[x]** |
+| **5-1** | **기도 상세** | `lib/screens/prayer_request_detail_screen.dart` | **[x]** |
+| **5-2** | **기도 요청 작성** | `lib/screens/prayer_request_create_screen.dart` | **[x]** |
 | 6 | 감정 공유 게시판 | - | [ ] |
 | 7 | 마이페이지 | - | [ ] |
 | 8 | 공개 추모관 검색 | - | [ ] |
@@ -19,9 +21,9 @@
 | 11 | 알림 설정 | - | [ ] |
 | 12 | 개인정보 수정 | - | [ ] |
 | 13 | 추모관 공유 | - | [ ] |
-| 14 | 추모관 통계 | - | [ ] |
+| **14** | **추모관 통계** | `lib/screens/memorial_stats_screen.dart` | **[x]** |
 | 15 | 추모관 백업/내보내기 | - | [ ] |
-| 16 | 추모 편지 남기기 | `lib/screens/memorial_letter_screen.dart` | [x] |
+| **16** | **추모 편지 남기기** | `lib/screens/memorial_letter_screen.dart` | **[x]** |
 | 17 | 유언장 | - | [ ] |
 | 18 | 상호 위로 매칭 | - | [ ] |
 | 19 | 감사 혜택 | - | [ ] |

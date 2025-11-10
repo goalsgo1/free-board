@@ -5,6 +5,10 @@ import 'package:free_board/screens/memorial_detail_screen.dart';
 import 'package:free_board/screens/memorial_edit_screen.dart';
 import 'package:free_board/screens/memorial_letter_screen.dart';
 import 'package:free_board/screens/memorial_list_screen.dart';
+import 'package:free_board/screens/prayer_request_screen.dart';
+import 'package:free_board/screens/prayer_request_detail_screen.dart';
+import 'package:free_board/screens/prayer_request_create_screen.dart';
+import 'package:free_board/screens/memorial_stats_screen.dart';
 import 'package:free_board/widgets/accessibility_button.dart';
 import 'package:free_board/widgets/components/app_buttons.dart';
 import 'package:free_board/widgets/components/app_card.dart';
@@ -88,7 +92,7 @@ class HomeScreen extends StatelessWidget {
       routeName: '/memorial-list',
     ),
     _HomeQuickShortcut(
-      title: '기도 요청',
+      title: '기도 목록',
       description: '함께 기도하며 위로 나누기',
       icon: Icons.favorite_outline,
       accentColor: AppPalette.accentPink,
@@ -311,6 +315,18 @@ class HomeScreen extends StatelessWidget {
                 const AppHelperText(
                   text: '통계는 추모관 업데이트 및 기도 참여 현황에 따라 매일 오전 갱신됩니다.',
                   icon: Icons.info_outline,
+                ),
+                const SizedBox(height: 16),
+                AppOutlinedButton(
+                  label: '추모관 통계 자세히 보기',
+                  leadingIcon: Icons.bar_chart_outlined,
+                  onPressed: () {
+                    Navigator.pushNamed(
+                      context,
+                      MemorialStatsScreen.routeName,
+                    );
+                  },
+                  color: AppPalette.warmBrown,
                 ),
               ],
             ),
@@ -818,12 +834,15 @@ class HomeNavigatorScreen extends StatelessWidget {
       actions: [
         const _NavigatorAction(label: '추모관 목록', routeName: '/memorial-list'),
         const _NavigatorAction(label: '추모관 생성/수정', routeName: '/memorial-edit'),
-        const _NavigatorAction(label: '추모관 통계 (준비 중)'),
+        const _NavigatorAction(
+          label: '추모관 통계',
+          routeName: MemorialStatsScreen.routeName,
+        ),
       ],
       tips: const [
         '홈 > 바로 가기 > 추모관 목록',
         '특정 추모관 상세에서 사진/영상/편지 관리',
-        '추모관 통계로 방문 수와 추모금을 확인',
+        '추모관 통계에서 방문과 추모금 변화를 확인',
       ],
     ),
     _NavigatorCategory(
@@ -832,7 +851,14 @@ class HomeNavigatorScreen extends StatelessWidget {
       icon: Icons.favorite_outline,
       accentColor: const Color(0xFFFF6B81),
       actions: [
-        const _NavigatorAction(label: '기도 요청', routeName: '/prayer-request'),
+        const _NavigatorAction(
+          label: '기도 목록',
+          routeName: '/prayer-request',
+        ),
+        const _NavigatorAction(
+          label: '기도 요청 작성',
+          routeName: PrayerRequestCreateScreen.routeName,
+        ),
         const _NavigatorAction(label: '감정 공유 게시판', routeName: '/emotion-board'),
         const _NavigatorAction(label: '후회 없는 편지', routeName: '/regret-letter'),
       ],
@@ -1054,14 +1080,32 @@ final List<AppPageInfo> appPageInfos = [
     builder: (_) => const MemorialEditScreen(),
   ),
   AppPageInfo(
-    title: '기도 요청',
+    title: '추모관 통계',
+    route: MemorialStatsScreen.routeName,
+    icon: Icons.bar_chart,
+    description: '방문 수, 편지, 추모금 등 추모관 활동을 시각적으로 확인하는 화면.',
+    builder: (_) => const MemorialStatsScreen(),
+  ),
+  AppPageInfo(
+    title: '기도 목록',
     route: '/prayer-request',
     icon: Icons.bolt,
-    description: '기도글 등록과 함께 참여/댓글을 통해 서로 위로하는 공간.',
-    builder: (_) => const PlaceholderScreen(
-      title: '기도 요청',
-      description: '기도글 작성과 응원 참여 흐름을 제공하는 커뮤니티 화면입니다.',
-    ),
+    description: '기도글을 모아 보고 함께 기도로 응답하는 공간.',
+    builder: (_) => const PrayerRequestScreen(),
+  ),
+  AppPageInfo(
+    title: '기도 상세',
+    route: '/prayer-detail',
+    icon: Icons.self_improvement,
+    description: '기도 제목과 응원 메시지를 상세히 확인하는 화면.',
+    builder: (_) => const PrayerRequestDetailScreen(),
+  ),
+  AppPageInfo(
+    title: '기도 요청 작성',
+    route: PrayerRequestCreateScreen.routeName,
+    icon: Icons.edit_note,
+    description: '새 기도 제목을 등록하고 공유할 내용을 작성합니다.',
+    builder: (_) => const PrayerRequestCreateScreen(),
   ),
   AppPageInfo(
     title: '감정 공유 게시판',

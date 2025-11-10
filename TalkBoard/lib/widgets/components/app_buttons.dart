@@ -68,9 +68,17 @@ class AppPrimaryButton extends StatelessWidget {
                 children: [
                   if (icon != null) ...[
                     Icon(icon, size: 18, color: resolvedForeground),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 6),
                   ],
-                  Text(label, style: labelStyle),
+                  Flexible(
+                    child: Text(
+                      label,
+                      style: labelStyle,
+                      maxLines: 2,
+                      softWrap: true,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
                 ],
               ),
       ),
