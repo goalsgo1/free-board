@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:free_board/providers/accessibility_provider.dart';
 import 'package:free_board/providers/auth_provider.dart';
+import 'package:free_board/screens/memorial_detail_screen.dart';
+import 'package:free_board/screens/memorial_edit_screen.dart';
+import 'package:free_board/screens/memorial_letter_screen.dart';
+import 'package:free_board/screens/memorial_list_screen.dart';
 import 'package:free_board/widgets/accessibility_button.dart';
 import 'package:free_board/widgets/components/app_buttons.dart';
 import 'package:free_board/widgets/components/app_card.dart';
 import 'package:free_board/widgets/components/app_inputs.dart';
 import 'package:free_board/widgets/components/app_palette.dart';
+import 'package:provider/provider.dart';
 
 Color _colorWithOpacity(Color color, double opacity) {
   return color.withAlpha((opacity.clamp(0.0, 1.0) * 255).round());
@@ -32,20 +37,20 @@ class HomeScreen extends StatelessWidget {
 
   static const routeName = '/home';
 
-  static final List<_MemorialHighlight> _todayMemorials = [
-    const _MemorialHighlight(
+  static final List<_MemorialHighlightData> _todayMemorials = [
+    const _MemorialHighlightData(
       title: '박정윤님 1주기',
       message: '오늘은 첫 번째 기일입니다. 함께했던 미소를 기억해요.',
       dateLabel: '오늘 · 3월 15일',
       imageUrl: 'https://picsum.photos/seed/memory1/420/520',
     ),
-    const _MemorialHighlight(
+    const _MemorialHighlightData(
       title: '고양이 감자 2주기',
       message: '따뜻한 품을 그리워하며 작은 간식을 준비했습니다.',
       dateLabel: '오늘 · 3월 15일',
       imageUrl: 'https://picsum.photos/seed/memory2/420/520',
     ),
-    const _MemorialHighlight(
+    const _MemorialHighlightData(
       title: '한지우님 생신',
       message: '생전 좋아하시던 노래로 추억을 꺼내보는 건 어떨까요?',
       dateLabel: '오늘 · 3월 15일',
@@ -53,20 +58,20 @@ class HomeScreen extends StatelessWidget {
     ),
   ];
 
-  static final List<_MemorialHighlight> _recentMemorials = [
-    const _MemorialHighlight(
+  static final List<_MemorialHighlightData> _recentMemorials = [
+    const _MemorialHighlightData(
       title: '이수진님 추모관',
       message: '가족과 친구들이 남긴 24개의 추모 편지',
       dateLabel: '최근 등록 · 2시간 전',
       imageUrl: 'https://picsum.photos/seed/memory4/420/520',
     ),
-    const _MemorialHighlight(
-      title: '반려견 모카 추억집',
-      message: '산책 사진과 영상을 모아둔 따뜻한 공간',
+    const _MemorialHighlightData(
+      title: '반려견 모카 추억첩',
+      message: '산책 사진과 영상들이 가득 담긴 공간',
       dateLabel: '최근 등록 · 5시간 전',
       imageUrl: 'https://picsum.photos/seed/memory5/420/520',
     ),
-    const _MemorialHighlight(
+    const _MemorialHighlightData(
       title: '김은호님 기념 추억첩',
       message: '아버지를 그리워하는 가족의 마음을 담았습니다.',
       dateLabel: '최근 등록 · 어제',
@@ -79,35 +84,35 @@ class HomeScreen extends StatelessWidget {
       title: '추모관 목록',
       description: '내가 만든 추모관을 살펴봐요',
       icon: Icons.auto_awesome_mosaic_outlined,
-      accentColor: const Color(0xFF8B7355),
+      accentColor: AppPalette.warmBrown,
       routeName: '/memorial-list',
     ),
     _HomeQuickShortcut(
       title: '기도 요청',
       description: '함께 기도하며 위로 나누기',
       icon: Icons.favorite_outline,
-      accentColor: const Color(0xFFFF6B81),
+      accentColor: AppPalette.accentPink,
       routeName: '/prayer-request',
     ),
     _HomeQuickShortcut(
       title: '감정 공유',
       description: '감정을 나누고 공감받아요',
       icon: Icons.forum_outlined,
-      accentColor: const Color(0xFF7E57C2),
+      accentColor: AppPalette.accentLavender,
       routeName: '/emotion-board',
     ),
     _HomeQuickShortcut(
       title: '감사 혜택',
       description: '쿠폰과 혜택을 확인해요',
       icon: Icons.card_giftcard,
-      accentColor: const Color(0xFFFFB74D),
+      accentColor: AppPalette.accentGold,
       routeName: '/gratitude-benefits',
     ),
     _HomeQuickShortcut(
       title: '공개 추모관',
       description: '다른 사람들의 추모 공간 보기',
       icon: Icons.travel_explore,
-      accentColor: const Color(0xFF42A5F5),
+      accentColor: AppPalette.accentLavender,
       routeName: '/public-search',
     ),
     _HomeQuickShortcut(
@@ -127,6 +132,9 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textScale = context.watch<AccessibilityProvider>().textScale;
+    final double highlightListHeight =
+        (320 + (textScale - 1.0) * 160).clamp(320, 440);
     return Scaffold(
       backgroundColor: AppPalette.softCream,
       appBar: AppBar(
@@ -160,17 +168,17 @@ class HomeScreen extends StatelessWidget {
             accentColor: AppPalette.warmBrown,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 Text(
                   '슬픔은 나눌 때 치유됩니다. 오늘도 따뜻한 마음을 전해보세요.',
-                  style: TextStyle(
-                    fontSize: 14,
-                    height: 1.6,
-                    color: AppPalette.caption,
-                  ),
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        height: 1.6,
+                        color: AppPalette.ink,
+                        fontWeight: FontWeight.w600,
+                      ),
                 ),
-                SizedBox(height: 12),
-                AppHelperText(
+                const SizedBox(height: 12),
+                const AppHelperText(
                   icon: Icons.tips_and_updates_outlined,
                   text: '기념일 알림과 추천 추모글을 참고하여 소중한 추억을 함께 나눠보세요.',
                 ),
@@ -194,7 +202,7 @@ class HomeScreen extends StatelessWidget {
             title: '오늘의 기념일',
             subtitle: '오늘 기억해야 할 소중한 분들을 모았어요.',
             icon: Icons.cake_outlined,
-            accentColor: const Color(0xFFFF9AA2),
+            accentColor: AppPalette.accentPink,
             child: Column(
               children: _todayMemorials
                   .map(
@@ -213,7 +221,7 @@ class HomeScreen extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           SizedBox(
-            height: 320,
+            height: highlightListHeight,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -235,7 +243,7 @@ class HomeScreen extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           SizedBox(
-            height: 320,
+            height: highlightListHeight,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -255,7 +263,9 @@ class HomeScreen extends StatelessWidget {
             title: '바로 가기',
             subtitle: '가장 많이 사용하는 기능을 한 번에 이동하세요.',
             icon: Icons.rocket_launch_outlined,
-            accentColor: const Color(0xFF5C6BC0),
+            accentColor: AppPalette.accentLavender,
+            iconColor: AppPalette.accentLavender,
+            titleColor: AppPalette.warmBrown,
             child: LayoutBuilder(
               builder: (context, constraints) {
                 return Column(
@@ -280,7 +290,8 @@ class HomeScreen extends StatelessWidget {
             title: '나의 기록 요약',
             subtitle: '최근 일주일 기준으로 정리했어요.',
             icon: Icons.insights_outlined,
-            accentColor: const Color(0xFF66BB6A),
+            accentColor: AppPalette.accentMint,
+            iconColor: AppPalette.accentMint,
             child: Column(
               children: [
                 Row(
@@ -384,7 +395,7 @@ class _HomeSectionHeader extends StatelessWidget {
 class _AnniversaryTile extends StatelessWidget {
   const _AnniversaryTile({required this.memorial});
 
-  final _MemorialHighlight memorial;
+  final _MemorialHighlightData memorial;
 
   @override
   Widget build(BuildContext context) {
@@ -500,7 +511,7 @@ class _MemorialHighlightCard extends StatelessWidget {
     required this.accentColor,
   });
 
-  final _MemorialHighlight highlight;
+  final _MemorialHighlightData highlight;
   final VoidCallback primaryAction;
   final Color accentColor;
 
@@ -535,48 +546,54 @@ class _MemorialHighlightCard extends StatelessWidget {
               fit: BoxFit.cover,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(14),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  highlight.title,
-                  style: TextStyle(
-                    fontSize: 14.5,
-                    fontWeight: FontWeight.w600,
-                    color: accentColor,
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(14),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    highlight.title,
+                    style: TextStyle(
+                      fontSize: 14.5,
+                      fontWeight: FontWeight.w600,
+                      color: accentColor,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  highlight.message,
-                  style: const TextStyle(
-                    fontSize: 12.5,
-                    height: 1.4,
-                    color: AppPalette.caption,
+                  const SizedBox(height: 6),
+                  Expanded(
+                    child: Text(
+                      highlight.message,
+                      style: const TextStyle(
+                        fontSize: 12.5,
+                        height: 1.4,
+                        color: AppPalette.caption,
+                      ),
+                      maxLines: 4,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  highlight.dateLabel,
-                  style: const TextStyle(
-                    fontSize: 11.5,
-                    color: AppPalette.caption,
+                  Text(
+                    highlight.dateLabel,
+                    style: const TextStyle(
+                      fontSize: 11.5,
+                      color: AppPalette.caption,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 12),
-                AppOutlinedButton(
-                  label: '살펴보기',
-                  leadingIcon: Icons.open_in_new,
-                  onPressed: primaryAction,
-                  color: accentColor,
-                ),
-              ],
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: AppOutlinedButton(
+                      label: '살펴보기',
+                      leadingIcon: Icons.open_in_new,
+                      onPressed: primaryAction,
+                      color: AppPalette.warmBrown,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -596,6 +613,9 @@ class _HomeShortcutTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Color accent = AppPalette.accessibleAccent(shortcut.accentColor);
+    final Color background =
+        Color.lerp(AppPalette.softCream, accent.withOpacity(0.22), 0.3)!;
     return GestureDetector(
       onTap: () {
         if (shortcut.routeName != null) {
@@ -605,32 +625,38 @@ class _HomeShortcutTile extends StatelessWidget {
       child: Container(
         width: width,
         decoration: BoxDecoration(
-          color: _colorWithOpacity(AppPalette.softCream, 0.9),
+          color: background,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: _colorWithOpacity(shortcut.accentColor, 0.35), width: 1.2),
+          border: Border.all(color: accent.withOpacity(0.45), width: 1.3),
+          boxShadow: [
+            BoxShadow(
+              color: accent.withOpacity(0.15),
+              blurRadius: 14,
+              offset: const Offset(0, 6),
+            ),
+          ],
         ),
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(18),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(shortcut.icon, color: shortcut.accentColor, size: 28),
-            const SizedBox(height: 12),
+            Icon(shortcut.icon, color: AppPalette.warmBrown, size: 24),
+            const SizedBox(height: 16),
             Text(
               shortcut.title,
-              style: TextStyle(
-                fontSize: 14.5,
-                fontWeight: FontWeight.w600,
-                color: AppPalette.warmBrown,
-              ),
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    color: AppPalette.warmBrown,
+                  ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             Text(
               shortcut.description,
-              style: const TextStyle(
-                fontSize: 12,
-                height: 1.4,
-                color: AppPalette.caption,
-              ),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    height: 1.45,
+                    color: AppPalette.ink,
+                    fontWeight: FontWeight.w700,
+                  ),
             ),
           ],
         ),
@@ -646,33 +672,41 @@ class _HomeStatTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Color resolvedColor = AppPalette.accessibleAccent(stat.color);
+    final Color foreground = AppPalette.foregroundOn(resolvedColor);
     return Container(
       decoration: BoxDecoration(
-        color: _colorWithOpacity(stat.color, 0.08),
+        color: resolvedColor.withOpacity(0.12),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: _colorWithOpacity(stat.color, 0.2), width: 1.2),
+        border: Border.all(color: resolvedColor.withOpacity(0.3), width: 1.4),
+        boxShadow: [
+          BoxShadow(
+            color: resolvedColor.withOpacity(0.2),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       padding: const EdgeInsets.all(14),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(stat.icon, color: stat.color),
-          const SizedBox(height: 10),
+          Icon(stat.icon, color: resolvedColor, size: 28),
+          const SizedBox(height: 12),
           Text(
             stat.value,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: AppPalette.ink,
-            ),
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: AppPalette.ink,
+                ),
           ),
           const SizedBox(height: 6),
           Text(
             stat.label,
-            style: const TextStyle(
-              fontSize: 12,
-              color: AppPalette.caption,
-            ),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: AppPalette.ink,
+                  fontWeight: FontWeight.w500,
+                ),
           ),
         ],
       ),
@@ -680,8 +714,8 @@ class _HomeStatTile extends StatelessWidget {
   }
 }
 
-class _MemorialHighlight {
-  const _MemorialHighlight({
+class _MemorialHighlightData {
+  const _MemorialHighlightData({
     required this.title,
     required this.message,
     required this.dateLabel,
@@ -784,11 +818,13 @@ class HomeNavigatorScreen extends StatelessWidget {
       actions: [
         const _NavigatorAction(label: '추모관 목록', routeName: '/memorial-list'),
         const _NavigatorAction(label: '추모관 생성/수정', routeName: '/memorial-edit'),
+        const _NavigatorAction(label: '추모 편지 남기기', routeName: '/memorial-letter'),
         const _NavigatorAction(label: '추모관 통계 (준비 중)'),
       ],
       tips: const [
         '홈 > 바로 가기 > 추모관 목록',
         '추모관 상세에서 사진/영상/편지 관리',
+        '추모 편지로 가족과 위로의 메시지 공유',
         '추모관 통계로 방문 수와 추모금을 확인',
       ],
     ),
@@ -996,30 +1032,28 @@ final List<AppPageInfo> appPageInfos = [
     route: '/memorial-list',
     icon: Icons.view_list,
     description: '내가 만든 추모관을 조회하고 검색/필터링할 수 있는 목록 화면.',
-    builder: (_) => const PlaceholderScreen(
-      title: '추모관 목록',
-      description: '사용자가 소유한 추모관 리스트와 검색/필터 기능을 제공합니다.',
-    ),
+    builder: (_) => const MemorialListScreen(),
   ),
   AppPageInfo(
     title: '추모관 상세',
     route: '/memorial-detail',
     icon: Icons.auto_awesome_mosaic,
     description: '고인 정보, 사진/영상, 편지, 댓글 등을 종합적으로 보여주는 화면.',
-    builder: (_) => const PlaceholderScreen(
-      title: '추모관 상세',
-      description: '개별 추모관의 모든 정보와 상호작용 기능을 담을 상세 화면입니다.',
-    ),
+    builder: (_) => const MemorialDetailScreen(),
+  ),
+  AppPageInfo(
+    title: '추모 편지 작성',
+    route: '/memorial-letter',
+    icon: Icons.edit_note,
+    description: '추모관에 편지를 남기고 공개 범위를 설정합니다.',
+    builder: (_) => const MemorialLetterScreen(),
   ),
   AppPageInfo(
     title: '추모관 생성/수정',
     route: '/memorial-edit',
     icon: Icons.edit,
     description: '사진, 편지, 공개 설정 등을 입력해 추모관을 만들고 수정하는 화면.',
-    builder: (_) => const PlaceholderScreen(
-      title: '추모관 생성/수정',
-      description: '추모관을 새로 만들거나 기존 정보를 수정하는 입력 화면입니다.',
-    ),
+    builder: (_) => const MemorialEditScreen(),
   ),
   AppPageInfo(
     title: '기도 요청',

@@ -13,6 +13,8 @@ class AppSurfaceCard extends StatelessWidget {
     this.subtitle,
     this.icon,
     this.accentColor = AppPalette.warmBrown,
+    this.titleColor,
+    this.iconColor,
     required this.child,
   });
 
@@ -20,11 +22,15 @@ class AppSurfaceCard extends StatelessWidget {
   final String? subtitle;
   final IconData? icon;
   final Color accentColor;
+  final Color? titleColor;
+  final Color? iconColor;
   final Widget child;
 
   @override
   Widget build(BuildContext context) {
-    final Color gradientEnd = accentColor.withAlpha(_alphaFromOpacity(0.12));
+    final Color resolvedAccent = AppPalette.accessibleAccent(accentColor);
+    final Color resolvedTitleColor = titleColor ?? AppPalette.warmBrown;
+    final Color gradientEnd = resolvedAccent.withAlpha(_alphaFromOpacity(0.12));
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -36,10 +42,10 @@ class AppSurfaceCard extends StatelessWidget {
           ],
         ),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: accentColor, width: 2),
+        border: Border.all(color: resolvedAccent, width: 2),
         boxShadow: [
           BoxShadow(
-            color: accentColor.withAlpha(_alphaFromOpacity(0.16)),
+            color: resolvedAccent.withAlpha(_alphaFromOpacity(0.16)),
             blurRadius: 14,
             offset: const Offset(0, 6),
           ),
@@ -57,13 +63,13 @@ class AppSurfaceCard extends StatelessWidget {
                   height: 40,
                   width: 40,
                   decoration: BoxDecoration(
-                    color: accentColor.withAlpha(_alphaFromOpacity(0.14)),
+                    color: resolvedAccent.withAlpha(_alphaFromOpacity(0.14)),
                     shape: BoxShape.circle,
-                    border: Border.all(color: accentColor, width: 2),
+                    border: Border.all(color: resolvedAccent, width: 2),
                   ),
                   child: Icon(
                     icon,
-                    color: accentColor,
+                    color: iconColor ?? resolvedAccent,
                     size: 22,
                   ),
                 ),
@@ -76,7 +82,8 @@ class AppSurfaceCard extends StatelessWidget {
                       title,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w600,
-                            color: accentColor,
+                            color: resolvedTitleColor,
+                            fontSize: 18,
                           ),
                     ),
                     if (subtitle != null && subtitle!.isNotEmpty) ...[

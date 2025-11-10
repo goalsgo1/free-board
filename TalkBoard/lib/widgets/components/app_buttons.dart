@@ -6,6 +6,9 @@ int _alphaFromOpacity(double opacity) {
   return (opacity.clamp(0.0, 1.0) * 255).round();
 }
 
+Color _resolveAccent(Color color) => AppPalette.accessibleAccent(color);
+Color _foregroundOn(Color background) => AppPalette.foregroundOn(background);
+
 class AppPrimaryButton extends StatelessWidget {
   const AppPrimaryButton({
     super.key,
@@ -25,6 +28,13 @@ class AppPrimaryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool enabled = onPressed != null && !isLoading;
+    final Color resolvedAccent = _resolveAccent(accentColor);
+    final Color resolvedForeground = _foregroundOn(resolvedAccent);
+    final TextStyle? labelStyle = Theme.of(context).textTheme.labelLarge?.copyWith(
+          fontWeight: FontWeight.w700,
+          color: resolvedForeground,
+          letterSpacing: 0.2,
+        );
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
@@ -35,19 +45,21 @@ class AppPrimaryButton extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          backgroundColor: accentColor,
-          foregroundColor: Colors.white,
-          disabledBackgroundColor: accentColor.withAlpha(_alphaFromOpacity(0.4)),
-          disabledForegroundColor: Colors.white70,
-          shadowColor: accentColor.withAlpha(_alphaFromOpacity(0.35)),
+          backgroundColor: resolvedAccent,
+          foregroundColor: resolvedForeground,
+          disabledBackgroundColor:
+              resolvedAccent.withAlpha(_alphaFromOpacity(0.4)),
+          disabledForegroundColor: resolvedForeground.withAlpha(200),
+          shadowColor: resolvedAccent.withAlpha(_alphaFromOpacity(0.35)),
         ),
         child: isLoading
-            ? const SizedBox(
+            ? SizedBox(
                 height: 22,
                 width: 22,
                 child: CircularProgressIndicator(
                   strokeWidth: 2.4,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  valueColor:
+                      AlwaysStoppedAnimation<Color>(resolvedForeground),
                 ),
               )
             : Row(
@@ -55,16 +67,10 @@ class AppPrimaryButton extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   if (icon != null) ...[
-                    Icon(icon, size: 18, color: Colors.white),
+                    Icon(icon, size: 18, color: resolvedForeground),
                     const SizedBox(width: 8),
                   ],
-                  Text(
-                    label,
-                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
-                  ),
+                  Text(label, style: labelStyle),
                 ],
               ),
       ),
@@ -90,11 +96,23 @@ class AppOutlinedButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Color resolvedColor = _resolveAccent(color);
+    final bool isLight = resolvedColor.computeLuminance() > 0.62;
+    final Color textColor =
+        isLight ? AppPalette.warmBrown : resolvedColor;
+    final TextStyle? textStyle = Theme.of(context).textTheme.labelLarge?.copyWith(
+          fontWeight: FontWeight.w600,
+          color: textColor,
+          letterSpacing: 0.2,
+        );
+
     return OutlinedButton(
       onPressed: onPressed,
       style: OutlinedButton.styleFrom(
-        foregroundColor: color,
-        side: BorderSide(color: color.withAlpha(_alphaFromOpacity(0.6))),
+        foregroundColor: textColor,
+        side: BorderSide(color: textColor.withAlpha(_alphaFromOpacity(0.6))),
+        backgroundColor: Colors.white,
+        overlayColor: textColor.withOpacity(0.12),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
@@ -105,16 +123,13 @@ class AppOutlinedButton extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (leadingIcon != null) ...[
-            Icon(leadingIcon, size: 20, color: color),
+            Icon(leadingIcon, size: 20, color: textColor),
             const SizedBox(width: 10),
           ],
           Flexible(
             child: Text(
               label,
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    fontWeight: FontWeight.w500,
-                    color: color,
-                  ),
+              style: textStyle,
             ),
           ),
           if (badgeText != null) ...[
@@ -145,28 +160,32 @@ class AppHelperText extends StatelessWidget {
     super.key,
     required this.text,
     this.icon,
+    this.color,
   });
 
   final String text;
   final IconData? icon;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
+    final Color resolvedColor = color ?? AppPalette.ink;
     return Padding(
-      padding: const EdgeInsets.only(top: 8),
+      padding: const EdgeInsets.only(top: 10),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (icon != null) ...[
-            Icon(icon, color: AppPalette.warmBrown, size: 16),
-            const SizedBox(width: 8),
+            Icon(icon, color: resolvedColor, size: 18),
+            const SizedBox(width: 10),
           ],
           Expanded(
             child: Text(
               text,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    height: 1.5,
-                    color: AppPalette.caption,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    height: 1.6,
+                    color: resolvedColor,
+                    fontWeight: FontWeight.w600,
                   ),
             ),
           ),

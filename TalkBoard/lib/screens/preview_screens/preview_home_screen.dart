@@ -1,5 +1,17 @@
 import 'package:flutter/material.dart';
 
+import 'package:free_board/widgets/accessibility_button.dart';
+import 'package:free_board/widgets/components/app_buttons.dart';
+import 'package:free_board/widgets/components/app_card.dart';
+import 'package:free_board/widgets/components/app_palette.dart';
+import 'package:free_board/screens/preview_screens/preview_memorial_letter_write_screen.dart';
+import 'package:free_board/screens/preview_screens/preview_memorial_share_screen.dart';
+import 'package:free_board/screens/preview_screens/preview_memorial_stats_screen.dart';
+import 'package:free_board/screens/preview_screens/preview_memorial_backup_screen.dart';
+import 'package:free_board/screens/preview_screens/preview_will_screen.dart';
+import 'package:free_board/screens/preview_screens/preview_matching_screen.dart';
+import 'package:free_board/screens/preview_screens/preview_events_screen.dart';
+
 import 'preview_home_navigator_screen.dart';
 
 class HomeNavigatorCategory {
@@ -82,27 +94,92 @@ final List<HomeNavigatorCategory> homeNavigatorCategories = [
     ],
   ),
   HomeNavigatorCategory(
-    title: '감사 혜택',
-    description: '감사 혜택과 쿠폰, 참여 이력을 확인합니다.',
-    icon: Icons.card_giftcard,
-    accentColor: Color(0xFFFFB74D),
-    targetBuilder: PreviewHomeNavigatorScreen.new,
-    flowSteps: [
-      '홈 → 기억의 탐험 가이드',
-      '🎁 감사 혜택 카드 선택',
-      '감사 혜택 화면에서 참여/혜택 확인',
-    ],
-  ),
-  HomeNavigatorCategory(
-    title: '설정 및 관리',
-    description: '프로필, 알림, 추모금, 백업 등 계정 관리를 지원합니다.',
-    icon: Icons.settings_outlined,
+    title: '12. 개인 정보 수정',
+    description: '프로필 사진, 이름, 비밀번호 변경',
+    icon: Icons.person_outline,
     accentColor: Color(0xFF546E7A),
-    targetBuilder: PreviewHomeNavigatorScreen.new,
+    targetBuilder: () => const PreviewHomeNavigatorScreen(),
     flowSteps: [
       '홈 → 기억의 탐험 가이드',
       '⚙️ 설정 및 관리 카드 선택',
       '설정 항목 중 필요한 기능으로 이동',
+    ],
+  ),
+  HomeNavigatorCategory(
+    title: '13. 추모 편지 남기기',
+    description: '따뜻한 마음을 담아 편지를 작성합니다.',
+    icon: Icons.edit_note_outlined,
+    accentColor: Color(0xFF8B7355),
+    targetBuilder: () => const PreviewMemorialLetterWriteScreen(),
+    flowSteps: [
+      '홈 → 추모 편지 남기기',
+      '편지 작성 화면으로 이동',
+    ],
+  ),
+  HomeNavigatorCategory(
+    title: '14. 추모관 공유',
+    description: '링크, QR 코드, SNS 공유',
+    icon: Icons.share_outlined,
+    accentColor: Color(0xFF8B7355),
+    targetBuilder: () => const PreviewMemorialShareScreen(),
+    flowSteps: [
+      '추모관 상세 → 공유 버튼',
+      '공유 옵션 선택 후 링크 전송',
+    ],
+  ),
+  HomeNavigatorCategory(
+    title: '15. 추모관 통계',
+    description: '방문 수, 댓글 수, 추모금 통계',
+    icon: Icons.pie_chart_outline,
+    accentColor: Color(0xFF8B7355),
+    targetBuilder: () => const PreviewMemorialStatsScreen(),
+    flowSteps: [
+      '추모관 상세 → 통계 버튼',
+      '통계 차트 확인',
+    ],
+  ),
+  HomeNavigatorCategory(
+    title: '16. 추모관 백업/내보내기',
+    description: 'PDF, 사진/영상, 편지, 전체 데이터 백업',
+    icon: Icons.archive_outlined,
+    accentColor: Color(0xFF8B7355),
+    targetBuilder: () => const PreviewMemorialBackupScreen(),
+    flowSteps: [
+      '추모관 상세 → 백업 버튼',
+      '원하는 형식으로 백업 실행',
+    ],
+  ),
+  HomeNavigatorCategory(
+    title: '17. 유언장',
+    description: '유언 작성, 공개/비공개 설정, 템플릿 제공',
+    icon: Icons.article_outlined,
+    accentColor: Color(0xFF8B7355),
+    targetBuilder: () => const PreviewWillScreen(),
+    flowSteps: [
+      '마이페이지 → 유언장',
+      '유언 작성 및 공유 설정',
+    ],
+  ),
+  HomeNavigatorCategory(
+    title: '18. 상호 위로 매칭',
+    description: '프로필 등록, 매칭 신청, 채팅, 신고',
+    icon: Icons.handshake_outlined,
+    accentColor: Color(0xFF8B7355),
+    targetBuilder: () => const PreviewMatchingScreen(),
+    flowSteps: [
+      '마이페이지 → 상호 위로 매칭',
+      '프로필 등록 후 매칭 신청',
+    ],
+  ),
+  HomeNavigatorCategory(
+    title: '19. 감사 혜택',
+    description: '감사 혜택 목록, 참여, 내 혜택 조회',
+    icon: Icons.card_giftcard_outlined,
+    accentColor: Color(0xFF8B7355),
+    targetBuilder: () => const PreviewEventsScreen(),
+    flowSteps: [
+      '홈 → 감사 혜택 배너 또는 마이페이지',
+      '혜택 참여 및 확인',
     ],
   ),
 ];

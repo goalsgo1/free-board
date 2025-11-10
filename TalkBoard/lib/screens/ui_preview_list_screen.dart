@@ -20,6 +20,7 @@ import 'package:free_board/screens/preview_screens/preview_will_screen.dart';
 import 'package:free_board/screens/preview_screens/preview_matching_screen.dart';
 import 'package:free_board/screens/preview_screens/preview_events_screen.dart';
 import 'package:free_board/screens/preview_screens/preview_modals_screen.dart';
+import 'package:free_board/screens/preview_screens/preview_memorial_letter_write_screen.dart';
 
 class UIPreviewListScreen extends StatelessWidget {
   const UIPreviewListScreen({super.key});
@@ -256,9 +257,21 @@ class UIPreviewListScreen extends StatelessWidget {
           ),
           _buildPreviewCard(
             context,
-            '16. 유언장',
+            '16. 추모 편지 남기기',
+            '편지 작성 흐름과 UI를 미리 확인합니다.',
+            Icons.edit_note_outlined,
+            () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const PreviewMemorialLetterWriteScreen(),
+              ),
+            ),
+          ),
+          _buildPreviewCard(
+            context,
+            '17. 유언장',
             '유언 작성, 공개/비공개 설정, 템플릿 제공',
-            Icons.article,
+            Icons.article_outlined,
             () => Navigator.push(
               context,
               MaterialPageRoute(
@@ -268,7 +281,7 @@ class UIPreviewListScreen extends StatelessWidget {
           ),
           _buildPreviewCard(
             context,
-            '17. 상호 위로 매칭',
+            '18. 상호 위로 매칭',
             '프로필 등록, 매칭 신청, 채팅, 신고',
             Icons.favorite_border,
             () => Navigator.push(
@@ -280,7 +293,7 @@ class UIPreviewListScreen extends StatelessWidget {
           ),
           _buildPreviewCard(
             context,
-            '18. 감사 혜택',
+            '19. 감사 혜택',
             '감사 혜택 목록, 참여, 내 혜택 조회',
             Icons.card_giftcard,
             () => Navigator.push(
@@ -295,7 +308,7 @@ class UIPreviewListScreen extends StatelessWidget {
           const SizedBox(height: 24),
           _buildPreviewCard(
             context,
-            '19. 팝업/모달 프리뷰',
+            '20. 팝업/모달 프리뷰',
             '모든 팝업 및 모달 UI 미리보기',
             Icons.window,
             () => Navigator.push(

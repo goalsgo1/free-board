@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'package:free_board/screens/preview_screens/preview_home_screen.dart';
+import 'package:free_board/screens/preview_screens/preview_memorial_letter_write_screen.dart';
+
 class PreviewHomeNavigatorScreen extends StatelessWidget {
   const PreviewHomeNavigatorScreen({super.key});
 
@@ -149,6 +152,21 @@ class PreviewHomeNavigatorScreen extends StatelessWidget {
                   Icons.attach_money,
                   warmBrown,
                   onTap: () {},
+                  onShowPath: () {},
+                ),
+                _buildFeatureCard(
+                  '추모 편지 남기기',
+                  '정성스러운 편지를 작성하고 가족과 공유',
+                  '추모관 상세 → 편지 작성 버튼',
+                  '편지 작성 화면 미리보기',
+                  Icons.edit_note_outlined,
+                  Colors.pink[300]!,
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const PreviewMemorialLetterWriteScreen(),
+                    ),
+                  ),
                   onShowPath: () {},
                 ),
               ],
