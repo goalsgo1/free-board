@@ -6,6 +6,7 @@ import 'package:free_board/widgets/components/app_card.dart';
 import 'package:free_board/widgets/components/app_inputs.dart';
 import 'package:free_board/widgets/components/app_palette.dart';
 import 'package:free_board/screens/will_guide_screen.dart';
+import 'package:free_board/widgets/app_bottom_nav_bar.dart';
 
 class WillScreen extends StatefulWidget {
   const WillScreen({super.key});
@@ -44,6 +45,7 @@ class _WillScreenState extends State<WillScreen> {
         foregroundColor: Colors.white,
         actions: const [AccessibilityButton()],
       ),
+      bottomNavigationBar: const AppBottomNavBar(currentTab: AppNavTab.home),
       body: SafeArea(
         child: Form(
           key: _formKey,

@@ -22,8 +22,7 @@
 | 8 | 공개 추모관 검색 | - | [ ] |
 | 9 | 책장 디자인 | - | [ ] |
 | **10** | **추모금 내역** | `lib/screens/donation_history_screen.dart` | **[x]** |
-| **11** | **알림 설정** | `lib/screens/notification_settings_screen.dart` | **[x]** |
-| **11-1** | **설정** | `lib/screens/settings_screen.dart` | **[x]** |
+| **11** | **설정 (알림 포함)** | `lib/screens/settings_screen.dart` | **[x]** |
 | **11-1** | **프리미엄 구독 관리** | `lib/screens/premium_subscription_screen.dart` | **[x]** |
 | **12** | **개인정보 수정** | `lib/screens/profile_edit_screen.dart` | **[x]** |
 | 13 | 추모관 공유 | - | [ ] |

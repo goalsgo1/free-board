@@ -5,6 +5,7 @@ import 'package:free_board/widgets/components/app_buttons.dart';
 import 'package:free_board/widgets/components/app_card.dart';
 import 'package:free_board/widgets/components/app_inputs.dart';
 import 'package:free_board/widgets/components/app_palette.dart';
+import 'package:free_board/widgets/app_bottom_nav_bar.dart';
 
 class WillGuideScreen extends StatelessWidget {
   const WillGuideScreen({super.key});
@@ -21,6 +22,7 @@ class WillGuideScreen extends StatelessWidget {
         foregroundColor: Colors.white,
         actions: const [AccessibilityButton()],
       ),
+      bottomNavigationBar: const AppBottomNavBar(currentTab: AppNavTab.home),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
         children: [

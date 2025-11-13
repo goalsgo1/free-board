@@ -600,7 +600,6 @@ class _SupportLinksCard extends StatelessWidget {
               label: '추모관 설정으로 이동',
               leadingIcon: Icons.settings,
               onPressed: () {},
-              color: AppPalette.warmBrown,
             ),
           ],
         ),

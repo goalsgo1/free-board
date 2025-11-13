@@ -5,6 +5,7 @@ import 'package:free_board/widgets/components/app_buttons.dart';
 import 'package:free_board/widgets/components/app_card.dart';
 import 'package:free_board/widgets/components/app_palette.dart';
 import 'package:free_board/widgets/components/app_inputs.dart';
+import 'package:free_board/widgets/app_bottom_nav_bar.dart';
 
 class ProfileEditScreen extends StatefulWidget {
   const ProfileEditScreen({super.key});
@@ -53,6 +54,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         foregroundColor: Colors.white,
         actions: const [AccessibilityButton()],
       ),
+      bottomNavigationBar: const AppBottomNavBar(currentTab: AppNavTab.mypage),
       body: SafeArea(
         child: Form(
           key: _formKey,

@@ -5,6 +5,7 @@ import 'package:free_board/widgets/components/app_buttons.dart';
 import 'package:free_board/widgets/components/app_card.dart';
 import 'package:free_board/widgets/components/app_inputs.dart';
 import 'package:free_board/widgets/components/app_palette.dart';
+import 'package:free_board/widgets/app_bottom_nav_bar.dart';
 
 class MatchingProfileEditorScreen extends StatefulWidget {
   const MatchingProfileEditorScreen({super.key});
@@ -46,6 +47,7 @@ class _MatchingProfileEditorScreenState extends State<MatchingProfileEditorScree
         foregroundColor: Colors.white,
         actions: const [AccessibilityButton()],
       ),
+      bottomNavigationBar: const AppBottomNavBar(currentTab: AppNavTab.matching),
       body: SafeArea(
         child: Form(
           key: _formKey,

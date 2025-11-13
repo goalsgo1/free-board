@@ -31,8 +31,8 @@ import 'package:free_board/screens/mypage_screen.dart';
 import 'package:free_board/screens/profile_edit_screen.dart';
 import 'package:free_board/screens/premium_subscription_screen.dart';
 import 'package:free_board/screens/donation_history_screen.dart';
-import 'package:free_board/screens/notification_settings_screen.dart';
 import 'package:free_board/screens/settings_screen.dart';
+import 'package:free_board/widgets/app_bottom_nav_bar.dart';
 
 Color _colorWithOpacity(Color color, double opacity) {
   return color.withAlpha((opacity.clamp(0.0, 1.0) * 255).round());
@@ -135,6 +135,7 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
+      bottomNavigationBar: const AppBottomNavBar(currentTab: AppNavTab.home),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 28),
         children: [
@@ -770,18 +771,16 @@ class HomeNavigatorScreen extends StatelessWidget {
     ),
     _NavigatorCategory(
       title: '설정 & 계정 관리',
-      description: '마이페이지, 알림, 데이터 구조 문서를 빠르게 이동합니다.',
+      description: '마이페이지, 앱 설정 등 계정 관련 화면으로 이동합니다.',
       icon: Icons.settings_outlined,
       accentColor: const Color(0xFF546E7A),
       actions: [
         const _NavigatorAction(label: '마이페이지', routeName: MyPageScreen.routeName),
-        const _NavigatorAction(label: '알림 설정', routeName: NotificationSettingsScreen.routeName),
-        const _NavigatorAction(label: '데이터베이스 구조', routeName: '/database-structure'),
+        const _NavigatorAction(label: '앱 설정', routeName: SettingsScreen.routeName),
       ],
       tips: const [
         '마이페이지에서 프로필/추모금/구독 관리',
-        '알림 설정에서 기념일·댓글 알림 조정',
-        '데이터 구조 문서로 정보 흐름 파악',
+        '앱 설정에서 알림·야간 모드·데이터 백업 옵션 확인',
       ],
     ),
   ];
@@ -797,6 +796,7 @@ class HomeNavigatorScreen extends StatelessWidget {
         elevation: 0,
         actions: const [AccessibilityButton()],
       ),
+      bottomNavigationBar: const AppBottomNavBar(currentTab: AppNavTab.home),
       body: ListView.separated(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
         itemBuilder: (context, index) {
@@ -1112,13 +1112,6 @@ final List<AppPageInfo> appPageInfos = [
     icon: Icons.volunteer_activism,
     description: '추모관으로 전달된 추모금/헌화 내역을 확인하고 감사장을 보내는 화면.',
     builder: (_) => const DonationHistoryScreen(),
-  ),
-  AppPageInfo(
-    title: '알림 설정',
-    route: NotificationSettingsScreen.routeName,
-    icon: Icons.notifications_outlined,
-    description: '알림 설정을 관리하는 화면.',
-    builder: (_) => const NotificationSettingsScreen(),
   ),
   AppPageInfo(
     title: '설정',

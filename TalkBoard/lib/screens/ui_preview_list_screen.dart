@@ -11,7 +11,7 @@ import 'package:free_board/screens/preview_screens/preview_mypage_screen.dart';
 import 'package:free_board/screens/preview_screens/preview_search_screen.dart';
 import 'package:free_board/screens/preview_screens/preview_bookshelf_screen.dart';
 import 'package:free_board/screens/preview_screens/preview_donation_history_screen.dart';
-import 'package:free_board/screens/preview_screens/preview_notification_settings_screen.dart';
+import 'package:free_board/screens/settings_screen.dart';
 import 'package:free_board/screens/preview_screens/preview_profile_edit_screen.dart';
 import 'package:free_board/screens/preview_screens/preview_memorial_share_screen.dart';
 import 'package:free_board/screens/preview_screens/preview_memorial_stats_screen.dart';
@@ -197,13 +197,13 @@ class UIPreviewListScreen extends StatelessWidget {
           ),
           _buildPreviewCard(
             context,
-            '11. 알림 설정',
-            '기념일, 댓글, 기도 알림 설정',
-            Icons.notifications,
+            '11. 설정',
+            '알림, 야간 모드, 계정 보안 옵션 통합 관리',
+            Icons.settings,
             () => Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const PreviewNotificationSettingsScreen(),
+                builder: (context) => const SettingsScreen(),
               ),
             ),
           ),

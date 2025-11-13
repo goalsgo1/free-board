@@ -8,6 +8,7 @@ import 'package:free_board/screens/profile_edit_screen.dart';
 import 'package:free_board/screens/premium_subscription_screen.dart';
 import 'package:free_board/screens/donation_history_screen.dart';
 import 'package:free_board/screens/settings_screen.dart';
+import 'package:free_board/widgets/app_bottom_nav_bar.dart';
 
 class MyPageScreen extends StatefulWidget {
   const MyPageScreen({super.key});
@@ -50,6 +51,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
         foregroundColor: Colors.white,
         actions: const [AccessibilityButton()],
       ),
+      bottomNavigationBar: const AppBottomNavBar(currentTab: AppNavTab.mypage),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
