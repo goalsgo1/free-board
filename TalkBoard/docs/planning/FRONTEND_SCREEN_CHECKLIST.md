@@ -18,19 +18,25 @@
 | **6-2** | **후회 없는 편지** | `lib/screens/regret_letter_board_screen.dart` | **[x]** |
 | **6-3** | **후회 없는 편지 작성** | `lib/screens/regret_letter_create_screen.dart` | **[x]** |
 | **6-4** | **후회 없는 편지 상세** | `lib/screens/regret_letter_detail_screen.dart` | **[x]** |
-| 7 | 마이페이지 | - | [ ] |
+| **7** | **마이페이지** | `lib/screens/mypage_screen.dart` | **[x]** |
 | 8 | 공개 추모관 검색 | - | [ ] |
 | 9 | 책장 디자인 | - | [ ] |
-| 10 | 추모금 내역 | - | [ ] |
-| 11 | 알림 설정 | - | [ ] |
-| 12 | 개인정보 수정 | - | [ ] |
+| **10** | **추모금 내역** | `lib/screens/donation_history_screen.dart` | **[x]** |
+| **11** | **알림 설정** | `lib/screens/notification_settings_screen.dart` | **[x]** |
+| **11-1** | **설정** | `lib/screens/settings_screen.dart` | **[x]** |
+| **11-1** | **프리미엄 구독 관리** | `lib/screens/premium_subscription_screen.dart` | **[x]** |
+| **12** | **개인정보 수정** | `lib/screens/profile_edit_screen.dart` | **[x]** |
 | 13 | 추모관 공유 | - | [ ] |
 | **14** | **추모관 통계** | `lib/screens/memorial_stats_screen.dart` | **[x]** |
 | 15 | 추모관 백업/내보내기 | - | [ ] |
 | **16** | **추모 편지 남기기** | `lib/screens/memorial_letter_screen.dart` | **[x]** |
-| 17 | 유언장 | - | [ ] |
-| 18 | 상호 위로 매칭 | - | [ ] |
-| 19 | 감사 혜택 | - | [ ] |
+| **17** | **유언장** | `lib/screens/will_screen.dart` | **[x]** |
+| **17-1** | **유언장 작성 가이드** | `lib/screens/will_guide_screen.dart` | **[x]** |
+| **18** | **상호 위로 매칭** | `lib/screens/matching_screen.dart` | **[x]** |
+| **18-1** | **매칭 프로필 등록 가이드** | `lib/screens/matching_profile_guide_screen.dart` | **[x]** |
+| **18-2** | **내 프로필 작성** | `lib/screens/matching_profile_editor_screen.dart` | **[x]** |
+| **18-3** | **AI 기억 답장** | `lib/screens/ai_memory_reply_screen.dart` | **[x]** |
+| **19** | **감사 혜택** | `lib/screens/gratitude_benefits_screen.dart` | **[x]** |
 | 20 | 팝업/모달 프리뷰 | - | [ ] |
 
 > 모든 화면 구현 시 `docs/planning/COMPONENTS.md`에 정의된 공통 컴포넌트를 우선적으로 사용합니다. 화면 전용 컴포넌트가 필요할 경우, 컴포넌트 가이드에 추가 정의 후 사용합니다.

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:free_board/providers/accessibility_provider.dart';
 import 'package:free_board/providers/auth_provider.dart';
+import 'package:free_board/screens/matching_screen.dart';
 import 'package:free_board/screens/memorial_detail_screen.dart';
 import 'package:free_board/screens/memorial_edit_screen.dart';
 import 'package:free_board/screens/memorial_letter_screen.dart';
@@ -14,12 +15,24 @@ import 'package:free_board/screens/regret_letter_board_screen.dart';
 import 'package:free_board/screens/regret_letter_create_screen.dart';
 import 'package:free_board/screens/regret_letter_detail_screen.dart';
 import 'package:free_board/screens/memorial_stats_screen.dart';
+import 'package:free_board/screens/will_screen.dart';
 import 'package:free_board/widgets/accessibility_button.dart';
 import 'package:free_board/widgets/components/app_buttons.dart';
 import 'package:free_board/widgets/components/app_card.dart';
 import 'package:free_board/widgets/components/app_inputs.dart';
 import 'package:free_board/widgets/components/app_palette.dart';
 import 'package:provider/provider.dart';
+import 'package:free_board/screens/matching_profile_guide_screen.dart';
+import 'package:free_board/screens/matching_profile_editor_screen.dart';
+import 'package:free_board/screens/will_guide_screen.dart';
+import 'package:free_board/screens/ai_memory_reply_screen.dart';
+import 'package:free_board/screens/gratitude_benefits_screen.dart';
+import 'package:free_board/screens/mypage_screen.dart';
+import 'package:free_board/screens/profile_edit_screen.dart';
+import 'package:free_board/screens/premium_subscription_screen.dart';
+import 'package:free_board/screens/donation_history_screen.dart';
+import 'package:free_board/screens/notification_settings_screen.dart';
+import 'package:free_board/screens/settings_screen.dart';
 
 Color _colorWithOpacity(Color color, double opacity) {
   return color.withAlpha((opacity.clamp(0.0, 1.0) * 255).round());
@@ -733,14 +746,14 @@ class HomeNavigatorScreen extends StatelessWidget {
       icon: Icons.smart_toy_outlined,
       accentColor: const Color(0xFF7E57C2),
       actions: [
-        const _NavigatorAction(label: '상호 위로 매칭', routeName: '/matching'),
-        const _NavigatorAction(label: '유언장', routeName: '/will'),
-        const _NavigatorAction(label: 'AI 기억 답장 (준비 중)'),
+        const _NavigatorAction(label: '상호 위로 매칭', routeName: MatchingScreen.routeName),
+        const _NavigatorAction(label: 'AI 기억 답장', routeName: AiMemoryReplyScreen.routeName),
+        const _NavigatorAction(label: '유언장', routeName: WillScreen.routeName),
       ],
       tips: const [
+        'AI 기억 답장은 곧 답장 생성 기능과 함께 공개될 예정입니다.',
         '프로필 등록 후 상호 위로 매칭 신청',
         '유언장 템플릿으로 빠르게 초안 작성',
-        'AI 기억 답장은 향후 업데이트 예정',
       ],
     ),
     _NavigatorCategory(
@@ -749,7 +762,7 @@ class HomeNavigatorScreen extends StatelessWidget {
       icon: Icons.card_giftcard,
       accentColor: const Color(0xFF42A5F5),
       actions: [
-        const _NavigatorAction(label: '감사 혜택', routeName: '/gratitude-benefits'),
+        const _NavigatorAction(label: '감사 혜택', routeName: GratitudeBenefitsScreen.routeName),
       ],
       tips: const [
         '감사 혜택 배너에서 최신 쿠폰과 이벤트를 확인하세요.',
@@ -761,8 +774,8 @@ class HomeNavigatorScreen extends StatelessWidget {
       icon: Icons.settings_outlined,
       accentColor: const Color(0xFF546E7A),
       actions: [
-        const _NavigatorAction(label: '마이페이지', routeName: '/mypage'),
-        const _NavigatorAction(label: '알림 설정', routeName: '/settings'),
+        const _NavigatorAction(label: '마이페이지', routeName: MyPageScreen.routeName),
+        const _NavigatorAction(label: '알림 설정', routeName: NotificationSettingsScreen.routeName),
         const _NavigatorAction(label: '데이터베이스 구조', routeName: '/database-structure'),
       ],
       tips: const [
@@ -998,53 +1011,59 @@ final List<AppPageInfo> appPageInfos = [
   ),
   AppPageInfo(
     title: '유언장',
-    route: '/will',
+    route: WillScreen.routeName,
     icon: Icons.gavel,
     description: '미리 유언을 작성하고 템플릿을 참고할 수 있는 화면.',
-    builder: (_) => const PlaceholderScreen(
-      title: '유언장',
-      description: '유언 작성과 템플릿 제공, 공개 설정을 지원하는 화면입니다.',
-    ),
+    builder: (_) => const WillScreen(),
   ),
   AppPageInfo(
     title: '상호 위로 매칭',
-    route: '/matching',
+    route: MatchingScreen.routeName,
     icon: Icons.handshake,
     description: '상실 경험을 가진 사람들끼리 프로필 매칭과 채팅을 지원.',
-    builder: (_) => const PlaceholderScreen(
-      title: '상호 위로 매칭',
-      description: '프로필 등록과 매칭, 채팅 흐름을 담는 매칭 화면입니다.',
-    ),
+    builder: (_) => const MatchingScreen(),
+  ),
+  AppPageInfo(
+    title: '상호 위로 매칭 가이드',
+    route: MatchingProfileGuideScreen.routeName,
+    icon: Icons.lightbulb_outline,
+    description: '상호 위로 매칭 기능을 이해하고 활용하는 방법을 안내하는 화면.',
+    builder: (_) => const MatchingProfileGuideScreen(),
+  ),
+  AppPageInfo(
+    title: '상호 위로 매칭 프로필 가이드',
+    route: MatchingProfileGuideScreen.routeName,
+    icon: Icons.menu_book_outlined,
+    description: '프로필 작성 전 확인해야 할 준비사항과 안전 가이드를 안내합니다.',
+    builder: (_) => const MatchingProfileGuideScreen(),
+  ),
+  AppPageInfo(
+    title: '상호 위로 프로필 작성',
+    route: MatchingProfileEditorScreen.routeName,
+    icon: Icons.person_add_alt_1_outlined,
+    description: '상실 경험과 위로 방식 등을 입력해 매칭에 참여하는 프로필 작성 화면입니다.',
+    builder: (_) => const MatchingProfileEditorScreen(),
   ),
   AppPageInfo(
     title: '감사 혜택',
-    route: '/gratitude-benefits',
+    route: GratitudeBenefitsScreen.routeName,
     icon: Icons.card_giftcard,
     description: '감사 혜택과 참여 현황을 확인하고 신청할 수 있는 화면.',
-    builder: (_) => const PlaceholderScreen(
-      title: '감사 혜택',
-      description: '진행 중인 혜택과 참여 내역을 보여주는 혜택 화면입니다.',
-    ),
+    builder: (_) => const GratitudeBenefitsScreen(),
   ),
   AppPageInfo(
     title: '마이페이지',
-    route: '/mypage',
+    route: MyPageScreen.routeName,
     icon: Icons.person,
     description: '프로필, 추모금, 프리미엄 구독, 아이템 구매 등을 관리.',
-    builder: (_) => const PlaceholderScreen(
-      title: '마이페이지',
-      description: '개인 정보와 결제/구독/추모금 관리를 담당하는 마이페이지입니다.',
-    ),
+    builder: (_) => const MyPageScreen(),
   ),
   AppPageInfo(
-    title: '설정',
-    route: '/settings',
-    icon: Icons.settings,
-    description: '계정, 알림, 프라이버시, 데이터 관리 등 전체 설정을 통합.',
-    builder: (_) => const PlaceholderScreen(
-      title: '설정',
-      description: '앱 계정과 알림, 데이터 설정을 관리하는 통합 설정 화면입니다.',
-    ),
+    title: '정보 수정',
+    route: ProfileEditScreen.routeName,
+    icon: Icons.edit,
+    description: '닉네임, 연락처, 프로필 공개 범위를 수정하는 화면.',
+    builder: (_) => const ProfileEditScreen(),
   ),
   AppPageInfo(
     title: '공개 추모관 검색',
@@ -1065,6 +1084,48 @@ final List<AppPageInfo> appPageInfos = [
       title: '책장 디자인',
       description: '추억을 책장 컨셉으로 탐색하는 상징적 시각화 화면입니다.',
     ),
+  ),
+  AppPageInfo(
+    title: '유언장 작성 가이드',
+    route: WillGuideScreen.routeName,
+    icon: Icons.menu_book_outlined,
+    description: '유언장 작성 단계, 준비물, 주의 사항을 안내하는 가이드 화면입니다.',
+    builder: (_) => const WillGuideScreen(),
+  ),
+  AppPageInfo(
+    title: 'AI 기억 답장',
+    route: AiMemoryReplyScreen.routeName,
+    icon: Icons.smart_toy_outlined,
+    description: 'AI가 기억을 답장하는 화면입니다.',
+    builder: (_) => const AiMemoryReplyScreen(),
+  ),
+  AppPageInfo(
+    title: '프리미엄 구독 관리',
+    route: PremiumSubscriptionScreen.routeName,
+    icon: Icons.workspace_premium,
+    description: '프리미엄 멤버십 혜택, 결제 정보, 자동 갱신을 관리하는 화면.',
+    builder: (_) => const PremiumSubscriptionScreen(),
+  ),
+  AppPageInfo(
+    title: '추모금 내역',
+    route: DonationHistoryScreen.routeName,
+    icon: Icons.volunteer_activism,
+    description: '추모관으로 전달된 추모금/헌화 내역을 확인하고 감사장을 보내는 화면.',
+    builder: (_) => const DonationHistoryScreen(),
+  ),
+  AppPageInfo(
+    title: '알림 설정',
+    route: NotificationSettingsScreen.routeName,
+    icon: Icons.notifications_outlined,
+    description: '알림 설정을 관리하는 화면.',
+    builder: (_) => const NotificationSettingsScreen(),
+  ),
+  AppPageInfo(
+    title: '설정',
+    route: SettingsScreen.routeName,
+    icon: Icons.settings,
+    description: '알림, 계정, 데이터 관련 설정을 한눈에 안내하는 화면.',
+    builder: (_) => const SettingsScreen(),
   ),
 ];
 

@@ -73,7 +73,7 @@ class PreviewMemorialListScreen extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+          onPressed: () {},
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         shape: const RoundedRectangleBorder(
