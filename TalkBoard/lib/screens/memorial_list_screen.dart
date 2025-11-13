@@ -171,21 +171,23 @@ class _MemorialListScreenState extends State<MemorialListScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-          onPressed: () => _showComingSoon(context, '추모관 생성은 추후 구현 예정입니다.'),
-          icon: Icon(boardTheme.createAction.icon, color: Colors.black),
-          label: Text(
-            boardTheme.createAction.label,
-            style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black,
-                ),
-          ),
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-            side: const BorderSide(color: Colors.black, width: 1.4),
-          ),
+        onPressed: () {
+          Navigator.pushNamed(context, '/memorial-edit');
+        },
+        icon: Icon(boardTheme.createAction.icon, color: Colors.black),
+        label: Text(
+          boardTheme.createAction.label,
+          style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: Colors.black,
+              ),
+        ),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: const BorderSide(color: Colors.black, width: 1.4),
+        ),
       ),
       body: SafeArea(
         child: ListView(
@@ -261,8 +263,7 @@ class _MemorialListScreenState extends State<MemorialListScreen> {
                   const SizedBox(height: 12),
                   ..._items.take(2).map(
                     (item) {
-                      final accent =
-                          AppPalette.accessibleAccent(item.accentColor);
+                      const Color accent = AppPalette.warmBrown;
                       return Padding(
                       padding: const EdgeInsets.only(bottom: 12),
                       child: Row(
@@ -487,13 +488,13 @@ class _MemorialListCard extends StatelessWidget {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: accent.withOpacity(0.12),
+                      color: AppPalette.warmBrown.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(999),
                     ),
                     child: Text(
                       tag,
                       style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                            color: accent,
+                            color: AppPalette.warmBrown,
                             fontWeight: FontWeight.w600,
                           ),
                     ),

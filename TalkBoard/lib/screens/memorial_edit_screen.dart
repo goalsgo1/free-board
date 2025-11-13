@@ -360,7 +360,6 @@ class _SaveButtonRow extends StatelessWidget {
                 Navigator.pop(context);
               }
             },
-            accentColor: AppPalette.warmBrown,
           ),
         ),
       ],
