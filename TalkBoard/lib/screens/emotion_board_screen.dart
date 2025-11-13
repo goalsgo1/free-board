@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:free_board/board/board_themes.dart';
 import 'package:free_board/widgets/accessibility_button.dart';
+import 'package:free_board/widgets/board/board_section_card.dart';
+import 'package:free_board/widgets/board/board_theme.dart';
 import 'package:free_board/widgets/components/app_buttons.dart';
 import 'package:free_board/widgets/components/app_card.dart';
 import 'package:free_board/widgets/components/app_inputs.dart';
 import 'package:free_board/widgets/components/app_palette.dart';
-import 'package:free_board/screens/emotion_post_create_screen.dart';
 
 class EmotionBoardScreen extends StatefulWidget {
   const EmotionBoardScreen({super.key});
@@ -100,154 +102,128 @@ class _EmotionBoardScreenState extends State<EmotionBoardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final boardTheme = BoardThemes.emotion;
+    final filterConfig = boardTheme.filterSection;
     final filtered = _filteredPosts;
     return Scaffold(
-      backgroundColor: AppPalette.softCream,
+      backgroundColor: boardTheme.backgroundColor,
       appBar: AppBar(
-        title: const Text('감정 공유 게시판'),
-        backgroundColor: AppPalette.warmBrown,
-        foregroundColor: Colors.white,
+        title: Text('${boardTheme.displayName} 게시판'),
+        backgroundColor: boardTheme.appBarColor,
+        foregroundColor: boardTheme.appBarForegroundColor,
         actions: const [AccessibilityButton()],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: AppPalette.accentLavender,
-        foregroundColor: AppPalette.warmBrown,
-        icon: const Icon(Icons.add_comment_outlined),
-        label: const Text('감정 글 작성'),
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: const BorderSide(color: Colors.black, width: 1.4),
+          ),
+        icon: Icon(boardTheme.createAction.icon),
+        label: Text(boardTheme.createAction.label),
         onPressed: () {
           Navigator.pushNamed(
             context,
-            EmotionPostCreateScreen.routeName,
+            boardTheme.createAction.routeName,
           );
         },
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
         children: [
-          AppSurfaceCard(
-            title: '지금 마음을 나눠요',
-            subtitle: '감사, 그리움, 위로, 기쁨 등 다양한 감정을 공유할 수 있어요.',
-            icon: Icons.favorite_outline,
-            accentColor: AppPalette.accentPink,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                AppHelperText(
-                  icon: Icons.info_outline,
-                  text:
-                      '누군가의 이야기가 또 다른 누군가에게 큰 위로가 됩니다. 부드러운 언어와 배려를 담아주세요.',
-                ),
-                SizedBox(height: 12),
-                AppHelperText(
-                  icon: Icons.tips_and_updates_outlined,
-                  text: '욕설이나 비방, 개인정보가 포함된 글은 비공개 처리될 수 있습니다.',
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-          AppSurfaceCard(
-            title: '감정으로 찾아보기',
-            subtitle: '공유하고 싶은 감정 키워드를 선택해보세요.',
-            icon: Icons.filter_alt_outlined,
-            accentColor: AppPalette.accentMint,
+          BoardSectionCard.fromIntro(
+            intro: boardTheme.introSection,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: const [
-                    '전체',
-                    '감사',
-                    '그리움',
-                    '위로',
-                    '기쁨',
-                    '슬픔',
-                    '응원',
-                  ].map((mood) {
-                    return ChoiceChip(
-                      label: Text(mood),
-                      selected: _selectedMood == mood,
-                      onSelected: (value) {
-                        if (!value) return;
-                        setState(() {
-                          _selectedMood = mood;
-                        });
-                      },
-                      selectedColor: AppPalette.warmBrown,
-                      labelStyle: TextStyle(
-                        color: _selectedMood == mood
-                            ? Colors.white
-                            : AppPalette.warmBrown,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      backgroundColor: Colors.white,
-                      side: BorderSide(
-                        color: _selectedMood == mood
-                            ? AppPalette.warmBrown
-                            : AppPalette.warmBeige,
-                      ),
-                    );
-                  }).toList(),
-                ),
-                const SizedBox(height: 16),
-                AppTextField(
-                  controller: _searchController,
-                  label: '키워드 검색',
-                  hint: '예: 위로, 감사, #가족',
-                  prefixIcon: const Icon(Icons.search),
-                  onChanged: (_) => setState(() {}),
-                ),
+                BoardHelperMessages(messages: boardTheme.introSection.helperMessages),
               ],
             ),
           ),
           const SizedBox(height: 20),
-          AppSurfaceCard(
-            title: '주간 인기 태그',
-            subtitle: '많이 공감받은 태그로 글을 찾아보세요.',
-            icon: Icons.tag_outlined,
-            accentColor: AppPalette.accentGold,
-            child: Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: const [
-                '#가족',
-                '#위로',
-                '#감사',
-                '#추억',
-                '#새로운시작',
-                '#기쁨',
-                '#회복중',
-              ]
-                  .map(
-                    (tag) => Chip(
-                      label: Text(tag),
-                      backgroundColor:
-                          AppPalette.accentLavender.withOpacity(0.18),
-                      labelStyle: const TextStyle(
-                        color: AppPalette.warmBrown,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  )
-                  .toList(),
-            ),
-          ),
-          const SizedBox(height: 24),
-          if (filtered.isEmpty)
-            AppSurfaceCard(
-              title: '검색 결과가 없어요',
-              subtitle: '조건을 조정하거나 다른 키워드로 다시 검색해보세요.',
-              icon: Icons.sentiment_dissatisfied_outlined,
-              accentColor: AppPalette.accentPink,
+          if (filterConfig != null)
+            BoardSectionCard(
+              title: filterConfig.title,
+              subtitle: filterConfig.subtitle,
+              icon: filterConfig.icon,
+              accentColor: filterConfig.accentColor,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  AppHelperText(
-                    icon: Icons.info_outline,
-                    text: '감정을 변경하거나 키워드를 줄이면 더 많은 글을 볼 수 있습니다.',
+                children: [
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: filterConfig.filterLabels.map((mood) {
+                      final isSelected = _selectedMood == mood;
+                      return ChoiceChip(
+                        label: Text(mood),
+                        selected: isSelected,
+                        onSelected: (value) {
+                          if (!value) return;
+                          setState(() {
+                            _selectedMood = mood;
+                          });
+                        },
+                        selectedColor: AppPalette.warmBrown,
+                        labelStyle: TextStyle(
+                          color:
+                              isSelected ? Colors.white : AppPalette.warmBrown,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        backgroundColor: Colors.white,
+                        side: BorderSide(
+                          color: isSelected
+                              ? AppPalette.warmBrown
+                              : AppPalette.warmBeige,
+                        ),
+                      );
+                    }).toList(),
                   ),
+                  const SizedBox(height: 16),
+                  AppTextField(
+                    controller: _searchController,
+                    label: filterConfig.searchLabel,
+                    hint: filterConfig.searchHint,
+                    prefixIcon: const Icon(Icons.search),
+                    onChanged: (_) => setState(() {}),
+                  ),
+                ],
+              ),
+            ),
+          const SizedBox(height: 20),
+          if (boardTheme.tagSection != null)
+            BoardSectionCard.fromTagSection(
+              tagSection: boardTheme.tagSection!,
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: boardTheme.tagSection!.tags
+                    .map(
+                      (tag) => Chip(
+                        label: Text(tag),
+                        backgroundColor:
+                            AppPalette.accentLavender.withOpacity(0.18),
+                        labelStyle: const TextStyle(
+                          color: AppPalette.warmBrown,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    )
+                    .toList(),
+              ),
+            ),
+          const SizedBox(height: 24),
+          if (filtered.isEmpty)
+            BoardSectionCard(
+              title: boardTheme.emptyState.title,
+              subtitle: boardTheme.emptyState.subtitle,
+              icon: boardTheme.emptyState.icon,
+              accentColor: boardTheme.emptyState.accentColor,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  BoardHelperMessages(messages: boardTheme.emptyState.helperMessages),
                 ],
               ),
             )
@@ -255,7 +231,10 @@ class _EmotionBoardScreenState extends State<EmotionBoardScreen> {
             for (final post in filtered)
               Padding(
                 padding: const EdgeInsets.only(bottom: 16),
-                child: _EmotionPostCard(post: post),
+                child: _EmotionPostCard(
+                  post: post,
+                  theme: boardTheme,
+                ),
               ),
           ],
         ],
@@ -293,13 +272,17 @@ class _EmotionPost {
 }
 
 class _EmotionPostCard extends StatelessWidget {
-  const _EmotionPostCard({required this.post});
+  const _EmotionPostCard({
+    required this.post,
+    required this.theme,
+  });
 
   final _EmotionPost post;
+  final BoardThemeData theme;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final textTheme = Theme.of(context).textTheme;
     return AppSurfaceCard(
       title: post.mood,
       subtitle: '${post.author} · ${post.relation} · ${post.submittedAgoLabel}',
@@ -310,7 +293,7 @@ class _EmotionPostCard extends StatelessWidget {
         children: [
           Text(
             post.excerpt,
-            style: theme.textTheme.bodyMedium?.copyWith(
+            style: textTheme.bodyMedium?.copyWith(
               height: 1.6,
               color: AppPalette.ink,
             ),
@@ -362,27 +345,29 @@ class _EmotionPostCard extends StatelessWidget {
             children: [
               Expanded(
                 child: AppOutlinedButton(
-                  label: '공감 남기기',
-                  leadingIcon: Icons.favorite_border,
+                  label: theme.actions.secondaryCta,
+                  leadingIcon: theme.actions.secondaryIcon,
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('"${post.mood}" 글에 공감했습니다.')),
+                      SnackBar(
+                        content: Text(
+                          '"${post.mood}" 글에 ${theme.actions.reactionLabel}을 남겼습니다.',
+                        ),
+                      ),
                     );
                   },
-                  color: post.accentColor,
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: AppPrimaryButton(
-                  label: '댓글 보기',
-                  icon: Icons.forum_outlined,
+                  label: theme.actions.primaryCta,
+                  icon: theme.actions.primaryIcon,
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('댓글 목록은 준비 중입니다.')),
                     );
                   },
-                  accentColor: post.accentColor,
                 ),
               ),
             ],
@@ -423,14 +408,5 @@ class _EmotionStat extends StatelessWidget {
       ],
     );
   }
-}
-
-String _formatCurrency(int amount) {
-  final digits = amount.toString();
-  final formatted = digits.replaceAllMapped(
-    RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
-    (match) => '${match.group(1)},',
-  );
-  return '₩$formatted';
 }
 

@@ -343,7 +343,6 @@ class _AuthScreenState extends State<AuthScreen> {
                               icon: _isLogin ? Icons.login_rounded : Icons.person_add_alt_1,
                               onPressed: authProvider.isLoading ? null : _submit,
                               isLoading: authProvider.isLoading,
-                              accentColor: AppPalette.warmBrown,
                             );
                           },
                         ),

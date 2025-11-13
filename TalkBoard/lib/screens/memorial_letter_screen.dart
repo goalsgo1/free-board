@@ -9,6 +9,8 @@ import 'package:free_board/widgets/components/app_palette.dart';
 class MemorialLetterScreen extends StatefulWidget {
   const MemorialLetterScreen({super.key});
 
+  static const routeName = '/memorial-letter';
+
   @override
   State<MemorialLetterScreen> createState() => _MemorialLetterScreenState();
 }
@@ -171,36 +173,15 @@ class _MemorialLetterScreenState extends State<MemorialLetterScreen> {
                     child: AppOutlinedButton(
                       label: '임시 저장',
                       leadingIcon: Icons.save_outlined,
-                      onPressed: () {
-                        FocusScope.of(context).unfocus();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('임시 저장 기능은 준비 중입니다.'),
-                          ),
-                        );
-                      },
-                      color: AppPalette.warmBrown,
+                      onPressed: _handleDraftSave,
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: AppPrimaryButton(
                       label: '편지 등록하기',
-                      icon: Icons.check_circle_outline,
-                      onPressed: () {
-                        if (_formKey.currentState?.validate() ?? false) {
-                          FocusScope.of(context).unfocus();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                '${data.memorialName}에 편지를 등록했어요.',
-                              ),
-                            ),
-                          );
-                          Navigator.pop(context);
-                        }
-                      },
-                      accentColor: AppPalette.warmBrown,
+                      icon: Icons.send_outlined,
+                      onPressed: _handleSubmit,
                     ),
                   ),
                 ],
@@ -210,6 +191,26 @@ class _MemorialLetterScreenState extends State<MemorialLetterScreen> {
         ),
       ),
     );
+  }
+
+  void _handleDraftSave() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('임시 저장 기능은 준비 중입니다.'),
+      ),
+    );
+  }
+
+  void _handleSubmit() {
+    if (!(_formKey.currentState?.validate() ?? false)) {
+      return;
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('추모 편지가 등록되었습니다. 검토 후 공개됩니다.'),
+      ),
+    );
+    Navigator.pop(context);
   }
 }
 

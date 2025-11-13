@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
+import 'package:free_board/board/board_themes.dart';
 import 'package:free_board/widgets/accessibility_button.dart';
+import 'package:free_board/widgets/board/board_section_card.dart';
+import 'package:free_board/widgets/board/board_theme.dart';
 import 'package:free_board/widgets/components/app_buttons.dart';
 import 'package:free_board/widgets/components/app_card.dart';
 import 'package:free_board/widgets/components/app_inputs.dart';
@@ -142,13 +145,16 @@ class _MemorialListScreenState extends State<MemorialListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final boardTheme = BoardThemes.memorial;
+    final filterConfig = boardTheme.filterSection;
+    final statsConfig = boardTheme.statsConfig;
     final filteredItems = _filteredItems;
     return Scaffold(
-      backgroundColor: AppPalette.softCream,
+      backgroundColor: boardTheme.backgroundColor,
       appBar: AppBar(
-        title: const Text('추모관 목록'),
-        backgroundColor: AppPalette.warmBrown,
-        foregroundColor: Colors.white,
+        title: Text(boardTheme.displayName),
+        backgroundColor: boardTheme.appBarColor,
+        foregroundColor: boardTheme.appBarForegroundColor,
         actions: [
           const AccessibilityButton(),
           IconButton(
@@ -165,21 +171,28 @@ class _MemorialListScreenState extends State<MemorialListScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _showComingSoon(context, '추모관 생성은 추후 구현 예정입니다.'),
-        icon: const Icon(Icons.add),
-        label: const Text('새 추모관 만들기'),
-        backgroundColor: AppPalette.warmBrown,
-        foregroundColor: Colors.white,
+          onPressed: () => _showComingSoon(context, '추모관 생성은 추후 구현 예정입니다.'),
+          icon: Icon(boardTheme.createAction.icon, color: Colors.black),
+          label: Text(
+            boardTheme.createAction.label,
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
+                ),
+          ),
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: const BorderSide(color: Colors.black, width: 1.4),
+          ),
       ),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
           children: [
-            AppSurfaceCard(
-              title: '내 추모관 현황',
-              subtitle: '필터와 검색을 활용해 추억을 빠르게 찾아보세요.',
-              icon: Icons.auto_awesome,
-              accentColor: AppPalette.warmBrown,
+            BoardSectionCard.fromIntro(
+              intro: boardTheme.introSection,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -213,12 +226,31 @@ class _MemorialListScreenState extends State<MemorialListScreen> {
                     ],
                   ),
                   const SizedBox(height: 18),
-                  Divider(
-                    color: AppPalette.warmBrown.withOpacity(0.2),
-                    height: 1,
-                    thickness: 1,
-                  ),
-                  const SizedBox(height: 18),
+                  if (statsConfig?.title != null) ...[
+                    Divider(
+                      color: AppPalette.warmBrown.withOpacity(0.2),
+                      height: 1,
+                      thickness: 1,
+                    ),
+                    const SizedBox(height: 18),
+                    Text(
+                      statsConfig!.title!,
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: AppPalette.warmBrown,
+                          ),
+                    ),
+                    if (statsConfig.subtitle != null) ...[
+                      const SizedBox(height: 6),
+                      Text(
+                        statsConfig.subtitle!,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: AppPalette.caption,
+                            ),
+                      ),
+                    ],
+                    const SizedBox(height: 12),
+                  ],
                   Text(
                     '다가오는 기념일',
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
@@ -277,29 +309,56 @@ class _MemorialListScreenState extends State<MemorialListScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 24),
-            AppTextField(
-              controller: _searchController,
-              label: '추모관 검색',
-              hint: '추모관 이름이나 추억 키워드를 입력하세요',
-              prefixIcon: const Icon(Icons.search),
-              textInputAction: TextInputAction.search,
-              onFieldSubmitted: (_) => setState(() {}),
-            ),
-            const SizedBox(height: 12),
-            _FilterChips(
-              filters: _filters,
-              selected: _selectedFilter,
-              onSelected: (value) {
-                setState(() {
-                  _selectedFilter = value;
-                });
-              },
-            ),
-            const AppHelperText(
-              text: '즐겨찾기 버튼을 눌러 자주 찾는 추모관을 한 번에 모아볼 수 있어요.',
-              icon: Icons.info_outline,
-            ),
+            if (filterConfig != null) ...[
+              const SizedBox(height: 24),
+              BoardSectionCard(
+                title: filterConfig.title,
+                subtitle: filterConfig.subtitle,
+                icon: filterConfig.icon,
+                accentColor: filterConfig.accentColor,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AppTextField(
+                      controller: _searchController,
+                      label: filterConfig.searchLabel,
+                      hint: filterConfig.searchHint,
+                      prefixIcon: const Icon(Icons.search),
+                      textInputAction: TextInputAction.search,
+                      onFieldSubmitted: (_) => setState(() {}),
+                    ),
+                    const SizedBox(height: 16),
+                    _FilterChips(
+                      filters: _filters,
+                      selected: _selectedFilter,
+                      onSelected: (value) {
+                        setState(() {
+                          _selectedFilter = value;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    SwitchListTile.adaptive(
+                      contentPadding: EdgeInsets.zero,
+                      title: const Text('즐겨찾기만 보기'),
+                      subtitle: const Text('즐겨찾기한 추모관만 목록에 표시합니다.'),
+                      value: _showFavoritesOnly,
+                      onChanged: (value) {
+                        setState(() {
+                          _showFavoritesOnly = value;
+                        });
+                      },
+                      activeColor: AppPalette.warmBrown,
+                    ),
+                    const SizedBox(height: 8),
+                    const AppHelperText(
+                      text: '즐겨찾기 버튼을 눌러 자주 찾는 추모관을 한 번에 모아볼 수 있어요.',
+                      icon: Icons.info_outline,
+                    ),
+                  ],
+                ),
+              ),
+            ],
             const SizedBox(height: 24),
             if (filteredItems.isEmpty)
               _EmptyState(
@@ -311,6 +370,7 @@ class _MemorialListScreenState extends State<MemorialListScreen> {
                     _searchController.clear();
                   });
                 },
+                theme: boardTheme,
               )
             else
               ...filteredItems.map(
@@ -318,6 +378,7 @@ class _MemorialListScreenState extends State<MemorialListScreen> {
                   padding: const EdgeInsets.only(bottom: 18),
                   child: _MemorialListCard(
                     item: item,
+                    theme: boardTheme,
                     onOpen: () => Navigator.pushNamed(
                       context,
                       '/memorial-detail',
@@ -398,11 +459,13 @@ class _MemorialListCard extends StatelessWidget {
     required this.item,
     required this.onOpen,
     required this.onShare,
+    required this.theme,
   });
 
   final _MemorialListItem item;
   final VoidCallback onOpen;
   final VoidCallback onShare;
+  final BoardThemeData theme;
 
   @override
   Widget build(BuildContext context) {
@@ -456,10 +519,9 @@ class _MemorialListCard extends StatelessWidget {
           ),
           const SizedBox(height: 18),
           AppPrimaryButton(
-            label: '추모관 들어가기',
-            icon: Icons.open_in_new,
+            label: theme.actions.primaryCta,
+            icon: theme.actions.primaryIcon,
             onPressed: onOpen,
-            accentColor: accent,
           ),
           const SizedBox(height: 12),
           SizedBox(
@@ -468,7 +530,6 @@ class _MemorialListCard extends StatelessWidget {
               label: '공유하기 (준비 중)',
               leadingIcon: Icons.share,
               onPressed: onShare,
-              color: accent,
             ),
           ),
           if (item.isFavorite)
@@ -533,47 +594,34 @@ class _EmptyState extends StatelessWidget {
   const _EmptyState({
     required this.searchText,
     required this.onClearFilter,
+    required this.theme,
   });
 
   final String searchText;
   final VoidCallback onClearFilter;
+  final BoardThemeData theme;
 
   @override
   Widget build(BuildContext context) {
     final query = searchText.trim();
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppPalette.warmBeige, width: 1.5),
+    final messages = [
+      BoardHelperMessage(
+        icon: Icons.search_off,
+        text: query.isEmpty
+            ? '필터 조건을 조정하거나 새 추모관을 만들어보세요.'
+            : '“$query”에 해당하는 추모관이 없습니다. 철자를 다시 확인하거나 다른 검색어를 사용해보세요.',
       ),
+      ...theme.emptyState.helperMessages,
+    ];
+    return BoardSectionCard(
+      title: theme.emptyState.title,
+      subtitle: theme.emptyState.subtitle,
+      icon: theme.emptyState.icon,
+      accentColor: theme.emptyState.accentColor,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              const Icon(Icons.search_off, color: AppPalette.warmBrown),
-              const SizedBox(width: 12),
-              Text(
-                '조건에 맞는 추모관이 없어요',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: AppPalette.warmBrown,
-                    ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Text(
-            query.isEmpty
-                ? '필터 조건을 조정하거나 새 추모관을 만들어보세요.'
-                : '“$query”에 해당하는 추모관이 없습니다. 철자를 다시 확인하거나 다른 검색어를 사용해보세요.',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  height: 1.5,
-                  color: AppPalette.caption,
-                ),
-          ),
+          BoardHelperMessages(messages: messages),
           const SizedBox(height: 18),
           SizedBox(
             width: double.infinity,

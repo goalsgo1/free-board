@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:free_board/board/board_themes.dart';
 import 'package:free_board/widgets/accessibility_button.dart';
+import 'package:free_board/widgets/board/board_section_card.dart';
+import 'package:free_board/widgets/board/board_theme.dart';
 import 'package:free_board/widgets/components/app_buttons.dart';
 import 'package:free_board/widgets/components/app_card.dart';
 import 'package:free_board/widgets/components/app_palette.dart';
 import 'package:free_board/widgets/components/app_inputs.dart';
 import 'package:free_board/screens/prayer_request_detail_screen.dart';
-import 'package:free_board/screens/prayer_request_create_screen.dart';
 
 class PrayerRequestScreen extends StatefulWidget {
   const PrayerRequestScreen({super.key});
@@ -34,6 +36,7 @@ class _PrayerRequestScreenState extends State<PrayerRequestScreen> {
       accentColor: AppPalette.accentPink,
       donationAmount: 185000,
       donorCount: 11,
+      allowsDonation: true,
     ),
     const _PrayerRequest(
       id: 'prayer-002',
@@ -51,6 +54,7 @@ class _PrayerRequestScreenState extends State<PrayerRequestScreen> {
       accentColor: AppPalette.accentMint,
       donationAmount: 296000,
       donorCount: 24,
+      allowsDonation: true,
     ),
     const _PrayerRequest(
       id: 'prayer-003',
@@ -68,6 +72,7 @@ class _PrayerRequestScreenState extends State<PrayerRequestScreen> {
       accentColor: AppPalette.accentLavender,
       donationAmount: 98000,
       donorCount: 9,
+      allowsDonation: false,
     ),
     const _PrayerRequest(
       id: 'prayer-004',
@@ -85,6 +90,7 @@ class _PrayerRequestScreenState extends State<PrayerRequestScreen> {
       accentColor: AppPalette.accentGold,
       donationAmount: 412000,
       donorCount: 31,
+      allowsDonation: false,
     ),
   ];
 
@@ -120,35 +126,37 @@ class _PrayerRequestScreenState extends State<PrayerRequestScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final boardTheme = BoardThemes.prayer;
+    final filterConfig = boardTheme.filterSection;
+    final statsConfig = boardTheme.statsConfig;
     final filtered = _filteredRequests;
     return Scaffold(
-      backgroundColor: AppPalette.softCream,
+      backgroundColor: boardTheme.backgroundColor,
       appBar: AppBar(
-        title: const Text('기도 목록'),
-        backgroundColor: AppPalette.warmBrown,
-        foregroundColor: Colors.white,
+        title: Text('${boardTheme.displayName} 목록'),
+        backgroundColor: boardTheme.appBarColor,
+        foregroundColor: boardTheme.appBarForegroundColor,
         actions: const [AccessibilityButton()],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: AppPalette.warmBrown,
-        foregroundColor: Colors.white,
-        icon: const Icon(Icons.edit_note),
-        label: const Text('기도 요청 작성'),
-        onPressed: () {
-          Navigator.pushNamed(
-            context,
-            PrayerRequestCreateScreen.routeName,
-          );
-        },
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: const BorderSide(color: Colors.black, width: 1.4),
+          ),
+        icon: Icon(boardTheme.createAction.icon),
+        label: Text(boardTheme.createAction.label),
+        onPressed: () => Navigator.pushNamed(
+          context,
+          boardTheme.createAction.routeName,
+        ),
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
         children: [
-          AppSurfaceCard(
-            title: '함께 기도해요',
-            subtitle: '오늘 올라온 기도 제목과 응답 현황을 한눈에 확인하세요.',
-            icon: Icons.volunteer_activism_outlined,
-            accentColor: AppPalette.accentLavender,
+          BoardSectionCard.fromIntro(
+            intro: boardTheme.introSection,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -156,7 +164,10 @@ class _PrayerRequestScreenState extends State<PrayerRequestScreen> {
                   builder: (context, constraints) {
                     final maxWidth = constraints.maxWidth;
                     final isCompact = maxWidth < 560;
-                    final stats = _PrayerSummaryStat.generate(_requests);
+                    final stats = _PrayerSummaryStat.generate(
+                      _requests,
+                      statsConfig,
+                    );
                     return Wrap(
                       spacing: 12,
                       runSpacing: 12,
@@ -171,99 +182,96 @@ class _PrayerRequestScreenState extends State<PrayerRequestScreen> {
                     );
                   },
                 ),
-                const SizedBox(height: 16),
-                const AppHelperText(
-                  icon: Icons.tips_and_updates_outlined,
-                  text: '기도 요청은 매일 오전 9시와 오후 9시에 새로고침됩니다.',
+                const SizedBox(height: 12),
+                BoardHelperMessages(
+                  messages: boardTheme.introSection.helperMessages,
                 ),
               ],
             ),
           ),
           const SizedBox(height: 20),
-          AppSurfaceCard(
-            title: '찾고 있는 기도 요청이 있나요?',
-            subtitle: '카테고리와 검색을 이용해 빠르게 찾아보세요.',
-            icon: Icons.filter_alt_outlined,
-            accentColor: AppPalette.accentMint,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AppTextField(
-                  controller: _searchController,
-                  label: '기도 제목 검색',
-                  hint: '예: 항암 치료, 회복, 진로',
-                  prefixIcon: const Icon(Icons.search),
-                  onChanged: (_) => setState(() {}),
-                ),
-                const SizedBox(height: 16),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: _categories
-                      .map(
-                        (category) => ChoiceChip(
-                          label: Text(category),
-                          selected: _selectedCategory == category,
-                          onSelected: (value) {
-                            if (!value) return;
-                            setState(() {
-                              _selectedCategory = category;
-                            });
-                          },
-                          selectedColor: AppPalette.warmBrown,
-                          labelStyle: TextStyle(
-                            color: _selectedCategory == category
-                                ? Colors.white
-                                : AppPalette.warmBrown,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          backgroundColor: Colors.white,
-                          side: BorderSide(
-                            color: _selectedCategory == category
-                                ? AppPalette.warmBrown
-                                : AppPalette.warmBeige,
-                          ),
-                        ),
-                      )
-                      .toList(),
-                ),
-                const SizedBox(height: 12),
-                SwitchListTile.adaptive(
-                  contentPadding: EdgeInsets.zero,
-                  title: const Text('응답 완료된 기도는 숨기기'),
-                  value: _hideAnswered,
-                  onChanged: (value) {
-                    setState(() {
-                      _hideAnswered = value;
-                    });
-                  },
-                  activeColor: AppPalette.warmBrown,
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 24),
-          if (filtered.isEmpty)
-            AppSurfaceCard(
-              title: '검색 결과가 없어요',
-              subtitle: '조건을 조정하거나 다른 키워드로 다시 검색해보세요.',
-              icon: Icons.sentiment_dissatisfied_outlined,
-              accentColor: AppPalette.accentPink,
+          if (filterConfig != null)
+            BoardSectionCard(
+              title: filterConfig.title,
+              subtitle: filterConfig.subtitle,
+              icon: filterConfig.icon,
+              accentColor: filterConfig.accentColor,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  AppHelperText(
-                    icon: Icons.info_outline,
-                    text: '응답 완료 숨기기를 끄거나 전체 카테고리를 선택하면 더 많은 기도 제목을 볼 수 있습니다.',
+                children: [
+                  AppTextField(
+                    controller: _searchController,
+                    label: filterConfig.searchLabel,
+                    hint: filterConfig.searchHint,
+                    prefixIcon: const Icon(Icons.search),
+                    onChanged: (_) => setState(() {}),
+                  ),
+                  const SizedBox(height: 16),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: _categories
+                        .map(
+                          (category) => ChoiceChip(
+                            label: Text(category),
+                            selected: _selectedCategory == category,
+                            onSelected: (value) {
+                              if (!value) return;
+                              setState(() {
+                                _selectedCategory = category;
+                              });
+                            },
+                            selectedColor: AppPalette.warmBrown,
+                            labelStyle: TextStyle(
+                              color: _selectedCategory == category
+                                  ? Colors.white
+                                  : AppPalette.warmBrown,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            backgroundColor: Colors.white,
+                            side: BorderSide(
+                              color: _selectedCategory == category
+                                  ? AppPalette.warmBrown
+                                  : AppPalette.warmBeige,
+                            ),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                  const SizedBox(height: 12),
+                  SwitchListTile.adaptive(
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text('응답 완료된 기도는 숨기기'),
+                    value: _hideAnswered,
+                    onChanged: (value) {
+                      setState(() {
+                        _hideAnswered = value;
+                      });
+                    },
+                    activeColor: AppPalette.warmBrown,
                   ),
                 ],
+              ),
+            ),
+          const SizedBox(height: 24),
+          if (filtered.isEmpty)
+            BoardSectionCard(
+              title: boardTheme.emptyState.title,
+              subtitle: boardTheme.emptyState.subtitle,
+              icon: boardTheme.emptyState.icon,
+              accentColor: boardTheme.emptyState.accentColor,
+              child: BoardHelperMessages(
+                messages: boardTheme.emptyState.helperMessages,
               ),
             )
           else ...[
             for (final request in filtered)
               Padding(
                 padding: const EdgeInsets.only(bottom: 16),
-                child: _PrayerRequestCard(request: request),
+                child: _PrayerRequestCard(
+                  request: request,
+                  theme: boardTheme,
+                ),
               ),
           ],
         ],
@@ -309,13 +317,28 @@ class _PrayerRequest {
 }
 
 class _PrayerRequestCard extends StatelessWidget {
-  const _PrayerRequestCard({required this.request});
+  const _PrayerRequestCard({
+    required this.request,
+    required this.theme,
+  });
 
   final _PrayerRequest request;
+  final BoardThemeData theme;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final textTheme = Theme.of(context).textTheme;
+    final totalPrayersDefinition = theme.statsConfig?.items.firstWhere(
+      (item) => item.id == 'total_prayers',
+      orElse: () => const BoardStatDefinition(
+        id: 'total_prayers',
+        label: '기도 참여',
+        icon: Icons.self_improvement_outlined,
+        accentColor: AppPalette.accentMint,
+      ),
+    );
+    final totalPrayerLabel = totalPrayersDefinition?.label ?? '기도 참여';
+    final totalPrayerColor = totalPrayersDefinition?.accentColor ?? AppPalette.accentMint;
     return AppSurfaceCard(
       title: request.title,
       subtitle:
@@ -327,7 +350,7 @@ class _PrayerRequestCard extends StatelessWidget {
         children: [
           Text(
             request.excerpt,
-            style: theme.textTheme.bodyMedium?.copyWith(
+            style: textTheme.bodyMedium?.copyWith(
               height: 1.5,
               color: AppPalette.ink,
             ),
@@ -347,9 +370,9 @@ class _PrayerRequestCard extends StatelessWidget {
             children: [
               _PrayerStatChip(
                 icon: Icons.self_improvement_outlined,
-                label: '기도 참여',
+                label: totalPrayerLabel,
                 value: '${request.prayerCount}',
-                accentColor: AppPalette.accentMint,
+                accentColor: totalPrayerColor,
               ),
               _PrayerStatChip(
                 icon: Icons.forum_outlined,
@@ -381,17 +404,16 @@ class _PrayerRequestCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     AppOutlinedButton(
-                      label: '기도로 응답하기',
-                      leadingIcon: Icons.pan_tool_alt_outlined,
-                      onPressed: () => _showPrayerSnack(context, request.title),
-                      color: request.accentColor,
+                            label: theme.actions.secondaryCta,
+                            leadingIcon: theme.actions.secondaryIcon,
+                            onPressed: () =>
+                                _showPrayerSnack(context, request.title, theme),
                     ),
                     const SizedBox(height: 12),
                     AppPrimaryButton(
-                      label: '자세히 보기',
-                      icon: Icons.arrow_forward,
+                            label: theme.actions.primaryCta,
+                            icon: theme.actions.primaryIcon,
                       onPressed: () => _openPrayerDetail(context, request),
-                      accentColor: request.accentColor,
                     ),
                   ],
                 );
@@ -400,19 +422,18 @@ class _PrayerRequestCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: AppOutlinedButton(
-                      label: '기도로 응답하기',
-                      leadingIcon: Icons.pan_tool_alt_outlined,
-                      onPressed: () => _showPrayerSnack(context, request.title),
-                      color: request.accentColor,
+                      label: theme.actions.secondaryCta,
+                      leadingIcon: theme.actions.secondaryIcon,
+                      onPressed: () =>
+                          _showPrayerSnack(context, request.title, theme),
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: AppPrimaryButton(
-                      label: '자세히 보기',
-                      icon: Icons.arrow_forward,
+                      label: theme.actions.primaryCta,
+                      icon: theme.actions.primaryIcon,
                       onPressed: () => _openPrayerDetail(context, request),
-                      accentColor: request.accentColor,
                     ),
                   ),
                 ],
@@ -425,10 +446,16 @@ class _PrayerRequestCard extends StatelessWidget {
   }
 }
 
-void _showPrayerSnack(BuildContext context, String title) {
+void _showPrayerSnack(
+  BuildContext context,
+  String title,
+  BoardThemeData theme,
+) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
-      content: Text('"$title" 기도에 함께 했습니다.'),
+      content: Text(
+        '"$title" ${theme.actions.reactionLabel}을 남겼습니다.',
+      ),
     ),
   );
 }
@@ -540,31 +567,75 @@ class _PrayerSummaryStat {
   final String value;
   final Color accentColor;
 
-  static List<_PrayerSummaryStat> generate(List<_PrayerRequest> requests) {
+  static List<_PrayerSummaryStat> generate(
+    List<_PrayerRequest> requests,
+    BoardStatsConfig? config,
+  ) {
     final todaysRequests =
         requests.where((request) => request.submittedAgoLabel.contains('시간')).length;
     final totalPrayers =
         requests.fold<int>(0, (sum, request) => sum + request.prayerCount);
     final answered = requests.where((request) => request.isAnswered).length;
 
+    BoardStatDefinition resolve(
+      String id,
+      String fallbackLabel,
+      IconData fallbackIcon,
+      Color fallbackColor,
+    ) {
+      final fallback = BoardStatDefinition(
+        id: id,
+        label: fallbackLabel,
+        icon: fallbackIcon,
+        accentColor: fallbackColor,
+      );
+      if (config == null) {
+        return fallback;
+      }
+
+      return config.items.firstWhere(
+        (item) => item.id == id,
+        orElse: () => fallback,
+      );
+    }
+
+    final todayDef = resolve(
+      'today_count',
+      '오늘 등록',
+      Icons.pending_actions_outlined,
+      AppPalette.accentPink,
+    );
+    final totalDef = resolve(
+      'total_prayers',
+      '누적 기도 참여',
+      Icons.self_improvement_outlined,
+      AppPalette.accentMint,
+    );
+    final answeredDef = resolve(
+      'answered',
+      '응답된 기도',
+      Icons.celebration_outlined,
+      AppPalette.accentGold,
+    );
+
     return [
       _PrayerSummaryStat(
-        icon: Icons.pending_actions_outlined,
-        label: '오늘 등록',
+        icon: todayDef.icon,
+        label: todayDef.label,
         value: '$todaysRequests건',
-        accentColor: AppPalette.accentPink,
+        accentColor: todayDef.accentColor,
       ),
       _PrayerSummaryStat(
-        icon: Icons.self_improvement_outlined,
-        label: '누적 기도 참여',
+        icon: totalDef.icon,
+        label: totalDef.label,
         value: '$totalPrayers회',
-        accentColor: AppPalette.accentMint,
+        accentColor: totalDef.accentColor,
       ),
       _PrayerSummaryStat(
-        icon: Icons.celebration_outlined,
-        label: '응답된 기도',
+        icon: answeredDef.icon,
+        label: answeredDef.label,
         value: '$answered건',
-        accentColor: AppPalette.accentGold,
+        accentColor: answeredDef.accentColor,
       ),
     ];
   }

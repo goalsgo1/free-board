@@ -1,18 +1,12 @@
 import 'package:flutter/material.dart';
 
-import 'package:free_board/widgets/components/app_palette.dart';
-
-int _alphaFromOpacity(double opacity) {
-  return (opacity.clamp(0.0, 1.0) * 255).round();
-}
-
 class AppSurfaceCard extends StatelessWidget {
   const AppSurfaceCard({
     super.key,
     required this.title,
     this.subtitle,
     this.icon,
-    this.accentColor = AppPalette.warmBrown,
+    this.accentColor = Colors.black,
     this.titleColor,
     this.iconColor,
     required this.child,
@@ -28,25 +22,18 @@ class AppSurfaceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color resolvedAccent = AppPalette.accessibleAccent(accentColor);
-    final Color resolvedTitleColor = titleColor ?? AppPalette.warmBrown;
-    final Color gradientEnd = resolvedAccent.withAlpha(_alphaFromOpacity(0.12));
+    final Color resolvedTitleColor = titleColor ?? Colors.black;
+    final Color subtitleColor = Colors.black.withValues(alpha: 0.7);
+    final Color borderColor = Colors.black.withValues(alpha: 0.08);
     return Container(
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.white,
-            gradientEnd,
-          ],
-        ),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: resolvedAccent, width: 2),
+        border: Border.all(color: borderColor, width: 1.2),
         boxShadow: [
           BoxShadow(
-            color: resolvedAccent.withAlpha(_alphaFromOpacity(0.16)),
-            blurRadius: 14,
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 12,
             offset: const Offset(0, 6),
           ),
         ],
@@ -63,13 +50,13 @@ class AppSurfaceCard extends StatelessWidget {
                   height: 40,
                   width: 40,
                   decoration: BoxDecoration(
-                    color: resolvedAccent.withAlpha(_alphaFromOpacity(0.14)),
+                    color: Colors.white,
                     shape: BoxShape.circle,
-                    border: Border.all(color: resolvedAccent, width: 2),
+                    border: Border.all(color: borderColor, width: 1.2),
                   ),
                   child: Icon(
                     icon,
-                    color: iconColor ?? resolvedAccent,
+                    color: iconColor ?? Colors.black87,
                     size: 22,
                   ),
                 ),
@@ -92,7 +79,7 @@ class AppSurfaceCard extends StatelessWidget {
                         subtitle!,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               height: 1.45,
-                              color: AppPalette.caption,
+                              color: subtitleColor,
                             ),
                       ),
                     ],

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:free_board/board/board_themes.dart';
 import 'package:free_board/widgets/accessibility_button.dart';
+import 'package:free_board/widgets/board/board_section_card.dart';
+import 'package:free_board/widgets/board/board_theme.dart';
 import 'package:free_board/widgets/components/app_buttons.dart';
 import 'package:free_board/widgets/components/app_card.dart';
 import 'package:free_board/widgets/components/app_inputs.dart';
@@ -37,37 +40,61 @@ class _EmotionPostCreateScreenState extends State<EmotionPostCreateScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final boardTheme = BoardThemes.emotion;
+    final formTheme = boardTheme.createForm!;
+    final mediaRules = boardTheme.mediaRules;
+    final List<BoardHelperMessage> mediaMessages = [
+      if (mediaRules?.maxAttachments != null)
+        BoardHelperMessage(
+          icon: Icons.collections_outlined,
+          text: '최대 ${mediaRules!.maxAttachments}개의 파일을 업로드할 수 있어요.',
+        ),
+      if (mediaRules?.maxFileSizeMb != null)
+        BoardHelperMessage(
+          icon: Icons.cloud_upload_outlined,
+          text: '파일당 ${mediaRules!.maxFileSizeMb!.toStringAsFixed(0)}MB 이내로 업로드해주세요.',
+        ),
+      ...?mediaRules?.helperMessages,
+      ...formTheme.additionalMediaGuidelines,
+    ];
+    final supportedTypes = (mediaRules?.supportedTypes ?? const [])
+        .map((type) => '#$type')
+        .join(' · ');
     return Scaffold(
-      backgroundColor: AppPalette.softCream,
+      backgroundColor: boardTheme.backgroundColor,
       appBar: AppBar(
-        title: const Text('감정 글 작성'),
-        backgroundColor: AppPalette.warmBrown,
-        foregroundColor: Colors.white,
+        title: Text(boardTheme.createAction.label),
+        backgroundColor: boardTheme.appBarColor,
+        foregroundColor: boardTheme.appBarForegroundColor,
         actions: const [AccessibilityButton()],
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
         children: [
-          AppSurfaceCard(
-            title: '마음을 나눠요',
-            subtitle: '지금 느끼는 감정을 솔직하게 표현해보세요.',
-            icon: Icons.favorite_border,
-            accentColor: AppPalette.accentPink,
+          BoardSectionCard.fromIntro(
+            intro: formTheme.introSection,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                AppHelperText(
-                  icon: Icons.info_outline,
-                  text: '따뜻한 언어와 배려를 담아 적어주세요. 욕설이나 개인정보는 포함되지 않도록 주의해 주세요.',
-                ),
-                SizedBox(height: 12),
-                AppHelperText(
-                  icon: Icons.tips_and_updates_outlined,
-                  text: '감정 공유 글은 검토 후 공개되며, 필요한 경우 비공개 처리될 수 있습니다.',
+              children: [
+                BoardHelperMessages(
+                  messages: formTheme.introSection.helperMessages,
                 ),
               ],
             ),
           ),
+          if (mediaMessages.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 20),
+              child: BoardSectionCard(
+                title: '업로드 가이드',
+                subtitle: supportedTypes.isEmpty
+                    ? '추억을 공유할 수 있는 파일 가이드를 확인하세요.'
+                    : '지원 형식: $supportedTypes',
+                icon: Icons.cloud_upload_outlined,
+                accentColor: boardTheme.createAction.accentColor,
+                child: BoardHelperMessages(messages: mediaMessages),
+              ),
+            ),
           const SizedBox(height: 24),
           Form(
             key: _formKey,
@@ -81,6 +108,7 @@ class _EmotionPostCreateScreenState extends State<EmotionPostCreateScreen> {
                   accentColor: AppPalette.accentLavender,
                   child: _MoodSelector(
                     value: _selectedMood,
+                    moods: formTheme.moodOptions,
                     onChanged: (value) {
                       setState(() {
                         _selectedMood = value;
@@ -135,15 +163,16 @@ class _EmotionPostCreateScreenState extends State<EmotionPostCreateScreen> {
                     children: [
                       AppTextField(
                         controller: _tagController,
-                        label: '태그 (쉼표로 구분)',
-                        hint: '예: 감사, 위로, 가족',
+                        label: formTheme.tagFieldLabel ?? '태그 (쉼표로 구분)',
+                        hint: formTheme.tagFieldHint ?? '예: 감사, 위로, 가족',
                         prefixIcon: const Icon(Icons.tag),
                       ),
                       const SizedBox(height: 16),
                       AppTextField(
                         controller: _memoryController,
                         label: '추억 메모 (선택)',
-                        hint: '기억하고 싶은 문장이나 다짐을 남겨보세요.',
+                        hint: formTheme.memoryFieldHint ??
+                            '기억하고 싶은 문장이나 다짐을 남겨보세요.',
                         maxLines: 4,
                         prefixIcon: const Icon(Icons.bookmark_border),
                       ),
@@ -193,7 +222,6 @@ class _EmotionPostCreateScreenState extends State<EmotionPostCreateScreen> {
                         label: '임시 저장',
                         leadingIcon: Icons.save_outlined,
                         onPressed: _handleDraftSave,
-                        color: AppPalette.warmBrown,
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -202,7 +230,6 @@ class _EmotionPostCreateScreenState extends State<EmotionPostCreateScreen> {
                         label: '감정 글 올리기',
                         icon: Icons.send_outlined,
                         onPressed: _handleSubmit,
-                        accentColor: AppPalette.warmBrown,
                       ),
                     ),
                   ],
@@ -241,28 +268,31 @@ class _EmotionPostCreateScreenState extends State<EmotionPostCreateScreen> {
 class _MoodSelector extends StatelessWidget {
   const _MoodSelector({
     required this.value,
+    required this.moods,
     required this.onChanged,
   });
 
   final String value;
   final ValueChanged<String> onChanged;
-
-  static const moods = [
-    '감사',
-    '위로',
-    '그리움',
-    '기쁨',
-    '슬픔',
-    '응원',
-    '따뜻함',
-  ];
+  final List<String> moods;
 
   @override
   Widget build(BuildContext context) {
+    final options = moods.isEmpty
+        ? const [
+            '감사',
+            '위로',
+            '그리움',
+            '기쁨',
+            '슬픔',
+            '응원',
+            '따뜻함',
+          ]
+        : moods;
     return Wrap(
       spacing: 8,
       runSpacing: 8,
-      children: moods
+      children: options
           .map(
             (mood) => ChoiceChip(
               label: Text(mood),

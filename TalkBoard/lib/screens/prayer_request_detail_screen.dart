@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:free_board/board/board_themes.dart';
 import 'package:free_board/widgets/accessibility_button.dart';
 import 'package:free_board/widgets/components/app_buttons.dart';
 import 'package:free_board/widgets/components/app_card.dart';
@@ -91,20 +92,25 @@ class _PrayerRequestDetailScreenState extends State<PrayerRequestDetailScreen> {
     final args = ModalRoute.of(context)?.settings.arguments
         as PrayerRequestDetailArguments?;
     final data = args ?? const PrayerRequestDetailArguments.sample();
+    final boardTheme = BoardThemes.prayer;
 
     return Scaffold(
-      backgroundColor: AppPalette.softCream,
+      backgroundColor: boardTheme.backgroundColor,
       appBar: AppBar(
-        title: const Text('기도 상세'),
-        backgroundColor: AppPalette.warmBrown,
-        foregroundColor: Colors.white,
+        title: Text('${boardTheme.displayName} 상세'),
+        backgroundColor: boardTheme.appBarColor,
+        foregroundColor: boardTheme.appBarForegroundColor,
         actions: const [AccessibilityButton()],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: AppPalette.accentLavender,
-        foregroundColor: AppPalette.warmBrown,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: const BorderSide(color: Colors.black, width: 1.4),
+        ),
         icon: const Icon(Icons.self_improvement_outlined),
-        label: const Text('기도 완료 기록'),
+        label: Text('${boardTheme.actions.reactionLabel} 완료 기록'),
         onPressed: () {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -312,7 +318,6 @@ class _PrayerRequestDetailScreenState extends State<PrayerRequestDetailScreen> {
                               ),
                             );
                           },
-                          color: AppPalette.accentPink,
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -321,7 +326,6 @@ class _PrayerRequestDetailScreenState extends State<PrayerRequestDetailScreen> {
                           label: '기도 동참금 보내기',
                           icon: Icons.favorite,
                           onPressed: () => _handleDonation(context),
-                          accentColor: AppPalette.accentPink,
                         ),
                       ),
                     ],

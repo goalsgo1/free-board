@@ -184,8 +184,13 @@ class PreviewWillScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
-        backgroundColor: warmBrown,
-        child: const Icon(Icons.edit, color: Colors.white),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(16)),
+          side: BorderSide(color: Colors.black, width: 1.4),
+        ),
+        child: const Icon(Icons.edit),
       ),
     );
   }

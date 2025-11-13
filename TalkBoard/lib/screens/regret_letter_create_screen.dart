@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:free_board/board/board_themes.dart';
 import 'package:free_board/widgets/accessibility_button.dart';
+import 'package:free_board/widgets/board/board_section_card.dart';
+import 'package:free_board/widgets/board/board_theme.dart';
 import 'package:free_board/widgets/components/app_buttons.dart';
 import 'package:free_board/widgets/components/app_card.dart';
 import 'package:free_board/widgets/components/app_inputs.dart';
@@ -54,37 +57,57 @@ class _RegretLetterCreateScreenState extends State<RegretLetterCreateScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final boardTheme = BoardThemes.regretLetter;
+    final formTheme = boardTheme.createForm!;
+    final mediaRules = boardTheme.mediaRules;
+    final List<BoardHelperMessage> mediaMessages = [
+      if (mediaRules?.maxAttachments != null)
+        BoardHelperMessage(
+          icon: Icons.collections_outlined,
+          text: '최대 ${mediaRules!.maxAttachments}개의 추억 자료를 첨부할 수 있어요.',
+        ),
+      if (mediaRules?.maxFileSizeMb != null)
+        BoardHelperMessage(
+          icon: Icons.cloud_upload_outlined,
+          text:
+              '파일당 ${mediaRules!.maxFileSizeMb!.toStringAsFixed(0)}MB 이하로 업로드해주세요.',
+        ),
+      ...?mediaRules?.helperMessages,
+      ...formTheme.additionalMediaGuidelines,
+    ];
+    final supportedTypes = (mediaRules?.supportedTypes ?? const [])
+        .map((type) => '#$type')
+        .join(' · ');
     return Scaffold(
-      backgroundColor: AppPalette.softCream,
+      backgroundColor: boardTheme.backgroundColor,
       appBar: AppBar(
-        title: const Text('후회 없는 편지 작성'),
-        backgroundColor: AppPalette.warmBrown,
-        foregroundColor: Colors.white,
+        title: Text(boardTheme.createAction.label),
+        backgroundColor: boardTheme.appBarColor,
+        foregroundColor: boardTheme.appBarForegroundColor,
         actions: const [AccessibilityButton()],
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
         children: [
-          AppSurfaceCard(
-            title: '전하지 못한 마음을 편지로 남겨요',
-            subtitle: '차분하게 마음을 정리하고 고인께 전하고 싶은 이야기를 작성해보세요.',
-            icon: Icons.mark_email_read_outlined,
-            accentColor: AppPalette.accentLavender,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                AppHelperText(
-                  icon: Icons.info_outline,
-                  text: '편지는 관리자 검토 후 공개되며, 민감한 개인정보는 자동으로 가려집니다.',
-                ),
-                SizedBox(height: 12),
-                AppHelperText(
-                  icon: Icons.tips_and_updates_outlined,
-                  text: '추모관 상세 화면에서도 편지를 작성할 수 있습니다. 지금은 샘플 추모관 목록을 제공해요.',
-                ),
-              ],
+          BoardSectionCard.fromIntro(
+            intro: formTheme.introSection,
+            child: BoardHelperMessages(
+              messages: formTheme.introSection.helperMessages,
             ),
           ),
+          if (mediaMessages.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 20),
+              child: BoardSectionCard(
+                title: '업로드 가이드',
+                subtitle: supportedTypes.isEmpty
+                    ? '첨부 가능한 자료 안내를 확인하세요.'
+                    : '지원 형식: $supportedTypes',
+                icon: Icons.cloud_upload_outlined,
+                accentColor: boardTheme.createAction.accentColor,
+                child: BoardHelperMessages(messages: mediaMessages),
+              ),
+            ),
           const SizedBox(height: 24),
           Form(
             key: _formKey,
@@ -274,7 +297,6 @@ class _RegretLetterCreateScreenState extends State<RegretLetterCreateScreen> {
                         label: '임시 저장',
                         leadingIcon: Icons.save_outlined,
                         onPressed: _handleDraftSave,
-                        color: AppPalette.warmBrown,
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -283,7 +305,6 @@ class _RegretLetterCreateScreenState extends State<RegretLetterCreateScreen> {
                         label: '편지 등록하기',
                         icon: Icons.send_outlined,
                         onPressed: _handleSubmit,
-                        accentColor: AppPalette.warmBrown,
                       ),
                     ),
                   ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:free_board/board/board_themes.dart';
 import 'package:free_board/widgets/accessibility_button.dart';
 import 'package:free_board/widgets/components/app_buttons.dart';
 import 'package:free_board/widgets/components/app_card.dart';
@@ -16,23 +17,28 @@ class RegretLetterDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final letter =
         arguments ?? ModalRoute.of(context)?.settings.arguments as RegretLetterDetailArguments? ?? _sampleArguments;
+    final boardTheme = BoardThemes.regretLetter;
     return Scaffold(
-      backgroundColor: AppPalette.softCream,
+      backgroundColor: boardTheme.backgroundColor,
       appBar: AppBar(
-        title: const Text('후회 없는 편지'),
-        backgroundColor: AppPalette.warmBrown,
-        foregroundColor: Colors.white,
+        title: Text(boardTheme.displayName),
+        backgroundColor: boardTheme.appBarColor,
+        foregroundColor: boardTheme.appBarForegroundColor,
         actions: const [AccessibilityButton()],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: AppPalette.warmBrown,
-        foregroundColor: Colors.white,
-        icon: const Icon(Icons.reply_outlined),
-        label: const Text('공감 댓글 남기기'),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: const BorderSide(color: Colors.black, width: 1.4),
+        ),
+        icon: Icon(boardTheme.actions.primaryIcon),
+        label: Text(boardTheme.actions.primaryCta),
         onPressed: () {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('댓글 작성 기능은 추후 구현 예정입니다.'),
+            SnackBar(
+              content: Text('"${letter.title}" 편지를 곧 확인할 수 있어요. 댓글 기능은 준비 중입니다.'),
             ),
           );
         },
@@ -173,7 +179,6 @@ class RegretLetterDetailScreen extends StatelessWidget {
                       ),
                     );
                   },
-                  color: AppPalette.warmBrown,
                 ),
                 AppPrimaryButton(
                   label: '이 편지에 공감하기',
@@ -185,7 +190,6 @@ class RegretLetterDetailScreen extends StatelessWidget {
                       ),
                     );
                   },
-                  accentColor: AppPalette.accentPink,
                 ),
               ];
               if (isNarrow) {

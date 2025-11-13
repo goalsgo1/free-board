@@ -322,7 +322,6 @@ class _MemorialStatsScreenState extends State<MemorialStatsScreen> {
                   label: '자세한 리포트 내보내기',
                   leadingIcon: Icons.picture_as_pdf_outlined,
                   onPressed: () {},
-                  color: AppPalette.warmBrown,
                 ),
               ],
             ),

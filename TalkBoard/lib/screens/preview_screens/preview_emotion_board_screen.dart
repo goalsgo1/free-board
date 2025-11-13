@@ -37,27 +37,15 @@ class PreviewEmotionBoardScreen extends StatelessWidget {
           _buildPostCard('제목', '내용 요약...', '따뜻한 마음', '1일 전', 8, 3),
         ],
       ),
-      floatingActionButton: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [warmBrown, warmBrown.withOpacity(0.8)],
-          ),
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: warmBrown.withOpacity(0.5),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-              spreadRadius: 2,
-            ),
-          ],
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(16)),
+          side: BorderSide(color: Colors.black, width: 1.4),
         ),
-        child: FloatingActionButton(
-          onPressed: () {},
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          child: const Icon(Icons.edit, color: Colors.white, size: 28),
-        ),
+        child: const Icon(Icons.edit),
       ),
       bottomNavigationBar: _buildBottomNav(),
     );

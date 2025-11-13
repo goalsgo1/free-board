@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:free_board/board/board_themes.dart';
 import 'package:free_board/widgets/accessibility_button.dart';
+import 'package:free_board/widgets/board/board_section_card.dart';
+import 'package:free_board/widgets/board/board_theme.dart';
 import 'package:free_board/widgets/components/app_buttons.dart';
 import 'package:free_board/widgets/components/app_card.dart';
 import 'package:free_board/widgets/components/app_inputs.dart';
 import 'package:free_board/widgets/components/app_palette.dart';
-import 'package:free_board/screens/regret_letter_create_screen.dart';
 import 'package:free_board/screens/regret_letter_detail_screen.dart';
-import 'package:free_board/screens/regret_letter_create_screen.dart';
 
 class RegretLetterBoardScreen extends StatefulWidget {
   const RegretLetterBoardScreen({super.key});
@@ -111,142 +112,133 @@ class _RegretLetterBoardScreenState extends State<RegretLetterBoardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final boardTheme = BoardThemes.regretLetter;
+    final filterConfig = boardTheme.filterSection;
     final filtered = _filteredLetters;
     return Scaffold(
-      backgroundColor: AppPalette.softCream,
+      backgroundColor: boardTheme.backgroundColor,
       appBar: AppBar(
-        title: const Text('후회 없는 편지'),
-        backgroundColor: AppPalette.warmBrown,
-        foregroundColor: Colors.white,
+        title: Text(boardTheme.displayName),
+        backgroundColor: boardTheme.appBarColor,
+        foregroundColor: boardTheme.appBarForegroundColor,
         actions: const [AccessibilityButton()],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: AppPalette.warmBrown,
-        foregroundColor: Colors.white,
-        icon: const Icon(Icons.mail_outline),
-        label: const Text('편지 쓰기'),
-        onPressed: () {
-          Navigator.pushNamed(context, RegretLetterCreateScreen.routeName);
-        },
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: const BorderSide(color: Colors.black, width: 1.4),
+          ),
+        icon: Icon(boardTheme.createAction.icon),
+        label: Text(boardTheme.createAction.label),
+        onPressed: () => Navigator.pushNamed(
+          context,
+          boardTheme.createAction.routeName,
+        ),
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
         children: [
-          AppSurfaceCard(
-            title: '전하지 못한 마음을 편지로 남겨요',
-            subtitle: '후회 없는 편지는 고인에게 전하지 못했던 말들을 나누는 공간입니다.',
-            icon: Icons.markunread_mailbox_outlined,
-            accentColor: AppPalette.accentLavender,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                AppHelperText(
-                  icon: Icons.info_outline,
-                  text: '편지는 관리자 검토 후 공개되며, 민감한 개인정보는 비공개 처리됩니다.',
-                ),
-                SizedBox(height: 12),
-                AppHelperText(
-                  icon: Icons.tips_and_updates_outlined,
-                  text: '편지를 작성하려면 먼저 추모관을 선택한 뒤 상세 화면에서 편지 작성 버튼을 눌러주세요.',
-                ),
-              ],
+          BoardSectionCard.fromIntro(
+            intro: boardTheme.introSection,
+            child: BoardHelperMessages(
+              messages: boardTheme.introSection.helperMessages,
             ),
           ),
           const SizedBox(height: 24),
-          AppSurfaceCard(
-            title: '편지 찾기',
-            subtitle: '카테고리와 검색을 활용해 공감하고 싶은 편지를 찾아보세요.',
-            icon: Icons.filter_alt_outlined,
-            accentColor: AppPalette.accentMint,
-            child: Column(
-              children: [
-                AppTextField(
-                  controller: _searchController,
-                  label: '편지 검색',
-                  hint: '예: 감사, 사과, 추억',
-                  prefixIcon: const Icon(Icons.search),
-                  onChanged: (_) => setState(() {}),
-                ),
-                const SizedBox(height: 16),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: _categories
-                      .map(
-                        (category) => ChoiceChip(
-                          label: Text(category),
-                          selected: _selectedCategory == category,
-                          onSelected: (selected) {
-                            if (!selected) return;
-                            setState(() {
-                              _selectedCategory = category;
-                            });
-                          },
-                          selectedColor: AppPalette.warmBrown,
-                          labelStyle: TextStyle(
-                            color: _selectedCategory == category
-                                ? Colors.white
-                                : AppPalette.warmBrown,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          backgroundColor: Colors.white,
-                          side: BorderSide(
-                            color: _selectedCategory == category
-                                ? AppPalette.warmBrown
-                                : AppPalette.warmBeige,
-                          ),
-                        ),
-                      )
-                      .toList(),
-                ),
-                const SizedBox(height: 12),
-                SwitchListTile.adaptive(
-                  contentPadding: EdgeInsets.zero,
-                  title: const Text('좋아요 많은 편지 먼저 보기'),
-                  value: _onlyFavorites,
-                  onChanged: (value) {
-                    setState(() {
-                      _onlyFavorites = value;
-                    });
-                  },
-                  activeColor: AppPalette.warmBrown,
-                ),
-                SwitchListTile.adaptive(
-                  contentPadding: EdgeInsets.zero,
-                  title: const Text('내가 쓴 편지만 보기'),
-                  value: _onlyMyLetters,
-                  onChanged: (value) {
-                    setState(() {
-                      _onlyMyLetters = value;
-                    });
-                  },
-                  activeColor: AppPalette.warmBrown,
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 24),
-          if (filtered.isEmpty)
-            AppSurfaceCard(
-              title: '검색 결과가 없어요',
-              subtitle: '다른 키워드나 카테고리로 다시 검색해보세요.',
-              icon: Icons.mark_email_unread_outlined,
-              accentColor: AppPalette.accentPink,
+          if (filterConfig != null)
+            BoardSectionCard(
+              title: filterConfig.title,
+              subtitle: filterConfig.subtitle,
+              icon: filterConfig.icon,
+              accentColor: filterConfig.accentColor,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  AppHelperText(
-                    icon: Icons.info_outline,
-                    text: '추모관 상세 화면에서 편지를 작성하면 이곳에 공유됩니다.',
+                children: [
+                  AppTextField(
+                    controller: _searchController,
+                    label: filterConfig.searchLabel,
+                    hint: filterConfig.searchHint,
+                    prefixIcon: const Icon(Icons.search),
+                    onChanged: (_) => setState(() {}),
+                  ),
+                  const SizedBox(height: 16),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: _categories
+                        .map(
+                          (category) => ChoiceChip(
+                            label: Text(category),
+                            selected: _selectedCategory == category,
+                            onSelected: (selected) {
+                              if (!selected) return;
+                              setState(() {
+                                _selectedCategory = category;
+                              });
+                            },
+                            selectedColor: AppPalette.warmBrown,
+                            labelStyle: TextStyle(
+                              color: _selectedCategory == category
+                                  ? Colors.white
+                                  : AppPalette.warmBrown,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            backgroundColor: Colors.white,
+                            side: BorderSide(
+                              color: _selectedCategory == category
+                                  ? AppPalette.warmBrown
+                                  : AppPalette.warmBeige,
+                            ),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                  const SizedBox(height: 12),
+                  SwitchListTile.adaptive(
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text('좋아요 많은 편지 먼저 보기'),
+                    value: _onlyFavorites,
+                    onChanged: (value) {
+                      setState(() {
+                        _onlyFavorites = value;
+                      });
+                    },
+                    activeColor: AppPalette.warmBrown,
+                  ),
+                  SwitchListTile.adaptive(
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text('내가 쓴 편지만 보기'),
+                    value: _onlyMyLetters,
+                    onChanged: (value) {
+                      setState(() {
+                        _onlyMyLetters = value;
+                      });
+                    },
+                    activeColor: AppPalette.warmBrown,
                   ),
                 ],
+              ),
+            ),
+          const SizedBox(height: 24),
+          if (filtered.isEmpty)
+            BoardSectionCard(
+              title: boardTheme.emptyState.title,
+              subtitle: boardTheme.emptyState.subtitle,
+              icon: boardTheme.emptyState.icon,
+              accentColor: boardTheme.emptyState.accentColor,
+              child: BoardHelperMessages(
+                messages: boardTheme.emptyState.helperMessages,
               ),
             )
           else ...[
             for (final letter in filtered)
               Padding(
                 padding: const EdgeInsets.only(bottom: 16),
-                child: _RegretLetterCard(letter: letter),
+                child: _RegretLetterCard(
+                  letter: letter,
+                  theme: boardTheme,
+                ),
               ),
           ],
         ],
@@ -290,13 +282,17 @@ class _RegretLetter {
 }
 
 class _RegretLetterCard extends StatelessWidget {
-  const _RegretLetterCard({required this.letter});
+  const _RegretLetterCard({
+    required this.letter,
+    required this.theme,
+  });
 
   final _RegretLetter letter;
+  final BoardThemeData theme;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final textTheme = Theme.of(context);
     return AppSurfaceCard(
       title: letter.title,
       subtitle:
@@ -308,7 +304,7 @@ class _RegretLetterCard extends StatelessWidget {
         children: [
           Text(
             letter.excerpt,
-            style: theme.textTheme.bodyMedium?.copyWith(
+            style: textTheme.textTheme.bodyMedium?.copyWith(
               height: 1.5,
               color: AppPalette.ink,
             ),
@@ -361,8 +357,8 @@ class _RegretLetterCard extends StatelessWidget {
               final isNarrow = constraints.maxWidth < 520;
               final buttons = [
                 AppOutlinedButton(
-                  label: '추모관 살펴보기',
-                  leadingIcon: Icons.travel_explore,
+                  label: theme.actions.secondaryCta,
+                  leadingIcon: theme.actions.secondaryIcon,
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -371,11 +367,10 @@ class _RegretLetterCard extends StatelessWidget {
                       ),
                     );
                   },
-                  color: letter.accentColor,
                 ),
                 AppPrimaryButton(
-                  label: '편지 자세히 보기',
-                  icon: Icons.arrow_forward,
+                  label: theme.actions.primaryCta,
+                  icon: theme.actions.primaryIcon,
                   onPressed: () {
                     Navigator.pushNamed(
                       context,
@@ -397,7 +392,6 @@ class _RegretLetterCard extends StatelessWidget {
                       ),
                     );
                   },
-                  accentColor: letter.accentColor,
                 ),
               ];
               if (isNarrow) {

@@ -234,7 +234,6 @@ class _ActionRow extends StatelessWidget {
                       ),
                     );
                   },
-                  accentColor: AppPalette.warmBrown,
                 ),
               ),
               const SizedBox(width: 12),
@@ -243,7 +242,6 @@ class _ActionRow extends StatelessWidget {
                   label: '공유하기',
                   leadingIcon: Icons.ios_share,
                   onPressed: () {},
-                  color: AppPalette.warmBrown,
                 ),
               ),
             ],
@@ -264,7 +262,6 @@ class _ActionRow extends StatelessWidget {
                 ),
               );
             },
-            color: AppPalette.accentGold,
           ),
         ],
       ),

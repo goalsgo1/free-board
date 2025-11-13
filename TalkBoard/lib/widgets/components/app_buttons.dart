@@ -1,14 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:free_board/widgets/components/app_palette.dart';
-
-int _alphaFromOpacity(double opacity) {
-  return (opacity.clamp(0.0, 1.0) * 255).round();
-}
-
-Color _resolveAccent(Color color) => AppPalette.accessibleAccent(color);
-Color _foregroundOn(Color background) => AppPalette.foregroundOn(background);
-
 class AppPrimaryButton extends StatelessWidget {
   const AppPrimaryButton({
     super.key,
@@ -16,7 +7,7 @@ class AppPrimaryButton extends StatelessWidget {
     this.onPressed,
     this.isLoading = false,
     this.icon,
-    this.accentColor = AppPalette.warmBrown,
+    this.accentColor = Colors.black,
   });
 
   final String label;
@@ -28,11 +19,14 @@ class AppPrimaryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool enabled = onPressed != null && !isLoading;
-    final Color resolvedAccent = _resolveAccent(accentColor);
-    final Color resolvedForeground = _foregroundOn(resolvedAccent);
+    assert(
+      accentColor == Colors.black,
+      'AppPrimaryButton now uses the monochrome design language. Remove custom accent overrides.',
+    );
+    const Color resolvedAccent = Colors.black;
     final TextStyle? labelStyle = Theme.of(context).textTheme.labelLarge?.copyWith(
           fontWeight: FontWeight.w700,
-          color: resolvedForeground,
+          color: resolvedAccent,
           letterSpacing: 0.2,
         );
     return SizedBox(
@@ -40,17 +34,16 @@ class AppPrimaryButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: enabled ? onPressed : null,
         style: ElevatedButton.styleFrom(
-          elevation: 4,
+          elevation: 0,
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          backgroundColor: resolvedAccent,
-          foregroundColor: resolvedForeground,
-          disabledBackgroundColor:
-              resolvedAccent.withAlpha(_alphaFromOpacity(0.4)),
-          disabledForegroundColor: resolvedForeground.withAlpha(200),
-          shadowColor: resolvedAccent.withAlpha(_alphaFromOpacity(0.35)),
+          backgroundColor: Colors.white,
+          foregroundColor: resolvedAccent,
+          side: BorderSide(color: resolvedAccent, width: 1.4),
+          disabledBackgroundColor: Colors.white,
+          disabledForegroundColor: Colors.grey.shade500,
         ),
         child: isLoading
             ? SizedBox(
@@ -58,8 +51,7 @@ class AppPrimaryButton extends StatelessWidget {
                 width: 22,
                 child: CircularProgressIndicator(
                   strokeWidth: 2.4,
-                  valueColor:
-                      AlwaysStoppedAnimation<Color>(resolvedForeground),
+                  valueColor: AlwaysStoppedAnimation<Color>(resolvedAccent),
                 ),
               )
             : Row(
@@ -67,7 +59,7 @@ class AppPrimaryButton extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   if (icon != null) ...[
-                    Icon(icon, size: 18, color: resolvedForeground),
+                    Icon(icon, size: 18, color: resolvedAccent),
                     const SizedBox(width: 6),
                   ],
                   Flexible(
@@ -93,7 +85,7 @@ class AppOutlinedButton extends StatelessWidget {
     this.onPressed,
     this.leadingIcon,
     this.badgeText,
-    this.color = AppPalette.warmBrown,
+    this.color = Colors.black,
   });
 
   final String label;
@@ -104,23 +96,24 @@ class AppOutlinedButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color resolvedColor = _resolveAccent(color);
-    final bool isLight = resolvedColor.computeLuminance() > 0.62;
-    final Color textColor =
-        isLight ? AppPalette.warmBrown : resolvedColor;
+    assert(
+      color == Colors.black,
+      'AppOutlinedButton now uses the monochrome design language. Remove custom color overrides.',
+    );
+    const Color resolvedColor = Colors.black;
     final TextStyle? textStyle = Theme.of(context).textTheme.labelLarge?.copyWith(
           fontWeight: FontWeight.w600,
-          color: textColor,
+          color: resolvedColor,
           letterSpacing: 0.2,
         );
 
     return OutlinedButton(
       onPressed: onPressed,
       style: OutlinedButton.styleFrom(
-        foregroundColor: textColor,
-        side: BorderSide(color: textColor.withAlpha(_alphaFromOpacity(0.6))),
+        foregroundColor: resolvedColor,
+        side: BorderSide(color: resolvedColor, width: 1.4),
         backgroundColor: Colors.white,
-        overlayColor: textColor.withOpacity(0.12),
+        overlayColor: resolvedColor.withValues(alpha: 0.1),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
@@ -131,7 +124,7 @@ class AppOutlinedButton extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (leadingIcon != null) ...[
-            Icon(leadingIcon, size: 20, color: textColor),
+            Icon(leadingIcon, size: 20, color: resolvedColor),
             const SizedBox(width: 10),
           ],
           Flexible(
@@ -145,14 +138,14 @@ class AppOutlinedButton extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: AppPalette.softLavender,
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(999),
               ),
               child: Text(
                 badgeText!,
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: const Color(0xFF5E35B1),
+                      color: resolvedColor,
                     ),
               ),
             ),
@@ -177,7 +170,7 @@ class AppHelperText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color resolvedColor = color ?? AppPalette.ink;
+    final Color resolvedColor = color ?? Colors.black87;
     return Padding(
       padding: const EdgeInsets.only(top: 10),
       child: Row(

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:free_board/board/board_themes.dart';
 import 'package:free_board/widgets/accessibility_button.dart';
+import 'package:free_board/widgets/board/board_section_card.dart';
+import 'package:free_board/widgets/board/board_theme.dart';
 import 'package:free_board/widgets/components/app_buttons.dart';
 import 'package:free_board/widgets/components/app_card.dart';
 import 'package:free_board/widgets/components/app_inputs.dart';
@@ -41,37 +44,57 @@ class _PrayerRequestCreateScreenState
 
   @override
   Widget build(BuildContext context) {
+    final boardTheme = BoardThemes.prayer;
+    final formTheme = boardTheme.createForm!;
+    final mediaRules = boardTheme.mediaRules;
+    final List<BoardHelperMessage> mediaMessages = [
+      if (mediaRules?.maxAttachments != null)
+        BoardHelperMessage(
+          icon: Icons.collections_outlined,
+          text: '최대 ${mediaRules!.maxAttachments}개의 파일을 업로드할 수 있어요.',
+        ),
+      if (mediaRules?.maxFileSizeMb != null)
+        BoardHelperMessage(
+          icon: Icons.cloud_upload_outlined,
+          text:
+              '파일당 ${mediaRules!.maxFileSizeMb!.toStringAsFixed(0)}MB 이하로 업로드해주세요.',
+        ),
+      ...?mediaRules?.helperMessages,
+      ...formTheme.additionalMediaGuidelines,
+    ];
+    final supportedTypes = (mediaRules?.supportedTypes ?? const [])
+        .map((type) => '#$type')
+        .join(' · ');
     return Scaffold(
-      backgroundColor: AppPalette.softCream,
+      backgroundColor: boardTheme.backgroundColor,
       appBar: AppBar(
-        title: const Text('기도 요청 작성'),
-        backgroundColor: AppPalette.warmBrown,
-        foregroundColor: Colors.white,
+        title: Text(boardTheme.createAction.label),
+        backgroundColor: boardTheme.appBarColor,
+        foregroundColor: boardTheme.appBarForegroundColor,
         actions: const [AccessibilityButton()],
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
         children: [
-          AppSurfaceCard(
-            title: '기도 제목을 등록해요',
-            subtitle: '함께 기도받고 싶은 내용을 작성해 주세요.',
-            icon: Icons.volunteer_activism_outlined,
-            accentColor: AppPalette.accentPink,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                AppHelperText(
-                  icon: Icons.info_outline,
-                  text: '민감한 개인정보는 포함하지 않도록 주의해 주세요. 기도 제목은 커뮤니티 검토 후 노출됩니다.',
-                ),
-                SizedBox(height: 12),
-                AppHelperText(
-                  icon: Icons.check_circle_outline,
-                  text: '응답 내용은 추후 다시 들어와 기록할 수 있어요. 함께 기도하는 분들에게 큰 위로가 됩니다.',
-                ),
-              ],
+          BoardSectionCard.fromIntro(
+            intro: formTheme.introSection,
+            child: BoardHelperMessages(
+              messages: formTheme.introSection.helperMessages,
             ),
           ),
+          if (mediaMessages.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 20),
+              child: BoardSectionCard(
+                title: '업로드 가이드',
+                subtitle: supportedTypes.isEmpty
+                    ? '관련 자료를 첨부할 때 확인해주세요.'
+                    : '지원 형식: $supportedTypes',
+                icon: Icons.cloud_upload_outlined,
+                accentColor: boardTheme.createAction.accentColor,
+                child: BoardHelperMessages(messages: mediaMessages),
+              ),
+            ),
           const SizedBox(height: 24),
           Form(
             key: _formKey,
@@ -242,7 +265,6 @@ class _PrayerRequestCreateScreenState
                         label: '초안으로 저장',
                         leadingIcon: Icons.save_outlined,
                         onPressed: _handleDraftSave,
-                        color: AppPalette.warmBrown,
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -251,7 +273,6 @@ class _PrayerRequestCreateScreenState
                         label: '기도 요청 등록하기',
                         icon: Icons.check_circle_outline,
                         onPressed: _handleSubmit,
-                        accentColor: AppPalette.warmBrown,
                       ),
                     ),
                   ],
