@@ -23,6 +23,8 @@ class AppTextField extends StatelessWidget {
     this.suffixIcon,
     this.focusNode,
     this.maxLines = 1,
+    this.readOnly = false,
+    this.onTap,
   });
 
   final TextEditingController? controller;
@@ -39,6 +41,8 @@ class AppTextField extends StatelessWidget {
   final Widget? suffixIcon;
   final FocusNode? focusNode;
   final int maxLines;
+  final bool readOnly;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +57,8 @@ class AppTextField extends StatelessWidget {
       validator: validator,
       obscureText: obscureText,
       maxLines: obscureText ? 1 : maxLines,
+      readOnly: readOnly,
+      onTap: onTap,
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,

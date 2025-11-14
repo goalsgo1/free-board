@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
-import 'package:free_board/widgets/accessibility_button.dart';
+import 'package:free_board/providers/auth_provider.dart';
+import 'package:free_board/providers/memorial_provider.dart';
 import 'package:free_board/widgets/components/app_buttons.dart';
 import 'package:free_board/widgets/components/app_card.dart';
 import 'package:free_board/widgets/components/app_inputs.dart';
 import 'package:free_board/widgets/components/app_palette.dart';
+import 'package:free_board/widgets/accessibility_button.dart';
+import 'package:provider/provider.dart';
 
 class MemorialEditScreen extends StatefulWidget {
   const MemorialEditScreen({super.key});
@@ -29,9 +32,11 @@ class _MemorialEditScreenState extends State<MemorialEditScreen> {
   late final TextEditingController _storyController;
   late final TextEditingController _anniversaryController;
   late final TextEditingController _notesController;
-  final ValueNotifier<bool> _isPublic = ValueNotifier<bool>(true);
-  final ValueNotifier<bool> _allowComments = ValueNotifier<bool>(true);
-  final ValueNotifier<bool> _allowSharing = ValueNotifier<bool>(true);
+  bool _isPublic = true;
+  bool _allowComments = true;
+  bool _allowSharing = true;
+  bool _initializedFromArgs = false;
+  DateTime? _selectedAnniversary;
 
   @override
   void initState() {
@@ -44,27 +49,50 @@ class _MemorialEditScreenState extends State<MemorialEditScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_initializedFromArgs) return;
+
+    final args =
+        ModalRoute.of(context)?.settings.arguments as MemorialEditArguments?;
+
+    if (args?.initialName != null && args!.initialName!.isNotEmpty) {
+      _nameController.text = args.initialName!;
+    }
+
+    if (args?.isEdit == true && args!.memorialId != null) {
+      final memorial =
+          context.read<MemorialProvider>().findById(args.memorialId!);
+      if (memorial != null) {
+        _nameController.text = memorial.name;
+        _relationController.text = memorial.relation ?? '';
+        _storyController.text = memorial.story ?? '';
+        _anniversaryController.text = memorial.anniversaryLabel ?? '';
+        _notesController.text = memorial.notes ?? '';
+        _isPublic = memorial.isPublic;
+        _allowComments = memorial.allowComments;
+        _allowSharing = memorial.allowSharing;
+      }
+    }
+
+    _initializedFromArgs = true;
+  }
+
+  @override
   void dispose() {
     _nameController.dispose();
     _relationController.dispose();
     _storyController.dispose();
     _anniversaryController.dispose();
     _notesController.dispose();
-    _isPublic.dispose();
-    _allowComments.dispose();
-    _allowSharing.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)?.settings.arguments
-        as MemorialEditArguments?;
+    final args =
+        ModalRoute.of(context)?.settings.arguments as MemorialEditArguments?;
     final bool isEdit = args?.isEdit ?? false;
-    if (isEdit && (args?.initialName?.isNotEmpty ?? false)) {
-      _nameController.text = args!.initialName!;
-    }
-
     return Scaffold(
       backgroundColor: AppPalette.softCream,
       appBar: AppBar(
@@ -96,6 +124,141 @@ class _MemorialEditScreenState extends State<MemorialEditScreen> {
         ),
       ),
     );
+  }
+
+  void updateIsPublic(bool value) {
+    setState(() {
+      _isPublic = value;
+    });
+  }
+
+  void updateAllowComments(bool value) {
+    setState(() {
+      _allowComments = value;
+    });
+  }
+
+  void updateAllowSharing(bool value) {
+    setState(() {
+      _allowSharing = value;
+    });
+  }
+
+  Future<void> handleSave(BuildContext context) async {
+    FocusScope.of(context).unfocus();
+    if (!(_formKey.currentState?.validate() ?? false)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('필수 항목을 확인해 주세요.')),
+      );
+      return;
+    }
+
+    final memorialProvider = context.read<MemorialProvider>();
+    final authProvider = context.read<AuthProvider>();
+
+    final name = _nameController.text.trim();
+    final relation = _relationController.text.trim();
+    final story = _storyController.text.trim();
+    final anniversary = _anniversaryController.text.trim();
+    final notes = _notesController.text.trim();
+    final createdBy = authProvider.currentUserId ?? 'anonymous';
+
+    final categories = _deriveCategories(relation);
+    final tags = _buildTags(
+      isPublic: _isPublic,
+      allowComments: _allowComments,
+      allowSharing: _allowSharing,
+      anniversary: anniversary,
+      relation: relation,
+    );
+
+    final heroImageUrl = _heroImageUrlSeed(name, anniversary);
+
+    final success = await memorialProvider.createMemorial(
+      name: name,
+      createdBy: createdBy,
+      relation: relation.isEmpty ? null : relation,
+      story: story,
+      anniversaryLabel: anniversary.isEmpty ? null : anniversary,
+      notes: notes.isEmpty ? null : notes,
+      isPublic: _isPublic,
+      allowComments: _allowComments,
+      allowSharing: _allowSharing,
+      categories: categories,
+      tags: tags,
+      heroImageUrl: heroImageUrl,
+    );
+
+    if (!mounted) return;
+
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('새 추모관이 생성되었습니다.')),
+      );
+      Navigator.pop(context, true);
+    } else {
+      final errorMessage =
+          memorialProvider.errorMessage ?? '추모관 생성 중 오류가 발생했습니다.';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(errorMessage)),
+      );
+    }
+  }
+
+  List<String> _deriveCategories(String relation) {
+    final normalized = relation.toLowerCase();
+    if (normalized.contains('반려')) {
+      return const ['반려동물'];
+    }
+    if (normalized.contains('어머니') ||
+        normalized.contains('아버지') ||
+        normalized.contains('가족') ||
+        normalized.contains('형') ||
+        normalized.contains('누나') ||
+        normalized.contains('언니') ||
+        normalized.contains('오빠') ||
+        normalized.contains('동생') ||
+        normalized.contains('자녀') ||
+        normalized.contains('부모')) {
+      return const ['가족'];
+    }
+    if (normalized.contains('친구') || normalized.contains('동기')) {
+      return const ['친구'];
+    }
+    if (normalized.contains('선생') || normalized.contains('교수')) {
+      return const ['스승'];
+    }
+    if (normalized.isEmpty) {
+      return const ['기타'];
+    }
+    return const ['기타'];
+  }
+
+  List<String> _buildTags({
+    required bool isPublic,
+    required bool allowComments,
+    required bool allowSharing,
+    required String anniversary,
+    required String relation,
+  }) {
+    final tags = <String>[
+      isPublic ? '공개 추모관' : '비공개 추모관',
+      allowComments ? '편지 허용' : '편지 제한',
+      allowSharing ? '공유 허용' : '공유 제한',
+    ];
+    if (anniversary.trim().isNotEmpty) {
+      tags.add('기념일 $anniversary');
+    }
+    if (relation.trim().isNotEmpty) {
+      tags.add(relation.trim());
+    }
+    return tags;
+  }
+
+  String _heroImageUrlSeed(String name, String anniversary) {
+    final seed =
+        '${name.trim()}-${anniversary.trim()}-${DateTime.now().millisecondsSinceEpoch}';
+    return 'https://picsum.photos/seed/${Uri.encodeComponent(seed)}/720/420';
   }
 }
 
@@ -136,12 +299,55 @@ class _BasicInfoSection extends StatelessWidget {
           AppTextField(
             controller: state._anniversaryController,
             label: '기념일',
-            hint: '예: 3월 15일 (오늘)',
+            hint: '예: 2024년 3월 15일',
             prefixIcon: const Icon(Icons.event_outlined),
+            readOnly: true,
+            onTap: () => _showDatePicker(context, state),
           ),
         ],
       ),
     );
+  }
+}
+
+Future<void> _showDatePicker(
+    BuildContext context, _MemorialEditScreenState state) async {
+  final now = DateTime.now();
+  final initialDate = state._selectedAnniversary ?? now;
+  final firstDate = DateTime(1900);
+  final lastDate = DateTime(now.year + 50);
+
+  final picked = await showDatePicker(
+    context: context,
+    initialDate: initialDate,
+    firstDate: firstDate,
+    lastDate: lastDate,
+    locale: const Locale('ko', 'KR'),
+    helpText: '기념일 선택',
+    cancelText: '취소',
+    confirmText: '선택',
+    fieldHintText: '예: 2024년 3월 15일',
+    builder: (context, child) {
+      return Theme(
+        data: Theme.of(context).copyWith(
+          colorScheme: Theme.of(context).colorScheme.copyWith(
+                primary: AppPalette.warmBrown,
+                onPrimary: Colors.white,
+                surface: Colors.white,
+                onSurface: AppPalette.ink,
+              ),
+        ),
+        child: child ?? const SizedBox.shrink(),
+      );
+    },
+  );
+
+  if (picked != null) {
+    state.setState(() {
+      state._selectedAnniversary = picked;
+      state._anniversaryController.text =
+          '${picked.year}년 ${picked.month}월 ${picked.day}일';
+    });
   }
 }
 
@@ -196,39 +402,24 @@ class _PrivacySection extends StatelessWidget {
       accentColor: AppPalette.accentGold,
       child: Column(
         children: [
-          ValueListenableBuilder<bool>(
-            valueListenable: state._isPublic,
-            builder: (context, value, _) {
-              return SwitchListTile.adaptive(
-                title: const Text('공개 추모관으로 설정'),
-                subtitle: const Text('누구나 검색하고 방문할 수 있습니다.'),
-                value: value,
-                onChanged: (enabled) => state._isPublic.value = enabled,
-              );
-            },
+          SwitchListTile.adaptive(
+            title: const Text('공개 추모관으로 설정'),
+            subtitle: const Text('누구나 검색하고 방문할 수 있습니다.'),
+            value: state._isPublic,
+            onChanged: state.updateIsPublic,
           ),
           const Divider(),
-          ValueListenableBuilder<bool>(
-            valueListenable: state._allowComments,
-            builder: (context, value, _) {
-              return SwitchListTile.adaptive(
-                title: const Text('편지/댓글 작성 허용'),
-                subtitle: const Text('방문자가 위로의 말을 남길 수 있습니다.'),
-                value: value,
-                onChanged: (enabled) => state._allowComments.value = enabled,
-              );
-            },
+          SwitchListTile.adaptive(
+            title: const Text('편지/댓글 작성 허용'),
+            subtitle: const Text('방문자가 위로의 말을 남길 수 있습니다.'),
+            value: state._allowComments,
+            onChanged: state.updateAllowComments,
           ),
-          ValueListenableBuilder<bool>(
-            valueListenable: state._allowSharing,
-            builder: (context, value, _) {
-              return SwitchListTile.adaptive(
-                title: const Text('추모관 공유 허용'),
-                subtitle: const Text('링크를 통해 다른 분들에게 추모관을 공유합니다.'),
-                value: value,
-                onChanged: (enabled) => state._allowSharing.value = enabled,
-              );
-            },
+          SwitchListTile.adaptive(
+            title: const Text('추모관 공유 허용'),
+            subtitle: const Text('링크를 통해 다른 분들에게 추모관을 공유합니다.'),
+            value: state._allowSharing,
+            onChanged: state.updateAllowSharing,
           ),
         ],
       ),
@@ -339,6 +530,7 @@ class _SaveButtonRow extends StatelessWidget {
           child: AppOutlinedButton(
             label: '임시 저장',
             leadingIcon: Icons.save_outlined,
+            badgeText: '준비 중',
             onPressed: () {
               FocusScope.of(context).unfocus();
               ScaffoldMessenger.of(context).showSnackBar(
@@ -349,16 +541,16 @@ class _SaveButtonRow extends StatelessWidget {
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: AppPrimaryButton(
-            label: '추모관 저장하기',
-            icon: Icons.check_circle_outline,
-            onPressed: () {
-              if (state._formKey.currentState?.validate() ?? false) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('추모관 정보를 저장했습니다.')),
-                );
-                Navigator.pop(context);
-              }
+          child: Consumer<MemorialProvider>(
+            builder: (context, provider, _) {
+              return AppPrimaryButton(
+                label: '추모관 저장하기',
+                icon: Icons.check_circle_outline,
+                isLoading: provider.isSubmitting,
+                onPressed: provider.isSubmitting
+                    ? null
+                    : () => state.handleSave(context),
+              );
             },
           ),
         ),
