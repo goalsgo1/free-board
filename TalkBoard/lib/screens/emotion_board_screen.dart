@@ -361,7 +361,7 @@ class _EmotionPostCard extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: AppPrimaryButton(
-                  label: theme.actions.primaryCta,
+                  label: '${theme.actions.primaryCta} (준비 중)',
                   icon: theme.actions.primaryIcon,
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(

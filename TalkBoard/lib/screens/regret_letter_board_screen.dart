@@ -359,6 +359,7 @@ class _RegretLetterCard extends StatelessWidget {
                 AppOutlinedButton(
                   label: theme.actions.secondaryCta,
                   leadingIcon: theme.actions.secondaryIcon,
+                badgeText: '준비 중',
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(

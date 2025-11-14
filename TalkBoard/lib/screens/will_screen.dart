@@ -211,6 +211,7 @@ class _WillScreenState extends State<WillScreen> {
                           child: AppOutlinedButton(
                             label: '임시 저장',
                             leadingIcon: Icons.save_outlined,
+                        badgeText: '준비 중',
                             onPressed: () {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(content: Text('임시 저장 기능은 준비 중입니다.')),
@@ -223,6 +224,7 @@ class _WillScreenState extends State<WillScreen> {
                           child: AppOutlinedButton(
                             label: '법무 검토 의뢰',
                             leadingIcon: Icons.support_agent_outlined,
+                        badgeText: '준비 중',
                             onPressed: () {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(content: Text('법무 검토 의뢰는 곧 열릴 예정입니다.')),
@@ -234,7 +236,7 @@ class _WillScreenState extends State<WillScreen> {
                     ),
                     const SizedBox(height: 16),
                     AppPrimaryButton(
-                      label: '유언장 서명 완료하기',
+                      label: '유언장 서명 완료하기 (준비 중)',
                       icon: Icons.check_circle_outline,
                       onPressed: () {
                         if (!(_formKey.currentState?.validate() ?? false)) {

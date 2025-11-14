@@ -221,13 +221,14 @@ class _EmotionPostCreateScreenState extends State<EmotionPostCreateScreen> {
                       child: AppOutlinedButton(
                         label: '임시 저장',
                         leadingIcon: Icons.save_outlined,
+                        badgeText: '준비 중',
                         onPressed: _handleDraftSave,
                       ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: AppPrimaryButton(
-                        label: '감정 글 올리기',
+                        label: '감정 글 올리기 (준비 중)',
                         icon: Icons.send_outlined,
                         onPressed: _handleSubmit,
                       ),

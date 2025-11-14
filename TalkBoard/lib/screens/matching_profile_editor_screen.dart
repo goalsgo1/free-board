@@ -184,6 +184,7 @@ class _MatchingProfileEditorScreenState extends State<MatchingProfileEditorScree
                     child: AppOutlinedButton(
                       label: '임시 저장',
                       leadingIcon: Icons.save_outlined,
+                      badgeText: '준비 중',
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('임시 저장 기능은 준비 중입니다.')),

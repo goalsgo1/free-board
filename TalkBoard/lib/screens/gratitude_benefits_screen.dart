@@ -137,7 +137,7 @@ class _GratitudeBenefitsScreenState extends State<GratitudeBenefitsScreen> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: AppPrimaryButton(
-                          label: '새 혜택 제안하기',
+                          label: '새 혜택 제안하기 (준비 중)',
                           icon: Icons.add_comment_outlined,
                           onPressed: () {
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -194,6 +194,7 @@ class _GratitudeBenefitsScreenState extends State<GratitudeBenefitsScreen> {
                   AppOutlinedButton(
                     label: '감사 이야기 남기기',
                     leadingIcon: Icons.edit_outlined,
+                badgeText: '준비 중',
                     onPressed: () {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('감사 이야기 작성 기능은 준비 중입니다.')),
@@ -361,6 +362,7 @@ class _BenefitCard extends StatelessWidget {
                 child: AppOutlinedButton(
                   label: '상세 안내 보기',
                   leadingIcon: Icons.open_in_new,
+                  badgeText: '준비 중',
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('"${campaign.title}" 상세 안내는 준비 중입니다.')),
@@ -371,7 +373,7 @@ class _BenefitCard extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: AppPrimaryButton(
-                  label: '혜택 신청하기',
+                  label: '혜택 신청하기 (준비 중)',
                   icon: Icons.send_outlined,
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(

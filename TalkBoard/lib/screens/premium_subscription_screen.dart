@@ -112,6 +112,7 @@ class _PremiumSubscriptionScreenState extends State<PremiumSubscriptionScreen> {
                       AppOutlinedButton(
                         label: '결제 수단 변경',
                         leadingIcon: Icons.payment_outlined,
+                        badgeText: '준비 중',
                         onPressed: () {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('결제 수단 변경은 다음 업데이트에서 제공됩니다.')),
@@ -207,6 +208,7 @@ class _PremiumSubscriptionScreenState extends State<PremiumSubscriptionScreen> {
                   AppOutlinedButton(
                     label: '전체 내역 다운로드',
                     leadingIcon: Icons.cloud_download_outlined,
+                    badgeText: '준비 중',
                     onPressed: () {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('상세 내역 다운로드는 준비 중입니다.')),
@@ -223,6 +225,7 @@ class _PremiumSubscriptionScreenState extends State<PremiumSubscriptionScreen> {
                   child: AppOutlinedButton(
                     label: '구독 해지 신청',
                     leadingIcon: Icons.cancel_outlined,
+                    badgeText: '준비 중',
                     onPressed: () {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('구독 해지는 고객센터 상담 후 처리됩니다.')),

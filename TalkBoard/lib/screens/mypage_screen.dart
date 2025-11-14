@@ -147,6 +147,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
                         child: AppOutlinedButton(
                           label: action.label,
                           leadingIcon: action.icon,
+                          badgeText: action.message != null ? '준비 중' : null,
                           onPressed: () {
                             if (action.routeName != null) {
                               Navigator.pushNamed(context, action.routeName!);
@@ -279,6 +280,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
                   child: AppOutlinedButton(
                     label: '로그아웃',
                     leadingIcon: Icons.logout,
+                    badgeText: '준비 중',
                     onPressed: () {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('로그아웃 기능은 준비 중입니다.')),
@@ -289,7 +291,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: AppPrimaryButton(
-                    label: '회원탈퇴',
+                    label: '회원탈퇴 (준비 중)',
                     icon: Icons.delete_outline,
                     onPressed: () {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -414,7 +416,7 @@ class _FaqLink extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    label,
+                        '$label (준비 중)',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.w600,
                           color: Colors.black,

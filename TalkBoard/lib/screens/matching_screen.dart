@@ -314,6 +314,7 @@ class _MatchingProfileCard extends StatelessWidget {
                 child: AppOutlinedButton(
                   label: '프로필 상세 보기',
                   leadingIcon: Icons.visibility_outlined,
+                  badgeText: '준비 중',
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -326,7 +327,7 @@ class _MatchingProfileCard extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: AppPrimaryButton(
-                  label: profile.ctaLabel,
+                  label: '${profile.ctaLabel} (준비 중)',
                   icon: Icons.handshake_outlined,
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(

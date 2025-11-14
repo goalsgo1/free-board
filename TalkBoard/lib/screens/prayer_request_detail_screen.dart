@@ -110,7 +110,7 @@ class _PrayerRequestDetailScreenState extends State<PrayerRequestDetailScreen> {
           side: const BorderSide(color: Colors.black, width: 1.4),
         ),
         icon: const Icon(Icons.self_improvement_outlined),
-        label: Text('${boardTheme.actions.reactionLabel} 완료 기록'),
+        label: Text('${boardTheme.actions.reactionLabel} 완료 기록 (준비 중)'),
         onPressed: () {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -310,6 +310,7 @@ class _PrayerRequestDetailScreenState extends State<PrayerRequestDetailScreen> {
                         child: AppOutlinedButton(
                           label: '동참금 안내 보기',
                           leadingIcon: Icons.article_outlined,
+                        badgeText: '준비 중',
                           onPressed: () {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
@@ -380,7 +381,7 @@ class _PrayerRequestDetailScreenState extends State<PrayerRequestDetailScreen> {
                   children: [
                     Expanded(
                       child: AppOutlinedButton(
-                        label: '임시 저장',
+                        label: '임시 저장 (준비 중)',
                         leadingIcon: Icons.save_outlined,
                         onPressed: () {
                           ScaffoldMessenger.of(context).showSnackBar(

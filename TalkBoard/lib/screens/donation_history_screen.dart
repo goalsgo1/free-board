@@ -216,6 +216,7 @@ class _DonationHistoryScreenState extends State<DonationHistoryScreen> {
                   child: AppOutlinedButton(
                     label: 'CSV로 내보내기',
                     leadingIcon: Icons.download_outlined,
+                    badgeText: '준비 중',
                     onPressed: () {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('CSV 내보내기는 준비 중입니다.')),
@@ -414,6 +415,7 @@ class _DonationHistoryTile extends StatelessWidget {
             AppOutlinedButton(
               label: '감사장 보내기',
               leadingIcon: Icons.mail_outlined,
+              badgeText: '준비 중',
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('${record.donor} 님께 감사장을 준비 중입니다.')),

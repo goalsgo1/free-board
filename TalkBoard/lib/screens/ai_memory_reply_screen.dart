@@ -152,6 +152,7 @@ class _AiMemoryReplyScreenState extends State<AiMemoryReplyScreen> {
                         child: AppOutlinedButton(
                           label: '자료 업로드',
                           leadingIcon: Icons.cloud_upload_outlined,
+                          badgeText: '준비 중',
                           onPressed: () {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text('자료 업로드 기능은 준비 중입니다.')),
@@ -162,7 +163,7 @@ class _AiMemoryReplyScreenState extends State<AiMemoryReplyScreen> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: AppPrimaryButton(
-                          label: 'AI 답장 미리보기',
+                          label: 'AI 답장 미리보기 (준비 중)',
                           icon: Icons.auto_awesome_outlined,
                           onPressed: () {
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -191,6 +192,7 @@ class _AiMemoryReplyScreenState extends State<AiMemoryReplyScreen> {
                   AppOutlinedButton(
                     label: '더 많은 답장 보기',
                     leadingIcon: Icons.history_outlined,
+                  badgeText: '준비 중',
                     onPressed: () {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('AI 답장 히스토리는 준비 중입니다.')),

@@ -264,13 +264,14 @@ class _PrayerRequestCreateScreenState
                       child: AppOutlinedButton(
                         label: '초안으로 저장',
                         leadingIcon: Icons.save_outlined,
+                        badgeText: '준비 중',
                         onPressed: _handleDraftSave,
                       ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: AppPrimaryButton(
-                        label: '기도 요청 등록하기',
+                        label: '기도 요청 등록하기 (준비 중)',
                         icon: Icons.check_circle_outline,
                         onPressed: _handleSubmit,
                       ),

@@ -126,6 +126,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   AppOutlinedButton(
                     label: '권한 설정 바로 가기',
                     leadingIcon: Icons.open_in_new,
+                    badgeText: '준비 중',
                     onPressed: () {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(

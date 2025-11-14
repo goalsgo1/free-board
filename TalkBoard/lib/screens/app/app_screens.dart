@@ -336,7 +336,7 @@ class _HomeSectionHeader extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: const [
                   Text(
-                    '전체 보기',
+                    '전체 보기 (준비 중)',
                     style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
                   ),
                   SizedBox(width: 4),
@@ -451,6 +451,7 @@ class _AnniversaryTile extends StatelessWidget {
                 child: AppOutlinedButton(
                   label: '추모하러 가기',
                   leadingIcon: Icons.arrow_forward,
+                  badgeText: '준비 중',
                   onPressed: () {},
                 ),
               ),
@@ -544,6 +545,7 @@ class _MemorialHighlightCard extends StatelessWidget {
                     child: AppOutlinedButton(
                       label: '살펴보기',
                       leadingIcon: Icons.open_in_new,
+                  badgeText: '준비 중',
                       onPressed: primaryAction,
                     ),
                   ),
