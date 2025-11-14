@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:free_board/board/board_themes.dart';
+import 'package:free_board/models/memorial.dart';
+import 'package:free_board/providers/memorial_provider.dart';
 import 'package:free_board/widgets/accessibility_button.dart';
 import 'package:free_board/widgets/board/board_section_card.dart';
 import 'package:free_board/widgets/board/board_theme.dart';
@@ -21,81 +24,12 @@ class MemorialListScreen extends StatefulWidget {
 
 class _MemorialListScreenState extends State<MemorialListScreen> {
   final TextEditingController _searchController = TextEditingController();
-  final List<_MemorialListItem> _items = const [
-    _MemorialListItem(
-      memorialId: 'memorial-001',
-      name: '박정윤',
-      relation: '어머니',
-      categories: ['가족', '인간'],
-      accentColor: AppPalette.warmBrown,
-      updatedAtLabel: '3시간 전 업데이트',
-      anniversaryLabel: '기일 · 3월 15일 (오늘)',
-      tags: ['사진 42장', '편지 18개', '추억 영상 2개'],
-      storyPreview:
-          '가족 모두가 모여 생일을 축하하던 모습을 기록했어요. 새로운 사진을 추가했습니다.',
-      isPinned: true,
-      isFavorite: true,
-      heroImageUrl: 'https://picsum.photos/seed/memorialList1/720/420',
-    ),
-    _MemorialListItem(
-      memorialId: 'memorial-002',
-      name: '브라우니',
-      relation: '반려견',
-      categories: ['반려동물', '추억'],
-      accentColor: AppPalette.softMint,
-      updatedAtLabel: '어제 · 21:10',
-      anniversaryLabel: '입양일 · 4월 2일 (D-15)',
-      tags: ['사진 18장', '음성 메모 3개'],
-      storyPreview:
-          '추억 노트에 산책 영상을 추가했어요. 입양 기념일 이벤트를 준비 중입니다.',
-      isPinned: false,
-      isFavorite: true,
-      heroImageUrl: 'https://picsum.photos/seed/memorialList2/720/420',
-    ),
-    _MemorialListItem(
-      memorialId: 'memorial-003',
-      name: '김태영',
-      relation: '대학교 친구',
-      categories: ['친구', '인간'],
-      accentColor: AppPalette.softLavender,
-      updatedAtLabel: '3일 전',
-      anniversaryLabel: '생일 · 5월 6일 (D-49)',
-      tags: ['편지 5개', '방명록 12개'],
-      storyPreview:
-          '동아리 친구들의 새 편지를 추가했어요. 방명록 정리를 진행 중입니다.',
-      isPinned: false,
-      isFavorite: false,
-      heroImageUrl: 'https://picsum.photos/seed/memorialList3/720/420',
-    ),
-    _MemorialListItem(
-      memorialId: 'memorial-004',
-      name: '정다운',
-      relation: '고등학교 친구',
-      categories: ['친구', '인간'],
-      accentColor: AppPalette.deepBlue,
-      updatedAtLabel: '1주일 전',
-      anniversaryLabel: '기일 · 8월 24일',
-      tags: ['사진 9장', '음성 편지 1개'],
-      storyPreview:
-          '추억 책갈피에 여행 사진을 업로드했습니다. 추억 모음집을 준비해보세요.',
-      isPinned: false,
-      isFavorite: false,
-      heroImageUrl: 'https://picsum.photos/seed/memorialList4/720/420',
-    ),
-  ];
-
-  late final List<String> _filters;
   String _selectedFilter = '전체';
   bool _showFavoritesOnly = false;
 
   @override
   void initState() {
     super.initState();
-    final categories = <String>{};
-    for (final item in _items) {
-      categories.addAll(item.categories);
-    }
-    _filters = ['전체', ...categories];
     _searchController.addListener(_handleSearchChanged);
   }
 
@@ -107,9 +41,14 @@ class _MemorialListScreenState extends State<MemorialListScreen> {
     super.dispose();
   }
 
-  List<_MemorialListItem> get _filteredItems {
+  List<_MemorialListItem> _allItems(BuildContext context) {
+    final memorials = context.watch<MemorialProvider>().memorials;
+    return memorials.map(_MemorialListItem.fromMemorial).toList();
+  }
+
+  List<_MemorialListItem> _filteredItems(List<_MemorialListItem> items) {
     final query = _searchController.text.trim().toLowerCase();
-    final filtered = _items.where((item) {
+    final filtered = items.where((item) {
       final matchesFilter =
           _selectedFilter == '전체' || item.categories.contains(_selectedFilter);
       final matchesFavorite = !_showFavoritesOnly || item.isFavorite;
@@ -134,6 +73,15 @@ class _MemorialListScreenState extends State<MemorialListScreen> {
     setState(() {});
   }
 
+  List<String> _buildFilters(List<_MemorialListItem> items) {
+    final categories = <String>{};
+    for (final item in items) {
+      categories.addAll(item.categories);
+    }
+    final sorted = categories.toList()..sort();
+    return ['전체', ...sorted];
+  }
+
   void _showComingSoon(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -145,10 +93,20 @@ class _MemorialListScreenState extends State<MemorialListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final allItems = _allItems(context);
+    final filters = _buildFilters(allItems);
+    if (!filters.contains(_selectedFilter)) {
+      _selectedFilter = '전체';
+    }
+    final filteredItems = _filteredItems(allItems);
+    final totalCount = allItems.length;
+    final favoriteCount =
+        allItems.where((item) => item.isFavorite).length;
+    final pinnedCount = allItems.where((item) => item.isPinned).length;
+
     final boardTheme = BoardThemes.memorial;
     final filterConfig = boardTheme.filterSection;
     final statsConfig = boardTheme.statsConfig;
-    final filteredItems = _filteredItems;
     return Scaffold(
       backgroundColor: boardTheme.backgroundColor,
       appBar: AppBar(
@@ -171,8 +129,15 @@ class _MemorialListScreenState extends State<MemorialListScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.pushNamed(context, '/memorial-edit');
+        onPressed: () async {
+          final result =
+              await Navigator.pushNamed(context, '/memorial-edit');
+          if (!mounted) return;
+          if (result == true) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('새 추모관이 추가되었습니다.')),
+            );
+          }
         },
         icon: Icon(boardTheme.createAction.icon, color: Colors.black),
         label: Text(
@@ -203,7 +168,7 @@ class _MemorialListScreenState extends State<MemorialListScreen> {
                       Expanded(
                         child: _StatTile(
                           label: '전체',
-                          value: '${_items.length}숲',
+                          value: '$totalCount숲',
                           icon: Icons.inbox,
                         ),
                       ),
@@ -211,8 +176,7 @@ class _MemorialListScreenState extends State<MemorialListScreen> {
                       Expanded(
                         child: _StatTile(
                           label: '즐겨찾기',
-                          value:
-                              '${_items.where((item) => item.isFavorite).length}숲',
+                          value: '$favoriteCount숲',
                           icon: Icons.favorite,
                         ),
                       ),
@@ -220,8 +184,7 @@ class _MemorialListScreenState extends State<MemorialListScreen> {
                       Expanded(
                         child: _StatTile(
                           label: '고정됨',
-                          value:
-                              '${_items.where((item) => item.isPinned).length}숲',
+                          value: '$pinnedCount숲',
                           icon: Icons.push_pin,
                         ),
                       ),
@@ -261,52 +224,58 @@ class _MemorialListScreenState extends State<MemorialListScreen> {
                         ),
                   ),
                   const SizedBox(height: 12),
-                  ..._items.take(2).map(
-                    (item) {
-                      const Color accent = AppPalette.warmBrown;
-                      return Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(
-                            Icons.calendar_month,
-                            size: 20,
-                            color: accent,
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  item.name,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium
-                                      ?.copyWith(
-                                        fontWeight: FontWeight.w600,
-                                        color: accent,
-                                      ),
+                  if (allItems.isEmpty)
+                    const AppHelperText(
+                      text: '아직 등록된 추모관이 없습니다. 새 추모관을 만들어보세요.',
+                      icon: Icons.info_outline,
+                    )
+                  else
+                    ...allItems.take(2).map(
+                      (item) {
+                        const Color accent = AppPalette.warmBrown;
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Icon(
+                                Icons.calendar_month,
+                                size: 20,
+                                color: accent,
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      item.name,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.w600,
+                                            color: accent,
+                                          ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      item.anniversaryLabel,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.copyWith(
+                                            color: AppPalette.caption,
+                                          ),
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  item.anniversaryLabel,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall
-                                      ?.copyWith(
-                                        color: AppPalette.caption,
-                                      ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    );
-                    },
-                  ),
+                        );
+                      },
+                    ),
                 ],
               ),
             ),
@@ -330,7 +299,7 @@ class _MemorialListScreenState extends State<MemorialListScreen> {
                     ),
                     const SizedBox(height: 16),
                     _FilterChips(
-                      filters: _filters,
+                      filters: filters,
                       selected: _selectedFilter,
                       onSelected: (value) {
                         setState(() {
@@ -385,13 +354,6 @@ class _MemorialListScreenState extends State<MemorialListScreen> {
                       '/memorial-detail',
                       arguments: MemorialDetailArguments(
                         memorialId: item.memorialId,
-                        name: item.name,
-                        relationSummary:
-                            '${item.relation} · ${item.updatedAtLabel}',
-                        relation: item.relation,
-                        heroImageUrl: item.heroImageUrl,
-                        story: item.storyPreview,
-                        anniversaryLabel: item.anniversaryLabel,
                       ),
                     ),
                     onShare: () => _showComingSoon(
@@ -479,6 +441,74 @@ class _MemorialListCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Align(
+            alignment: Alignment.topRight,
+            child: Wrap(
+              spacing: 8,
+              children: [
+                _CardIconButton(
+                  tooltip: item.isPinned ? '고정 해제' : '고정하기',
+                  icon: item.isPinned ? Icons.push_pin : Icons.push_pin_outlined,
+                  isActive: item.isPinned,
+                  onPressed: () async {
+                    final provider = context.read<MemorialProvider>();
+                    final success = await provider.updatePinned(
+                      item.memorialId,
+                      !item.isPinned,
+                    );
+                    if (!context.mounted) return;
+                    if (success) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            item.isPinned
+                                ? '"${item.name}" 고정을 해제했습니다.'
+                                : '"${item.name}"을(를) 상단에 고정했습니다.',
+                          ),
+                        ),
+                      );
+                    } else {
+                      final error = provider.errorMessage ??
+                          '고정 상태를 변경하지 못했습니다.';
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(error)),
+                      );
+                    }
+                  },
+                ),
+                _CardIconButton(
+                  tooltip: item.isFavorite ? '즐겨찾기 해제' : '즐겨찾기',
+                  icon: item.isFavorite ? Icons.favorite : Icons.favorite_border,
+                  isActive: item.isFavorite,
+                  onPressed: () async {
+                    final provider = context.read<MemorialProvider>();
+                    final success = await provider.updateFavorite(
+                      item.memorialId,
+                      !item.isFavorite,
+                    );
+                    if (!context.mounted) return;
+                    if (success) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            item.isFavorite
+                                ? '"${item.name}" 즐겨찾기를 해제했습니다.'
+                                : '"${item.name}"을(를) 즐겨찾기에 추가했습니다.',
+                          ),
+                        ),
+                      );
+                    } else {
+                      final error = provider.errorMessage ??
+                          '즐겨찾기 상태를 변경하지 못했습니다.';
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(error)),
+                      );
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
           Wrap(
             spacing: 8,
             runSpacing: 8,
@@ -652,6 +682,7 @@ class _MemorialListItem {
     required this.isPinned,
     required this.isFavorite,
     required this.heroImageUrl,
+    required this.createdAt,
   });
 
   final String memorialId;
@@ -666,10 +697,163 @@ class _MemorialListItem {
   final bool isPinned;
   final bool isFavorite;
   final String heroImageUrl;
+  final DateTime createdAt;
 
   String get searchText =>
       '$name $relation ${categories.join(' ')} $storyPreview'
           .toLowerCase();
+
+  static _MemorialListItem fromMemorial(Memorial memorial) {
+    final categories = memorial.categories.isNotEmpty
+        ? memorial.categories
+        : _fallbackCategories(memorial.relation);
+    final tags =
+        memorial.tags.isNotEmpty ? memorial.tags : _fallbackTags(memorial);
+    return _MemorialListItem(
+      memorialId: memorial.id,
+      name: memorial.name,
+      relation: memorial.relation ?? '관계 미정',
+      categories: categories,
+      accentColor: _accentColorFor(memorial),
+      updatedAtLabel: _formatUpdatedAt(memorial.updatedAt),
+      anniversaryLabel:
+          memorial.anniversaryLabel ?? '기념일 정보가 아직 없습니다.',
+      tags: tags,
+      storyPreview: memorial.story?.isNotEmpty == true
+          ? memorial.story!
+          : '추억 이야기가 아직 작성되지 않았습니다.',
+      isPinned: memorial.isPinned,
+      isFavorite: memorial.isFavorite,
+      heroImageUrl: memorial.heroImageUrl ??
+          'https://picsum.photos/seed/${Uri.encodeComponent(memorial.id)}/720/420',
+      createdAt: memorial.createdAt,
+    );
+  }
+
+  static List<String> _fallbackCategories(String? relation) {
+    if (relation == null || relation.trim().isEmpty) {
+      return const ['기타'];
+    }
+    final normalized = relation.toLowerCase();
+    if (normalized.contains('반려')) return const ['반려동물'];
+    if (normalized.contains('친구')) return const ['친구'];
+    if (normalized.contains('선생') || normalized.contains('교수')) {
+      return const ['스승'];
+    }
+    if (normalized.contains('어머니') ||
+        normalized.contains('아버지') ||
+        normalized.contains('부모') ||
+        normalized.contains('형') ||
+        normalized.contains('오빠') ||
+        normalized.contains('언니') ||
+        normalized.contains('누나') ||
+        normalized.contains('동생') ||
+        normalized.contains('자녀') ||
+        normalized.contains('가족')) {
+      return const ['가족'];
+    }
+    return const ['기타'];
+  }
+
+  static List<String> _fallbackTags(Memorial memorial) {
+    final tags = <String>[
+      memorial.isPublic ? '공개 추모관' : '비공개 추모관',
+      memorial.allowComments ? '편지 허용' : '편지 제한',
+      memorial.allowSharing ? '공유 허용' : '공유 제한',
+    ];
+    if (memorial.anniversaryLabel != null &&
+        memorial.anniversaryLabel!.trim().isNotEmpty) {
+      tags.add(memorial.anniversaryLabel!.trim());
+    }
+    if (memorial.relation != null && memorial.relation!.trim().isNotEmpty) {
+      tags.add(memorial.relation!.trim());
+    }
+    return tags;
+  }
+
+  static Color _accentColorFor(Memorial memorial) {
+    const palette = [
+      AppPalette.warmBrown,
+      AppPalette.accentMint,
+      AppPalette.accentLavender,
+      AppPalette.accentGold,
+      AppPalette.accentPink,
+      AppPalette.deepBlue,
+    ];
+    final seed = memorial.id.isNotEmpty
+        ? memorial.id.hashCode
+        : memorial.name.hashCode;
+    final color = palette[seed.abs() % palette.length];
+    return AppPalette.accessibleAccent(color);
+  }
+
+  static String _formatUpdatedAt(DateTime updatedAt) {
+    final now = DateTime.now();
+    final difference = now.difference(updatedAt);
+    if (difference.inMinutes <= 1) {
+      return '방금 전 업데이트';
+    } else if (difference.inHours < 1) {
+      return '${difference.inMinutes}분 전 업데이트';
+    } else if (difference.inHours < 24) {
+      return '${difference.inHours}시간 전 업데이트';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays}일 전 업데이트';
+    } else {
+      final month = updatedAt.month.toString().padLeft(2, '0');
+      final day = updatedAt.day.toString().padLeft(2, '0');
+      return '${updatedAt.year}.$month.$day 업데이트';
+    }
+  }
+}
+
+class _CardIconButton extends StatelessWidget {
+  const _CardIconButton({
+    required this.icon,
+    required this.tooltip,
+    required this.onPressed,
+    this.isActive = false,
+  });
+
+  final IconData icon;
+  final String tooltip;
+  final VoidCallback onPressed;
+  final bool isActive;
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: tooltip,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: onPressed,
+        child: Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isActive ? AppPalette.warmBrown : AppPalette.warmBeige,
+              width: 1.2,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 6,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          alignment: Alignment.center,
+          child: Icon(
+            icon,
+            size: 18,
+            color: isActive ? AppPalette.warmBrown : AppPalette.ink,
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 

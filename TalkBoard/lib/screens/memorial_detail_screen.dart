@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import 'package:free_board/models/memorial.dart';
+import 'package:free_board/providers/memorial_provider.dart';
+import 'package:free_board/screens/memorial_letter_screen.dart';
 import 'package:free_board/screens/memorial_stats_screen.dart';
 import 'package:free_board/widgets/accessibility_button.dart';
 import 'package:free_board/widgets/components/app_buttons.dart';
 import 'package:free_board/widgets/components/app_card.dart';
 import 'package:free_board/widgets/components/app_inputs.dart';
 import 'package:free_board/widgets/components/app_palette.dart';
-import 'package:free_board/screens/memorial_letter_screen.dart';
 
 class MemorialDetailScreen extends StatelessWidget {
   const MemorialDetailScreen({super.key});
@@ -15,7 +18,7 @@ class MemorialDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)?.settings.arguments
         as MemorialDetailArguments?;
-    final data = args ?? const MemorialDetailArguments.sample();
+    final memorialId = args?.memorialId;
 
     return Scaffold(
       backgroundColor: AppPalette.softCream,
@@ -25,37 +28,61 @@ class MemorialDetailScreen extends StatelessWidget {
         foregroundColor: Colors.white,
         actions: const [AccessibilityButton()],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.only(bottom: 32),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _MemorialHeroSection(data: data),
-            const SizedBox(height: 20),
-            _SummaryCard(data: data),
-            const SizedBox(height: 20),
-            _ActionRow(data: data),
-            const SizedBox(height: 20),
-            const _StatsCard(),
-            const SizedBox(height: 20),
-            const _TimelineCard(),
-            const SizedBox(height: 20),
-            const _MemoriesCard(),
-            const SizedBox(height: 20),
-            const _LettersPreviewCard(),
-            const SizedBox(height: 20),
-            const _SupportLinksCard(),
-          ],
-        ),
+      body: memorialId == null
+          ? const _ErrorView(message: '유효하지 않은 추모관 정보입니다.')
+          : Consumer<MemorialProvider>(
+              builder: (context, provider, child) {
+                final memorial = provider.findById(memorialId);
+                if (memorial == null) {
+                  if (provider.memorials.isEmpty) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  return const _ErrorView(message: '추모관을 찾을 수 없습니다.');
+                }
+                return _MemorialDetailContent(memorial: memorial);
+              },
+            ),
+    );
+  }
+}
+
+class _MemorialDetailContent extends StatelessWidget {
+  const _MemorialDetailContent({required this.memorial});
+
+  final Memorial memorial;
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.only(bottom: 32),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _MemorialHeroSection(memorial: memorial),
+          const SizedBox(height: 20),
+          _SummaryCard(memorial: memorial),
+          const SizedBox(height: 20),
+          _ActionRow(memorial: memorial),
+          const SizedBox(height: 20),
+          _StatsCard(memorial: memorial),
+          const SizedBox(height: 20),
+          const _TimelineCard(),
+          const SizedBox(height: 20),
+          const _MemoriesCard(),
+          const SizedBox(height: 20),
+          const _LettersPreviewCard(),
+          const SizedBox(height: 20),
+          const _SupportLinksCard(),
+        ],
       ),
     );
   }
 }
 
 class _MemorialHeroSection extends StatelessWidget {
-  const _MemorialHeroSection({required this.data});
+  const _MemorialHeroSection({required this.memorial});
 
-  final MemorialDetailArguments data;
+  final Memorial memorial;
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +92,8 @@ class _MemorialHeroSection extends StatelessWidget {
           height: 220,
           width: double.infinity,
           child: Image.network(
-            data.heroImageUrl,
+            memorial.heroImageUrl ??
+                'https://picsum.photos/seed/${Uri.encodeComponent(memorial.id)}/1080/640',
             fit: BoxFit.cover,
           ),
         ),
@@ -91,7 +119,7 @@ class _MemorialHeroSection extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                data.name,
+                memorial.name,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       color: Colors.white,
                       fontSize: 26,
@@ -100,7 +128,7 @@ class _MemorialHeroSection extends StatelessWidget {
               ),
               const SizedBox(height: 6),
               Text(
-                data.relationSummary,
+                _buildRelationSummary(memorial),
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: Colors.white70,
                       fontWeight: FontWeight.w500,
@@ -115,43 +143,89 @@ class _MemorialHeroSection extends StatelessWidget {
 }
 
 class _SummaryCard extends StatelessWidget {
-  const _SummaryCard({required this.data});
+  const _SummaryCard({required this.memorial});
 
-  final MemorialDetailArguments data;
+  final Memorial memorial;
 
   @override
   Widget build(BuildContext context) {
+    final relation = memorial.relation?.trim();
+    final relationLabel =
+        relation != null && relation.isNotEmpty ? relation : '관계 정보가 없습니다.';
+    final anniversary = memorial.anniversaryLabel?.trim();
+    final anniversaryLabel = anniversary != null && anniversary.isNotEmpty
+        ? anniversary
+        : '기념일 정보가 아직 없습니다.';
+    final notes = memorial.notes?.trim();
+    final notesLabel = notes != null && notes.isNotEmpty
+        ? notes
+        : '추모 메모가 아직 작성되지 않았습니다.';
+    final accessibilityLabels = [
+      memorial.isPublic ? '공개' : '비공개',
+      memorial.allowComments ? '편지 허용' : '편지 제한',
+      memorial.allowSharing ? '공유 허용' : '공유 제한',
+    ].join(' · ');
+    final categories = memorial.categories.isNotEmpty
+        ? memorial.categories.join(', ')
+        : null;
+    final tags = memorial.tags.isNotEmpty ? memorial.tags.join(' · ') : null;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: AppSurfaceCard(
         title: '기억의 요약',
-        subtitle: data.story,
+        subtitle: memorial.story?.isNotEmpty == true
+            ? memorial.story!
+            : '아직 추억 소개가 작성되지 않았습니다.',
         icon: Icons.spa_outlined,
         accentColor: AppPalette.accentMint,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _SummaryRow(
+              icon: Icons.person_outline,
+              label: '관계',
+              value: relationLabel,
+            ),
+            const SizedBox(height: 12),
+            _SummaryRow(
               icon: Icons.cake_outlined,
               label: '기념일',
-              value: data.anniversaryLabel,
+              value: anniversaryLabel,
             ),
             const SizedBox(height: 12),
             _SummaryRow(
-              icon: Icons.location_on_outlined,
-              label: '추모 장소',
-              value: '기억의 정원 · 가족 추모관 3층',
+              icon: Icons.lock_open_outlined,
+              label: '공개 설정',
+              value: accessibilityLabels,
             ),
+            if (categories != null) ...[
+              const SizedBox(height: 12),
+              _SummaryRow(
+                icon: Icons.category_outlined,
+                label: '분류',
+                value: categories,
+              ),
+            ],
+            if (tags != null) ...[
+              const SizedBox(height: 12),
+              _SummaryRow(
+                icon: Icons.tag_outlined,
+                label: '태그',
+                value: tags,
+              ),
+            ],
             const SizedBox(height: 12),
             _SummaryRow(
-              icon: Icons.groups_outlined,
-              label: '참여 가족',
-              value: '자녀 3명, 손주 2명, 지인 12명',
+              icon: Icons.notes_outlined,
+              label: '추모 메모',
+              value: notesLabel,
             ),
             const SizedBox(height: 16),
-            const AppHelperText(
+            AppHelperText(
               icon: Icons.info_outline,
-              text: '가족 인증이 완료되었습니다. 추모관 관리 권한이 부여되었습니다.',
+              text:
+                  '마지막 업데이트 ${_formatTimeAgo(memorial.updatedAt)} · 생성 ${_formatDate(memorial.createdAt)}',
             ),
           ],
         ),
@@ -206,9 +280,9 @@ class _SummaryRow extends StatelessWidget {
 }
 
 class _ActionRow extends StatelessWidget {
-  const _ActionRow({required this.data});
+  const _ActionRow({required this.memorial});
 
-  final MemorialDetailArguments data;
+  final Memorial memorial;
 
   @override
   Widget build(BuildContext context) {
@@ -227,10 +301,10 @@ class _ActionRow extends StatelessWidget {
                       context,
                       '/memorial-letter',
                       arguments: MemorialLetterArguments(
-                        memorialId: data.memorialId ?? 'memorial-001',
-                        memorialName: data.name,
+                        memorialId: memorial.id,
+                        memorialName: memorial.name,
                         defaultAuthor: '작성자',
-                        defaultRelation: data.relation,
+                        defaultRelation: memorial.relation ?? '가족',
                       ),
                     );
                   },
@@ -241,6 +315,7 @@ class _ActionRow extends StatelessWidget {
                 child: AppOutlinedButton(
                   label: '공유하기',
                   leadingIcon: Icons.ios_share,
+              badgeText: '준비 중',
                   onPressed: () {},
                 ),
               ),
@@ -255,10 +330,11 @@ class _ActionRow extends StatelessWidget {
                 context,
                 MemorialStatsScreen.routeName,
                 arguments: MemorialStatsArguments(
-                  memorialId: data.memorialId ?? 'memorial-001',
-                  memorialName: data.name,
-                  relationSummary: data.relationSummary,
-                  heroImageUrl: data.heroImageUrl,
+                  memorialId: memorial.id,
+                  memorialName: memorial.name,
+                  relationSummary: _buildRelationSummary(memorial),
+                  heroImageUrl: memorial.heroImageUrl ??
+                      'https://picsum.photos/seed/${Uri.encodeComponent(memorial.id)}/720/420',
                 ),
               );
             },
@@ -270,38 +346,55 @@ class _ActionRow extends StatelessWidget {
 }
 
 class _StatsCard extends StatelessWidget {
-  const _StatsCard();
+  const _StatsCard({required this.memorial});
+
+  final Memorial memorial;
 
   @override
   Widget build(BuildContext context) {
+    final metrics = [
+      _StatMetric(label: '방문 수', value: memorial.visitCount, suffix: '명'),
+      _StatMetric(label: '편지', value: memorial.letterCount, suffix: '통'),
+      _StatMetric(label: '사진', value: memorial.photoCount, suffix: '장'),
+      _StatMetric(label: '영상', value: memorial.videoCount, suffix: '개'),
+      _StatMetric(label: '기도 참여', value: memorial.prayerCount, suffix: '명'),
+    ];
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: AppSurfaceCard(
         title: '추모 현황',
-        subtitle: '지난 7일간 가족과 지인들의 참여 기록입니다.',
+        subtitle: '최근 7일간 가족과 지인들의 참여 기록입니다.',
         icon: Icons.insights_outlined,
         accentColor: AppPalette.accentGold,
         child: Wrap(
           spacing: 12,
           runSpacing: 12,
-          children: const [
-            _StatChip(label: '방문 수', value: '128명'),
-            _StatChip(label: '편지', value: '24통'),
-            _StatChip(label: '사진', value: '36장'),
-            _StatChip(label: '영상', value: '3개'),
-            _StatChip(label: '기도 참여', value: '42명'),
-          ],
+          children: metrics
+              .map((metric) => _StatChip(metric: metric))
+              .toList(),
         ),
       ),
     );
   }
 }
 
-class _StatChip extends StatelessWidget {
-  const _StatChip({required this.label, required this.value});
+class _StatMetric {
+  const _StatMetric({
+    required this.label,
+    required this.value,
+    required this.suffix,
+  });
 
   final String label;
-  final String value;
+  final int value;
+  final String suffix;
+}
+
+class _StatChip extends StatelessWidget {
+  const _StatChip({required this.metric});
+
+  final _StatMetric metric;
 
   @override
   Widget build(BuildContext context) {
@@ -324,7 +417,7 @@ class _StatChip extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            value,
+            _formatCount(metric.value, metric.suffix),
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w700,
                   color: AppPalette.warmBrown,
@@ -332,7 +425,7 @@ class _StatChip extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            label,
+            metric.label,
             style: Theme.of(context).textTheme.labelMedium?.copyWith(
                   color: AppPalette.caption,
                   fontWeight: FontWeight.w500,
@@ -599,6 +692,7 @@ class _SupportLinksCard extends StatelessWidget {
             AppOutlinedButton(
               label: '추모관 설정으로 이동',
               leadingIcon: Icons.settings,
+              badgeText: '준비 중',
               onPressed: () {},
             ),
           ],
@@ -608,31 +702,88 @@ class _SupportLinksCard extends StatelessWidget {
   }
 }
 
+class _ErrorView extends StatelessWidget {
+  const _ErrorView({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.error_outline, size: 48, color: AppPalette.warmBrown),
+            const SizedBox(height: 16),
+            Text(
+              message,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: AppPalette.ink,
+                    fontWeight: FontWeight.w600,
+                    height: 1.5,
+                  ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+String _formatCount(int value, String suffix) {
+  return '${_formatNumber(value)}$suffix';
+}
+
+String _formatNumber(int value) {
+  final digits = value.toString();
+  final buffer = StringBuffer();
+  for (int i = 0; i < digits.length; i++) {
+    final positionFromEnd = digits.length - i;
+    buffer.write(digits[i]);
+    if (positionFromEnd > 1 && positionFromEnd % 3 == 1) {
+      buffer.write(',');
+    }
+  }
+  return buffer.toString();
+}
+
+String _buildRelationSummary(Memorial memorial) {
+  final relation = memorial.relation?.trim();
+  final relationLabel =
+      relation != null && relation.isNotEmpty ? relation : '관계 미정';
+  final updatedAgo = _formatTimeAgo(memorial.updatedAt);
+  return '$relationLabel · $updatedAgo 업데이트';
+}
+
+String _formatTimeAgo(DateTime dateTime) {
+  final now = DateTime.now();
+  final difference = now.difference(dateTime);
+
+  if (difference.inMinutes < 1) {
+    return '방금';
+  } else if (difference.inMinutes < 60) {
+    return '${difference.inMinutes}분 전';
+  } else if (difference.inHours < 24) {
+    return '${difference.inHours}시간 전';
+  } else if (difference.inDays < 7) {
+    return '${difference.inDays}일 전';
+  } else {
+    return _formatDate(dateTime);
+  }
+}
+
+String _formatDate(DateTime dateTime) {
+  final year = dateTime.year;
+  final month = dateTime.month;
+  final day = dateTime.day;
+  return '$year년 ${month}월 ${day}일';
+}
+
 class MemorialDetailArguments {
-  const MemorialDetailArguments({
-    this.memorialId,
-    required this.name,
-    required this.relationSummary,
-    required this.heroImageUrl,
-    required this.story,
-    required this.anniversaryLabel,
-    this.relation,
-  });
+  const MemorialDetailArguments({required this.memorialId});
 
-  const MemorialDetailArguments.sample()
-      : memorialId = 'memorial-001',
-        name = '박정윤님 추모관',
-        relationSummary = '사랑하는 어머니 · 1958.02.03 ~ 2022.11.18',
-        heroImageUrl = 'https://picsum.photos/seed/memorialHero/1080/640',
-        story = '박정윤님을 기억하는 핵심 정보를 모았습니다.',
-        anniversaryLabel = '매년 3월 15일 · 첫 기일을 맞이합니다.',
-        relation = '가족';
-
-  final String? memorialId;
-  final String name;
-  final String relationSummary;
-  final String heroImageUrl;
-  final String story;
-  final String anniversaryLabel;
-  final String? relation;
+  final String memorialId;
 }
