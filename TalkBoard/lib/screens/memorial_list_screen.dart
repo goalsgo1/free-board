@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:free_board/board/board_themes.dart';
 import 'package:free_board/models/memorial.dart';
 import 'package:free_board/providers/memorial_provider.dart';
+import 'package:free_board/providers/auth_provider.dart';
 import 'package:free_board/widgets/accessibility_button.dart';
 import 'package:free_board/widgets/board/board_section_card.dart';
 import 'package:free_board/widgets/board/board_theme.dart';
@@ -25,6 +26,7 @@ class MemorialListScreen extends StatefulWidget {
 class _MemorialListScreenState extends State<MemorialListScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _selectedFilter = '전체';
+  MemoryType? _selectedMemoryType; // null이면 전체 타입
   bool _showFavoritesOnly = false;
 
   @override
@@ -51,9 +53,10 @@ class _MemorialListScreenState extends State<MemorialListScreen> {
     final filtered = items.where((item) {
       final matchesFilter =
           _selectedFilter == '전체' || item.categories.contains(_selectedFilter);
+      final matchesMemoryType = _selectedMemoryType == null || item.memoryType == _selectedMemoryType;
       final matchesFavorite = !_showFavoritesOnly || item.isFavorite;
       final matchesQuery = query.isEmpty || item.searchText.contains(query);
-      return matchesFilter && matchesFavorite && matchesQuery;
+      return matchesFilter && matchesMemoryType && matchesFavorite && matchesQuery;
     }).toList();
 
     filtered.sort((a, b) {
@@ -84,15 +87,17 @@ class _MemorialListScreenState extends State<MemorialListScreen> {
 
   void _showComingSoon(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: AppPalette.warmBrown,
-      ),
+      SnackBar(content: Text(message), backgroundColor: AppPalette.warmBrown),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = context.watch<AuthProvider>();
+    context.read<MemorialProvider>().updateCurrentUser(
+      authProvider.currentUserId,
+    );
+
     final allItems = _allItems(context);
     final filters = _buildFilters(allItems);
     if (!filters.contains(_selectedFilter)) {
@@ -100,8 +105,7 @@ class _MemorialListScreenState extends State<MemorialListScreen> {
     }
     final filteredItems = _filteredItems(allItems);
     final totalCount = allItems.length;
-    final favoriteCount =
-        allItems.where((item) => item.isFavorite).length;
+    final favoriteCount = allItems.where((item) => item.isFavorite).length;
     final pinnedCount = allItems.where((item) => item.isPinned).length;
 
     final boardTheme = BoardThemes.memorial;
@@ -115,6 +119,19 @@ class _MemorialListScreenState extends State<MemorialListScreen> {
         foregroundColor: boardTheme.appBarForegroundColor,
         actions: [
           const AccessibilityButton(),
+          IconButton(
+            tooltip: '목록 새로고침',
+            icon: const Icon(Icons.refresh),
+            onPressed: () async {
+              await context.read<MemorialProvider>().refreshMemorials(
+                userId: authProvider.currentUserId,
+              );
+              if (!mounted) return;
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('추모관 목록을 새로 불러왔습니다.')),
+              );
+            },
+          ),
           IconButton(
             tooltip: _showFavoritesOnly ? '전체 추모관 보기' : '즐겨찾기만 보기',
             icon: Icon(
@@ -130,22 +147,21 @@ class _MemorialListScreenState extends State<MemorialListScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
-          final result =
-              await Navigator.pushNamed(context, '/memorial-edit');
+          final result = await Navigator.pushNamed(context, '/memorial-edit');
           if (!mounted) return;
           if (result == true) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('새 추모관이 추가되었습니다.')),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(const SnackBar(content: Text('새 추모관이 추가되었습니다.')));
           }
         },
         icon: Icon(boardTheme.createAction.icon, color: Colors.black),
         label: Text(
           boardTheme.createAction.label,
           style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: Colors.black,
-              ),
+            fontWeight: FontWeight.w600,
+            color: Colors.black,
+          ),
         ),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
@@ -201,17 +217,17 @@ class _MemorialListScreenState extends State<MemorialListScreen> {
                     Text(
                       statsConfig!.title!,
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: AppPalette.warmBrown,
-                          ),
+                        fontWeight: FontWeight.w600,
+                        color: AppPalette.warmBrown,
+                      ),
                     ),
                     if (statsConfig.subtitle != null) ...[
                       const SizedBox(height: 6),
                       Text(
                         statsConfig.subtitle!,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: AppPalette.caption,
-                            ),
+                          color: AppPalette.caption,
+                        ),
                       ),
                     ],
                     const SizedBox(height: 12),
@@ -219,9 +235,9 @@ class _MemorialListScreenState extends State<MemorialListScreen> {
                   Text(
                     '다가오는 기념일',
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: AppPalette.warmBrown,
-                        ),
+                      fontWeight: FontWeight.w600,
+                      color: AppPalette.warmBrown,
+                    ),
                   ),
                   const SizedBox(height: 12),
                   if (allItems.isEmpty)
@@ -230,52 +246,46 @@ class _MemorialListScreenState extends State<MemorialListScreen> {
                       icon: Icons.info_outline,
                     )
                   else
-                    ...allItems.take(2).map(
-                      (item) {
-                        const Color accent = AppPalette.warmBrown;
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Icon(
-                                Icons.calendar_month,
-                                size: 20,
-                                color: accent,
+                    ...allItems.take(2).map((item) {
+                      const Color accent = AppPalette.warmBrown;
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(Icons.calendar_month, size: 20, color: accent),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    item.name,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.w600,
+                                          color: accent,
+                                        ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    item.anniversaryLabel,
+                                    style: Theme.of(context).textTheme.bodySmall
+                                        ?.copyWith(color: AppPalette.caption),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
                               ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      item.name,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.w600,
-                                            color: accent,
-                                          ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      item.anniversaryLabel,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall
-                                          ?.copyWith(
-                                            color: AppPalette.caption,
-                                          ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }),
                 ],
               ),
             ),
@@ -296,6 +306,15 @@ class _MemorialListScreenState extends State<MemorialListScreen> {
                       prefixIcon: const Icon(Icons.search),
                       textInputAction: TextInputAction.search,
                       onFieldSubmitted: (_) => setState(() {}),
+                    ),
+                    const SizedBox(height: 16),
+                    _MemoryTypeFilter(
+                      selectedType: _selectedMemoryType,
+                      onTypeSelected: (type) {
+                        setState(() {
+                          _selectedMemoryType = type;
+                        });
+                      },
                     ),
                     const SizedBox(height: 16),
                     _FilterChips(
@@ -336,6 +355,7 @@ class _MemorialListScreenState extends State<MemorialListScreen> {
                 onClearFilter: () {
                   setState(() {
                     _selectedFilter = '전체';
+                    _selectedMemoryType = null;
                     _showFavoritesOnly = false;
                     _searchController.clear();
                   });
@@ -356,15 +376,92 @@ class _MemorialListScreenState extends State<MemorialListScreen> {
                         memorialId: item.memorialId,
                       ),
                     ),
-                    onShare: () => _showComingSoon(
-                      context,
-                      '공유 기능은 곧 추가될 예정입니다.',
-                    ),
+                    onShare: () =>
+                        _showComingSoon(context, '공유 기능은 곧 추가될 예정입니다.'),
                   ),
                 ),
               ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// 추억 타입 필터 위젯
+class _MemoryTypeFilter extends StatelessWidget {
+  const _MemoryTypeFilter({
+    required this.selectedType,
+    required this.onTypeSelected,
+  });
+
+  final MemoryType? selectedType;
+  final ValueChanged<MemoryType?> onTypeSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '추억 타입',
+          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: AppPalette.warmBrown,
+              ),
+        ),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            // 전체 타입 버튼
+            _buildTypeChip(
+              context,
+              type: null,
+              label: '전체',
+              icon: '📚',
+            ),
+            // 각 타입별 버튼
+            ...MemoryType.values.map((type) => _buildTypeChip(
+                  context,
+                  type: type,
+                  label: type.displayName,
+                  icon: type.icon,
+                )),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTypeChip(
+    BuildContext context, {
+    required MemoryType? type,
+    required String label,
+    required String icon,
+  }) {
+    final isSelected = selectedType == type;
+    return ChoiceChip(
+      label: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(icon, style: const TextStyle(fontSize: 16)),
+          const SizedBox(width: 6),
+          Text(label),
+        ],
+      ),
+      selected: isSelected,
+      onSelected: (_) => onTypeSelected(isSelected ? null : type),
+      selectedColor: AppPalette.warmBrown.withOpacity(0.2),
+      backgroundColor: Colors.white,
+      labelStyle: TextStyle(
+        color: isSelected ? AppPalette.warmBrown : AppPalette.ink,
+        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+      ),
+      side: BorderSide(
+        color: isSelected ? AppPalette.warmBrown : AppPalette.warmBeige,
+        width: isSelected ? 2 : 1,
       ),
     );
   }
@@ -395,9 +492,9 @@ class _FilterChips extends StatelessWidget {
                   selected: selected == filter,
                   onSelected: (_) => onSelected(filter),
                   labelStyle: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: selected == filter ? Colors.white : AppPalette.ink,
-                      ),
+                    fontWeight: FontWeight.w600,
+                    color: selected == filter ? Colors.white : AppPalette.ink,
+                  ),
                   selectedColor: AppPalette.warmBrown,
                   backgroundColor: Colors.white,
                   side: BorderSide(
@@ -435,7 +532,7 @@ class _MemorialListCard extends StatelessWidget {
     final accent = AppPalette.accessibleAccent(item.accentColor);
     return AppSurfaceCard(
       title: item.name,
-      subtitle: '${item.relation} · ${item.updatedAtLabel}',
+      subtitle: '${item.memoryType.icon} ${item.memoryType.displayName} · ${item.relation} · ${item.updatedAtLabel}',
       icon: item.isPinned ? Icons.push_pin : Icons.auto_awesome_outlined,
       accentColor: accent,
       child: Column(
@@ -448,7 +545,9 @@ class _MemorialListCard extends StatelessWidget {
               children: [
                 _CardIconButton(
                   tooltip: item.isPinned ? '고정 해제' : '고정하기',
-                  icon: item.isPinned ? Icons.push_pin : Icons.push_pin_outlined,
+                  icon: item.isPinned
+                      ? Icons.push_pin
+                      : Icons.push_pin_outlined,
                   isActive: item.isPinned,
                   onPressed: () async {
                     final provider = context.read<MemorialProvider>();
@@ -468,17 +567,19 @@ class _MemorialListCard extends StatelessWidget {
                         ),
                       );
                     } else {
-                      final error = provider.errorMessage ??
-                          '고정 상태를 변경하지 못했습니다.';
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(error)),
-                      );
+                      final error =
+                          provider.errorMessage ?? '고정 상태를 변경하지 못했습니다.';
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(SnackBar(content: Text(error)));
                     }
                   },
                 ),
                 _CardIconButton(
                   tooltip: item.isFavorite ? '즐겨찾기 해제' : '즐겨찾기',
-                  icon: item.isFavorite ? Icons.favorite : Icons.favorite_border,
+                  icon: item.isFavorite
+                      ? Icons.favorite
+                      : Icons.favorite_border,
                   isActive: item.isFavorite,
                   onPressed: () async {
                     final provider = context.read<MemorialProvider>();
@@ -498,11 +599,11 @@ class _MemorialListCard extends StatelessWidget {
                         ),
                       );
                     } else {
-                      final error = provider.errorMessage ??
-                          '즐겨찾기 상태를 변경하지 못했습니다.';
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(error)),
-                      );
+                      final error =
+                          provider.errorMessage ?? '즐겨찾기 상태를 변경하지 못했습니다.';
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(SnackBar(content: Text(error)));
                     }
                   },
                 ),
@@ -515,8 +616,10 @@ class _MemorialListCard extends StatelessWidget {
             children: item.tags
                 .map(
                   (tag) => Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: AppPalette.warmBrown.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(999),
@@ -524,9 +627,9 @@ class _MemorialListCard extends StatelessWidget {
                     child: Text(
                       tag,
                       style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                            color: AppPalette.warmBrown,
-                            fontWeight: FontWeight.w600,
-                          ),
+                        color: AppPalette.warmBrown,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 )
@@ -536,17 +639,17 @@ class _MemorialListCard extends StatelessWidget {
           Text(
             item.storyPreview,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  height: 1.5,
-                  color: AppPalette.ink,
-                ),
+              height: 1.5,
+              color: AppPalette.ink,
+            ),
           ),
           const SizedBox(height: 16),
           Text(
             item.anniversaryLabel,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppPalette.caption,
-                  fontWeight: FontWeight.w500,
-                ),
+              color: AppPalette.caption,
+              fontWeight: FontWeight.w500,
+            ),
           ),
           const SizedBox(height: 18),
           AppPrimaryButton(
@@ -603,17 +706,17 @@ class _StatTile extends StatelessWidget {
           Text(
             value,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: AppPalette.ink,
-                ),
+              fontWeight: FontWeight.w700,
+              color: AppPalette.ink,
+            ),
           ),
           const SizedBox(height: 4),
           Text(
             label,
             style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  color: AppPalette.caption,
-                  fontWeight: FontWeight.w500,
-                ),
+              color: AppPalette.caption,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ],
       ),
@@ -673,6 +776,7 @@ class _MemorialListItem {
     required this.memorialId,
     required this.name,
     required this.relation,
+    required this.memoryType,
     required this.categories,
     required this.accentColor,
     required this.updatedAtLabel,
@@ -688,6 +792,7 @@ class _MemorialListItem {
   final String memorialId;
   final String name;
   final String relation;
+  final MemoryType memoryType;
   final List<String> categories;
   final Color accentColor;
   final String updatedAtLabel;
@@ -700,31 +805,32 @@ class _MemorialListItem {
   final DateTime createdAt;
 
   String get searchText =>
-      '$name $relation ${categories.join(' ')} $storyPreview'
-          .toLowerCase();
+      '$name $relation ${categories.join(' ')} $storyPreview'.toLowerCase();
 
   static _MemorialListItem fromMemorial(Memorial memorial) {
     final categories = memorial.categories.isNotEmpty
         ? memorial.categories
         : _fallbackCategories(memorial.relation);
-    final tags =
-        memorial.tags.isNotEmpty ? memorial.tags : _fallbackTags(memorial);
+    final tags = memorial.tags.isNotEmpty
+        ? memorial.tags
+        : _fallbackTags(memorial);
     return _MemorialListItem(
       memorialId: memorial.id,
       name: memorial.name,
       relation: memorial.relation ?? '관계 미정',
+      memoryType: memorial.memoryType,
       categories: categories,
       accentColor: _accentColorFor(memorial),
       updatedAtLabel: _formatUpdatedAt(memorial.updatedAt),
-      anniversaryLabel:
-          memorial.anniversaryLabel ?? '기념일 정보가 아직 없습니다.',
+      anniversaryLabel: memorial.anniversaryLabel ?? '기념일 정보가 아직 없습니다.',
       tags: tags,
       storyPreview: memorial.story?.isNotEmpty == true
           ? memorial.story!
           : '추억 이야기가 아직 작성되지 않았습니다.',
       isPinned: memorial.isPinned,
       isFavorite: memorial.isFavorite,
-      heroImageUrl: memorial.heroImageUrl ??
+      heroImageUrl:
+          memorial.heroImageUrl ??
           'https://picsum.photos/seed/${Uri.encodeComponent(memorial.id)}/720/420',
       createdAt: memorial.createdAt,
     );
@@ -855,5 +961,3 @@ class _CardIconButton extends StatelessWidget {
     );
   }
 }
-
-

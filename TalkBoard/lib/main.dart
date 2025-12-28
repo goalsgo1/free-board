@@ -29,13 +29,44 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final baseTheme = ThemeData(
       colorScheme: ColorScheme.fromSeed(
-        seedColor: Colors.blue,
+        seedColor: const Color(0xFF8B7355), // warmBrown
         brightness: Brightness.light,
+        primary: const Color(0xFF8B7355),
+        secondary: const Color(0xFFF5F1E8), // warmBeige
+        surface: const Color(0xFFFFF8F0), // softCream
+        background: const Color(0xFFFFF8F0),
       ),
       useMaterial3: true,
+      scaffoldBackgroundColor: const Color(0xFFFFF8F0), // softCream
       appBarTheme: const AppBarTheme(
         centerTitle: true,
-        elevation: 2,
+        elevation: 0,
+        backgroundColor: Color(0xFF8B7355), // warmBrown
+        foregroundColor: Colors.white,
+        iconTheme: IconThemeData(color: Colors.white),
+      ),
+      cardTheme: CardThemeData(
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        color: Colors.white,
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: Colors.white.withOpacity(0.95),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color(0xFFF5F1E8), width: 1.5),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color(0xFFF5F1E8), width: 1.5),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color(0xFF8B7355), width: 2.0),
+        ),
       ),
     );
 
@@ -54,7 +85,7 @@ class MyApp extends StatelessWidget {
           );
 
           return MaterialApp(
-            title: '기억의 정원',
+            title: '추억의 정원',
             debugShowCheckedModeBanner: false,
             theme: theme,
             localizationsDelegates: const [

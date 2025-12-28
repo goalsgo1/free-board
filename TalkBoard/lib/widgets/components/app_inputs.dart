@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
-import 'package:free_board/widgets/components/app_palette.dart';
+import 'package:free_board/utils/design_tokens.dart';
+import 'package:free_board/utils/responsive.dart';
 
 int _alphaFromOpacity(double opacity) {
   return (opacity.clamp(0.0, 1.0) * 255).round();
@@ -59,36 +59,50 @@ class AppTextField extends StatelessWidget {
       maxLines: obscureText ? 1 : maxLines,
       readOnly: readOnly,
       onTap: onTap,
+      style: DesignTokens.body(context),
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
         prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
         filled: true,
-        fillColor: Colors.white.withAlpha(_alphaFromOpacity(0.9)),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+        fillColor: DesignTokens.white.withAlpha(_alphaFromOpacity(0.95)),
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: DesignTokens.spacingXL,
+          vertical: DesignTokens.spacingLG,
+        ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppPalette.warmBeige, width: 1.5),
+          borderRadius: BorderRadius.circular(DesignTokens.radiusMD),
+          borderSide: DesignTokens.borderSideDefault,
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppPalette.warmBrown, width: 2),
+          borderRadius: BorderRadius.circular(DesignTokens.radiusMD),
+          borderSide: BorderSide(
+            color: DesignTokens.warmBrown,
+            width: 2.0,
+          ),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.redAccent),
+          borderRadius: BorderRadius.circular(DesignTokens.radiusMD),
+          borderSide: const BorderSide(color: Colors.redAccent, width: 1.5),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.redAccent, width: 2),
+          borderRadius: BorderRadius.circular(DesignTokens.radiusMD),
+          borderSide: const BorderSide(color: Colors.redAccent, width: 2.0),
         ),
-        labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w500,
-              color: AppPalette.ink,
-            ),
+        disabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(DesignTokens.radiusMD),
+          borderSide: BorderSide(
+            color: DesignTokens.warmBeige.withOpacity(0.5),
+            width: 1.5,
+          ),
+        ),
+        labelStyle: DesignTokens.body(context).copyWith(
+          fontWeight: FontWeight.w500,
+          color: DesignTokens.ink,
+        ),
+        hintStyle: DesignTokens.captionText(context),
       ),
-      style: Theme.of(context).textTheme.bodyMedium,
     );
   }
 }
@@ -108,23 +122,22 @@ class AppChecklist extends StatelessWidget {
       children: items
           .map(
             (item) => Padding(
-              padding: const EdgeInsets.only(bottom: 6),
+              padding: EdgeInsets.only(bottom: DesignTokens.spacingSM),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.check_circle_rounded,
-                    size: 16,
-                    color: Color(0xFF7CB342),
+                    size: 18,
+                    color: DesignTokens.accentMint,
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: DesignTokens.spacingSM),
                   Expanded(
                     child: Text(
                       item,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            height: 1.5,
-                            color: AppPalette.caption,
-                          ),
+                      style: DesignTokens.captionText(context).copyWith(
+                        height: 1.5,
+                      ),
                     ),
                   ),
                 ],

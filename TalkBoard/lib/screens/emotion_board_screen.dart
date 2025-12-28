@@ -398,12 +398,16 @@ class _EmotionStat extends StatelessWidget {
       children: [
         Icon(icon, color: color, size: 18),
         const SizedBox(width: 6),
-        Text(
-          '$value $label',
-          style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                color: AppPalette.warmBrown,
-                fontWeight: FontWeight.w600,
-              ),
+        Flexible(
+          child: Text(
+            '$value $label',
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  color: AppPalette.warmBrown,
+                  fontWeight: FontWeight.w600,
+                ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
       ],
     );

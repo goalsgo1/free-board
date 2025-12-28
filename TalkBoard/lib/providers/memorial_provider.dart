@@ -6,17 +6,8 @@ import 'package:free_board/services/memorial_service.dart';
 
 class MemorialProvider extends ChangeNotifier {
   MemorialProvider({MemorialService? memorialService})
-      : _memorialService = memorialService ?? MemorialService() {
-    _subscription = _memorialService.streamMemorials().listen(
-      (memorials) {
-        _memorials = memorials;
-        notifyListeners();
-      },
-      onError: (error) {
-        _errorMessage = error.toString();
-        notifyListeners();
-      },
-    );
+    : _memorialService = memorialService ?? MemorialService() {
+    _subscribe();
   }
 
   final MemorialService _memorialService;
@@ -25,10 +16,58 @@ class MemorialProvider extends ChangeNotifier {
   List<Memorial> _memorials = const [];
   bool _isSubmitting = false;
   String? _errorMessage;
+  String? _currentUserId;
 
   List<Memorial> get memorials => _memorials;
   bool get isSubmitting => _isSubmitting;
   String? get errorMessage => _errorMessage;
+
+  void _subscribe() {
+    _subscription?.cancel();
+    _subscription = _memorialService
+        .streamMemorials(currentUserId: _currentUserId)
+        .listen(
+          (memorials) {
+            _memorials = memorials;
+            assert(() {
+              final summary = memorials
+                  .map((m) {
+                    final isMine =
+                        _currentUserId != null && m.createdBy == _currentUserId;
+                    return '${m.name} | public=${m.isPublic} | mine=$isMine';
+                  })
+                  .join('\n  ');
+              debugPrint(
+                '[MemorialProvider] received ${memorials.length} memorials '
+                '(user=$_currentUserId)\n  $summary',
+              );
+              return true;
+            }());
+            notifyListeners();
+          },
+          onError: (error) {
+            _errorMessage = error.toString();
+            notifyListeners();
+          },
+        );
+  }
+
+  void updateCurrentUser(String? userId) {
+    if (_currentUserId == userId) return;
+    _currentUserId = userId;
+    _subscribe();
+  }
+
+  Future<void> refreshMemorials({String? userId}) async {
+    if (userId != null) {
+      _currentUserId = userId;
+    }
+    _errorMessage = null;
+    await _subscription?.cancel();
+    _memorials = const [];
+    notifyListeners();
+    _subscribe();
+  }
 
   Memorial? findById(String memorialId) {
     try {
@@ -41,6 +80,7 @@ class MemorialProvider extends ChangeNotifier {
   Future<bool> createMemorial({
     required String name,
     required String createdBy,
+    MemoryType memoryType = MemoryType.memorial, // 기본값은 추모 (하위 호환성)
     String? relation,
     String? story,
     String? anniversaryLabel,
@@ -64,6 +104,7 @@ class MemorialProvider extends ChangeNotifier {
         id: '',
         name: name,
         createdBy: createdBy,
+        memoryType: memoryType,
         relation: relation,
         story: story,
         anniversaryLabel: anniversaryLabel,
@@ -97,10 +138,9 @@ class MemorialProvider extends ChangeNotifier {
   }
 
   Future<bool> updatePinned(String memorialId, bool isPinned) async {
-    final success = await _memorialService.updateMemorial(
-      memorialId,
-      {'isPinned': isPinned},
-    );
+    final success = await _memorialService.updateMemorial(memorialId, {
+      'isPinned': isPinned,
+    });
     if (success) {
       _memorials = _memorials
           .map(
@@ -118,10 +158,9 @@ class MemorialProvider extends ChangeNotifier {
   }
 
   Future<bool> updateFavorite(String memorialId, bool isFavorite) async {
-    final success = await _memorialService.updateMemorial(
-      memorialId,
-      {'isFavorite': isFavorite},
-    );
+    final success = await _memorialService.updateMemorial(memorialId, {
+      'isFavorite': isFavorite,
+    });
     if (success) {
       _memorials = _memorials
           .map(
@@ -138,5 +177,3 @@ class MemorialProvider extends ChangeNotifier {
     return success;
   }
 }
-
-

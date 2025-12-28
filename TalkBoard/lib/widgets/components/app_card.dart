@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:free_board/utils/design_tokens.dart';
+import 'package:free_board/utils/responsive.dart';
 
 class AppSurfaceCard extends StatelessWidget {
   const AppSurfaceCard({
@@ -6,39 +8,43 @@ class AppSurfaceCard extends StatelessWidget {
     required this.title,
     this.subtitle,
     this.icon,
-    this.accentColor = Colors.black,
+    this.accentColor,
     this.titleColor,
     this.iconColor,
     required this.child,
+    this.padding,
   });
 
   final String title;
   final String? subtitle;
   final IconData? icon;
-  final Color accentColor;
+  final Color? accentColor;
   final Color? titleColor;
   final Color? iconColor;
   final Widget child;
+  final EdgeInsets? padding;
 
   @override
   Widget build(BuildContext context) {
-    final Color resolvedTitleColor = titleColor ?? Colors.black;
-    final Color subtitleColor = Colors.black.withValues(alpha: 0.7);
-    final Color borderColor = Colors.black.withValues(alpha: 0.08);
+    final Color resolvedAccentColor = accentColor ?? DesignTokens.warmBrown;
+    final Color resolvedTitleColor = titleColor ?? DesignTokens.ink;
+    final Color subtitleColor = DesignTokens.caption;
+    final EdgeInsets resolvedPadding = padding ?? EdgeInsets.all(
+      Responsive.responsiveSpacing(
+        context,
+        mobile: DesignTokens.spacingXL,
+        tablet: DesignTokens.spacing2XL,
+      ),
+    );
+
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: borderColor, width: 1.2),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
-          ),
-        ],
+        color: DesignTokens.white,
+        borderRadius: BorderRadius.circular(DesignTokens.radiusLG),
+        border: DesignTokens.borderDefault,
+        boxShadow: DesignTokens.shadowMedium,
       ),
-      padding: const EdgeInsets.all(20),
+      padding: resolvedPadding,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -47,40 +53,44 @@ class AppSurfaceCard extends StatelessWidget {
             children: [
               if (icon != null)
                 Container(
-                  height: 40,
-                  width: 40,
+                  height: 48,
+                  width: 48,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: resolvedAccentColor.withOpacity(0.1),
                     shape: BoxShape.circle,
-                    border: Border.all(color: borderColor, width: 1.2),
+                    border: Border.all(
+                      color: resolvedAccentColor.withOpacity(0.2),
+                      width: 1.5,
+                    ),
                   ),
                   child: Icon(
                     icon,
-                    color: iconColor ?? Colors.black87,
-                    size: 22,
+                    color: iconColor ?? resolvedAccentColor,
+                    size: 24,
                   ),
                 ),
-              if (icon != null) const SizedBox(width: 14),
+              if (icon != null) SizedBox(width: DesignTokens.spacingMD),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       title,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: resolvedTitleColor,
-                            fontSize: 18,
-                          ),
+                      style: DesignTokens.heading3(context).copyWith(
+                        color: resolvedTitleColor,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     if (subtitle != null && subtitle!.isNotEmpty) ...[
-                      const SizedBox(height: 6),
+                      SizedBox(height: DesignTokens.spacingXS),
                       Text(
                         subtitle!,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              height: 1.45,
-                              color: subtitleColor,
-                            ),
+                        style: DesignTokens.captionText(context).copyWith(
+                          height: 1.5,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ],
@@ -88,7 +98,7 @@ class AppSurfaceCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: DesignTokens.spacingXL),
           child,
         ],
       ),

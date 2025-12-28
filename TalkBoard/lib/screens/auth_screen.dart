@@ -10,6 +10,8 @@ import 'package:free_board/widgets/components/app_buttons.dart';
 import 'package:free_board/widgets/components/app_card.dart';
 import 'package:free_board/widgets/components/app_inputs.dart';
 import 'package:free_board/widgets/components/app_palette.dart';
+import 'package:free_board/utils/design_tokens.dart';
+import 'package:free_board/utils/responsive.dart';
 import 'package:free_board/widgets/accessibility_button.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -230,10 +232,10 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppPalette.softCream,
+      backgroundColor: DesignTokens.softCream,
       appBar: AppBar(
         title: Text(_isLogin ? '로그인' : '회원가입'),
-        backgroundColor: AppPalette.warmBrown,
+        backgroundColor: DesignTokens.warmBrown,
         foregroundColor: Colors.white,
         elevation: 0,
         actions: [
@@ -248,9 +250,11 @@ class _AuthScreenState extends State<AuthScreen> {
       ),
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 32),
+          padding: Responsive.responsivePadding(context),
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 480),
+            constraints: BoxConstraints(
+              maxWidth: Responsive.maxContentWidth(context),
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -353,9 +357,14 @@ class _AuthScreenState extends State<AuthScreen> {
                             child: TextButton(
                               onPressed: _showPasswordResetDialog,
                               style: TextButton.styleFrom(
-                                foregroundColor: AppPalette.warmBrown,
+                                foregroundColor: DesignTokens.warmBrown,
                               ),
-                              child: const Text('비밀번호를 잊으셨나요?'),
+                              child: Text(
+                                '비밀번호를 잊으셨나요?',
+                                style: DesignTokens.captionText(context).copyWith(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                             ),
                           ),
                         Consumer<AuthProvider>(
@@ -363,25 +372,29 @@ class _AuthScreenState extends State<AuthScreen> {
                             return TextButton(
                               onPressed: authProvider.isLoading ? null : _handleResendVerification,
                               style: TextButton.styleFrom(
-                                foregroundColor: AppPalette.warmBrown,
+                                foregroundColor: DesignTokens.warmBrown,
                               ),
-                              child: const Text('이메일 인증 메일 다시 보내기'),
+                              child: Text(
+                                '이메일 인증 메일 다시 보내기',
+                                style: DesignTokens.captionText(context).copyWith(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                             );
                           },
                         ),
-                        const SizedBox(height: 16),
-                        const Divider(),
-                        const SizedBox(height: 12),
-                        const Center(
+                        SizedBox(height: DesignTokens.spacingLG),
+                        Divider(color: DesignTokens.warmBeige),
+                        SizedBox(height: DesignTokens.spacingMD),
+                        Center(
                           child: Text(
                             '소셜 계정으로 계속하기',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              color: AppPalette.warmBrown,
+                            style: DesignTokens.bodyBold(context).copyWith(
+                              color: DesignTokens.warmBrown,
                             ),
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        SizedBox(height: DesignTokens.spacingLG),
                         Consumer<AuthProvider>(
                           builder: (context, authProvider, child) {
                             return Column(
@@ -445,8 +458,8 @@ class _AuthScreenState extends State<AuthScreen> {
                                       });
                                     },
                               style: TextButton.styleFrom(
-                                foregroundColor: AppPalette.deepBlue,
-                                textStyle: const TextStyle(fontWeight: FontWeight.w600),
+                                foregroundColor: DesignTokens.deepBlue,
+                                textStyle: DesignTokens.bodyBold(context),
                               ),
                               child: Text(
                                 _isLogin
@@ -473,8 +486,10 @@ class _AuthScreenState extends State<AuthScreen> {
                       );
                     },
                     style: TextButton.styleFrom(
-                      foregroundColor: AppPalette.warmBrown,
-                      textStyle: const TextStyle(decoration: TextDecoration.underline),
+                      foregroundColor: DesignTokens.warmBrown,
+                      textStyle: DesignTokens.captionText(context).copyWith(
+                        decoration: TextDecoration.underline,
+                      ),
                     ),
                     child: const Text('개인정보처리방침'),
                   ),
@@ -493,9 +508,9 @@ class _AuthScreenState extends State<AuthScreen> {
                     icon: const Icon(Icons.widgets),
                     label: const Text('공통 컴포넌트 가이드'),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: AppPalette.caption,
-                      side: const BorderSide(color: AppPalette.warmBeige),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      foregroundColor: DesignTokens.caption,
+                      side: BorderSide(color: DesignTokens.warmBeige),
+                      padding: EdgeInsets.symmetric(vertical: DesignTokens.spacingMD),
                     ),
                   ),
                 ],
@@ -512,9 +527,9 @@ class _AuthScreenState extends State<AuthScreen> {
                   icon: const Icon(Icons.visibility),
                   label: const Text('UI 프리뷰'),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: AppPalette.deepBlue,
-                    side: const BorderSide(color: Color(0xFF90CAF9)),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    foregroundColor: DesignTokens.deepBlue,
+                    side: BorderSide(color: DesignTokens.deepBlue.withOpacity(0.3)),
+                    padding: EdgeInsets.symmetric(vertical: DesignTokens.spacingMD),
                   ),
                 ),
                 const SizedBox(height: 16),

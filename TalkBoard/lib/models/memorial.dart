@@ -1,5 +1,57 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+/// 추억 타입
+enum MemoryType {
+  /// 생일/기념일
+  birthday,
+  /// 여행
+  travel,
+  /// 일상
+  daily,
+  /// 성장
+  growth,
+  /// 추모 (고인)
+  memorial,
+  /// 반려동물 추모
+  petMemorial,
+}
+
+extension MemoryTypeExtension on MemoryType {
+  String get displayName {
+    switch (this) {
+      case MemoryType.birthday:
+        return '생일/기념일';
+      case MemoryType.travel:
+        return '여행';
+      case MemoryType.daily:
+        return '일상';
+      case MemoryType.growth:
+        return '성장';
+      case MemoryType.memorial:
+        return '추모';
+      case MemoryType.petMemorial:
+        return '반려동물 추모';
+    }
+  }
+
+  String get icon {
+    switch (this) {
+      case MemoryType.birthday:
+        return '🎂';
+      case MemoryType.travel:
+        return '✈️';
+      case MemoryType.daily:
+        return '📸';
+      case MemoryType.growth:
+        return '🌱';
+      case MemoryType.memorial:
+        return '🕊️';
+      case MemoryType.petMemorial:
+        return '🐾';
+    }
+  }
+}
+
 class Memorial {
   const Memorial({
     required this.id,
@@ -7,6 +59,7 @@ class Memorial {
     required this.createdBy,
     required this.createdAt,
     required this.updatedAt,
+    this.memoryType = MemoryType.memorial, // 기본값은 추모 (하위 호환성)
     this.relation,
     this.story,
     this.anniversaryLabel,
@@ -32,6 +85,7 @@ class Memorial {
   final String createdBy;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final MemoryType memoryType;
   final String? relation;
   final String? story;
   final String? anniversaryLabel;
@@ -57,6 +111,7 @@ class Memorial {
     String? createdBy,
     DateTime? createdAt,
     DateTime? updatedAt,
+    MemoryType? memoryType,
     String? relation,
     String? story,
     String? anniversaryLabel,
@@ -82,6 +137,7 @@ class Memorial {
       createdBy: createdBy ?? this.createdBy,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      memoryType: memoryType ?? this.memoryType,
       relation: relation ?? this.relation,
       story: story ?? this.story,
       anniversaryLabel: anniversaryLabel ?? this.anniversaryLabel,
@@ -106,6 +162,7 @@ class Memorial {
   Map<String, dynamic> toFirestore() {
     return {
       'name': name,
+      'memoryType': memoryType.name,
       'relation': relation,
       'story': story,
       'anniversaryLabel': anniversaryLabel,
@@ -135,9 +192,19 @@ class Memorial {
     final updatedAtTimestamp = data['updatedAt'] as Timestamp?;
     final featuredTimestamp = data['featuredAt'] as Timestamp?;
 
+    // 하위 호환성: memoryType이 없으면 추모로 설정
+    final memoryTypeString = data['memoryType'] as String?;
+    final memoryType = memoryTypeString != null
+        ? MemoryType.values.firstWhere(
+            (e) => e.name == memoryTypeString,
+            orElse: () => MemoryType.memorial,
+          )
+        : MemoryType.memorial;
+
     return Memorial(
       id: id,
       name: (data['name'] as String?) ?? '이름 미정',
+      memoryType: memoryType,
       relation: data['relation'] as String?,
       story: data['story'] as String?,
       anniversaryLabel: data['anniversaryLabel'] as String?,

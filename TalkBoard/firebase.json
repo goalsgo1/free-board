@@ -1,1 +1,34 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"memory-garden-app","appId":"1:45493208263:android:06168ab71f52c0c2e56ae2","fileOutput":"android/app/google-services.json"}},"ios":{"default":{"projectId":"memory-garden-app","appId":"1:45493208263:ios:8f0aa82cb61411b4e56ae2","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"memory-garden-app","configurations":{"android":"1:45493208263:android:06168ab71f52c0c2e56ae2","ios":"1:45493208263:ios:8f0aa82cb61411b4e56ae2"}}}}}}
+{
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "memory-garden-app",
+          "appId": "1:45493208263:android:06168ab71f52c0c2e56ae2",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "memory-garden-app",
+          "appId": "1:45493208263:ios:8f0aa82cb61411b4e56ae2",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "memory-garden-app",
+          "configurations": {
+            "android": "1:45493208263:android:06168ab71f52c0c2e56ae2",
+            "ios": "1:45493208263:ios:8f0aa82cb61411b4e56ae2"
+          }
+        }
+      }
+    }
+  }
+}

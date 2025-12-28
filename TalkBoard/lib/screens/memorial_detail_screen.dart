@@ -262,6 +262,8 @@ class _SummaryRow extends StatelessWidget {
                       fontWeight: FontWeight.w700,
                       color: AppPalette.warmBrown,
                     ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 4),
               Text(
@@ -270,6 +272,8 @@ class _SummaryRow extends StatelessWidget {
                       height: 1.5,
                       color: AppPalette.ink,
                     ),
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
@@ -510,6 +514,8 @@ class _TimelineEntry extends StatelessWidget {
                       color: AppPalette.caption,
                       fontWeight: FontWeight.w600,
                     ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 4),
               Text(
@@ -518,6 +524,8 @@ class _TimelineEntry extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                       color: AppPalette.warmBrown,
                     ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 4),
               Text(
@@ -526,6 +534,8 @@ class _TimelineEntry extends StatelessWidget {
                       height: 1.5,
                       color: AppPalette.ink,
                     ),
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
@@ -637,12 +647,16 @@ class _LetterTile extends StatelessWidget {
           children: [
             Icon(Icons.favorite, color: AppPalette.accentPink.withOpacity(0.8)),
             const SizedBox(width: 10),
-            Text(
-              '$author · $relation',
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: AppPalette.warmBrown,
-                  ),
+            Flexible(
+              child: Text(
+                '$author · $relation',
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: AppPalette.warmBrown,
+                    ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
             const Spacer(),
             Text(

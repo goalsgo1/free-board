@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:free_board/models/memorial.dart';
 import 'package:free_board/providers/accessibility_provider.dart';
 import 'package:free_board/providers/auth_provider.dart';
 import 'package:free_board/screens/matching_screen.dart';
@@ -21,6 +22,8 @@ import 'package:free_board/widgets/components/app_buttons.dart';
 import 'package:free_board/widgets/components/app_card.dart';
 import 'package:free_board/widgets/components/app_inputs.dart';
 import 'package:free_board/widgets/components/app_palette.dart';
+import 'package:free_board/utils/design_tokens.dart';
+import 'package:free_board/utils/responsive.dart';
 import 'package:provider/provider.dart';
 import 'package:free_board/screens/matching_profile_guide_screen.dart';
 import 'package:free_board/screens/matching_profile_editor_screen.dart';
@@ -33,10 +36,6 @@ import 'package:free_board/screens/premium_subscription_screen.dart';
 import 'package:free_board/screens/donation_history_screen.dart';
 import 'package:free_board/screens/settings_screen.dart';
 import 'package:free_board/widgets/app_bottom_nav_bar.dart';
-
-Color _colorWithOpacity(Color color, double opacity) {
-  return color.withAlpha((opacity.clamp(0.0, 1.0) * 255).round());
-}
 
 class AppPageInfo {
   const AppPageInfo({
@@ -60,51 +59,57 @@ class HomeScreen extends StatelessWidget {
   static const routeName = '/home';
 
   static final List<_MemorialHighlightData> _todayMemorials = [
-    const _MemorialHighlightData(
+    _MemorialHighlightData(
       title: '박정윤님 1주기',
       message: '오늘은 첫 번째 기일입니다. 함께했던 미소를 기억해요.',
       dateLabel: '오늘 · 3월 15일',
       imageUrl: 'https://picsum.photos/seed/memory1/420/520',
+      memoryType: MemoryType.memorial,
     ),
-    const _MemorialHighlightData(
+    _MemorialHighlightData(
       title: '고양이 감자 2주기',
       message: '따뜻한 품을 그리워하며 작은 간식을 준비했습니다.',
       dateLabel: '오늘 · 3월 15일',
       imageUrl: 'https://picsum.photos/seed/memory2/420/520',
+      memoryType: MemoryType.petMemorial,
     ),
-    const _MemorialHighlightData(
+    _MemorialHighlightData(
       title: '한지우님 생신',
       message: '생전 좋아하시던 노래로 추억을 꺼내보는 건 어떨까요?',
       dateLabel: '오늘 · 3월 15일',
       imageUrl: 'https://picsum.photos/seed/memory3/420/520',
+      memoryType: MemoryType.birthday,
     ),
   ];
 
   static final List<_MemorialHighlightData> _recentMemorials = [
-    const _MemorialHighlightData(
-      title: '이수진님 추모관',
-      message: '가족과 친구들이 남긴 24개의 추모 편지',
+    _MemorialHighlightData(
+      title: '제주도 여행',
+      message: '가족과 함께한 3박 4일 제주 여행의 소중한 순간들',
       dateLabel: '최근 등록 · 2시간 전',
       imageUrl: 'https://picsum.photos/seed/memory4/420/520',
+      memoryType: MemoryType.travel,
     ),
-    const _MemorialHighlightData(
+    _MemorialHighlightData(
       title: '반려견 모카 추억첩',
       message: '산책 사진과 영상들이 가득 담긴 공간',
       dateLabel: '최근 등록 · 5시간 전',
       imageUrl: 'https://picsum.photos/seed/memory5/420/520',
+      memoryType: MemoryType.petMemorial,
     ),
-    const _MemorialHighlightData(
-      title: '김은호님 기념 추억첩',
-      message: '아버지를 그리워하는 가족의 마음을 담았습니다.',
+    _MemorialHighlightData(
+      title: '오늘의 일상',
+      message: '평범하지만 소중한 하루의 기록',
       dateLabel: '최근 등록 · 어제',
       imageUrl: 'https://picsum.photos/seed/memory6/420/520',
+      memoryType: MemoryType.daily,
     ),
   ];
 
   static final List<_HomeStat> _stats = [
-    const _HomeStat('추모관', '12곳', Icons.auto_awesome_outlined, Color(0xFF8D6E63)),
-    const _HomeStat('위로 받은 인원', '87명', Icons.volunteer_activism_outlined, Color(0xFF42A5F5)),
-    const _HomeStat('이번 주 추모금', '128,000원', Icons.savings_outlined, Color(0xFF66BB6A)),
+    const _HomeStat('추억 저장소', '12개', Icons.auto_awesome_outlined, Color(0xFF8D6E63)),
+    const _HomeStat('공유된 추억', '87개', Icons.volunteer_activism_outlined, Color(0xFF42A5F5)),
+    const _HomeStat('이번 주 기록', '24개', Icons.savings_outlined, Color(0xFF66BB6A)),
   ];
 
   @override
@@ -113,10 +118,10 @@ class HomeScreen extends StatelessWidget {
     final double highlightListHeight =
         (320 + (textScale - 1.0) * 160).clamp(320, 440);
     return Scaffold(
-      backgroundColor: AppPalette.softCream,
+      backgroundColor: DesignTokens.softCream,
       appBar: AppBar(
         title: const Text('기억의 정원'),
-        backgroundColor: AppPalette.warmBrown,
+        backgroundColor: DesignTokens.warmBrown,
         foregroundColor: Colors.white,
         elevation: 0,
         actions: [
@@ -137,64 +142,67 @@ class HomeScreen extends StatelessWidget {
       ),
       bottomNavigationBar: const AppBottomNavBar(currentTab: AppNavTab.home),
       body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 28),
+        padding: Responsive.responsivePadding(context),
         children: [
           AppSurfaceCard(
-            title: '기억의 정원에 오신 것을 환영합니다',
-            subtitle: '함께 공감하고 위로하며 소중한 기억을 간직하세요.',
+            title: '추억의 정원에 오신 것을 환영합니다',
+            subtitle: '소중한 순간을 기록하고, 사랑하는 사람들과 함께 나누는 추억 저장소',
             icon: Icons.favorite,
-            accentColor: AppPalette.warmBrown,
+            accentColor: DesignTokens.warmBrown,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  '슬픔은 나눌 때 치유됩니다. 오늘도 따뜻한 마음을 전해보세요.',
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        height: 1.6,
-                        color: AppPalette.ink,
-                        fontWeight: FontWeight.w600,
-                      ),
+                Container(
+                  padding: EdgeInsets.all(DesignTokens.spacingLG),
+                  decoration: BoxDecoration(
+                    gradient: DesignTokens.gradientWarm,
+                    borderRadius: BorderRadius.circular(DesignTokens.radiusMD),
+                  ),
+                  child: Text(
+                    '생일, 여행, 일상, 그리고 소중한 사람들을 기억하는 모든 순간을 여기에 기록하세요.',
+                    style: DesignTokens.bodyBold(context).copyWith(
+                      height: 1.6,
+                    ),
+                  ),
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: DesignTokens.spacingMD),
                 const AppHelperText(
                   icon: Icons.tips_and_updates_outlined,
-                  text: '기념일 알림과 추천 추모글을 참고하여 소중한 추억을 함께 나눠보세요.',
+                  text: '기념일 알림과 추천 추억을 참고하여 소중한 순간을 함께 나눠보세요.',
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 24),
-          SizedBox(
-            width: double.infinity,
-            child: AppOutlinedButton(
-              label: '기억의 정원 가이드로 이동',
-              leadingIcon: Icons.map_outlined,
-              onPressed: () {
-                Navigator.pushNamed(context, '/home-navigator');
-              },
-            ),
+          SizedBox(height: DesignTokens.spacing2XL),
+          AppOutlinedButton(
+            label: '기억의 정원 가이드로 이동',
+            leadingIcon: Icons.map_outlined,
+            fullWidth: true,
+            onPressed: () {
+              Navigator.pushNamed(context, '/home-navigator');
+            },
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: DesignTokens.spacing2XL),
           AppSurfaceCard(
             title: '오늘의 기념일',
-            subtitle: '오늘 기억해야 할 소중한 분들을 모았어요.',
+            subtitle: '생일, 기념일, 그리고 소중한 날들을 모았어요.',
             icon: Icons.cake_outlined,
-            accentColor: AppPalette.accentPink,
+            accentColor: DesignTokens.accentPink,
             child: Column(
               children: _todayMemorials
                   .map(
                     (memorial) => Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      padding: EdgeInsets.symmetric(vertical: DesignTokens.spacingSM),
                       child: _AnniversaryTile(memorial: memorial),
                     ),
                   )
                   .toList(),
             ),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: DesignTokens.spacing2XL),
           const _HomeSectionHeader(
-            title: '오늘의 추모',
-            subtitle: '사람과 반려동물의 이야기를 둘러보세요.',
+            title: '오늘의 추억',
+            subtitle: '생일, 여행, 일상 등 다양한 추억을 둘러보세요.',
           ),
           const SizedBox(height: 12),
           SizedBox(
@@ -214,8 +222,8 @@ class HomeScreen extends StatelessWidget {
           ),
           const SizedBox(height: 28),
           const _HomeSectionHeader(
-            title: '최근 등록된 추모관',
-            subtitle: '따끈한 추모 공간을 방문해보세요.',
+            title: '최근 등록된 추억',
+            subtitle: '새롭게 기록된 소중한 순간들을 만나보세요.',
           ),
           const SizedBox(height: 12),
           SizedBox(
@@ -233,13 +241,13 @@ class HomeScreen extends StatelessWidget {
               },
             ),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: DesignTokens.spacing2XL),
           AppSurfaceCard(
             title: '나의 기록 요약',
             subtitle: '최근 일주일 기준으로 정리했어요.',
             icon: Icons.insights_outlined,
-            accentColor: AppPalette.accentMint,
-            iconColor: AppPalette.accentMint,
+            accentColor: DesignTokens.accentMint,
+            iconColor: DesignTokens.accentMint,
             child: Column(
               children: [
                 Row(
@@ -248,22 +256,23 @@ class HomeScreen extends StatelessWidget {
                       .map(
                         (stat) => Expanded(
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 6),
+                            padding: EdgeInsets.symmetric(horizontal: DesignTokens.spacingSM),
                             child: _HomeStatTile(stat: stat),
                           ),
                         ),
                       )
                       .toList(),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: DesignTokens.spacingLG),
                 const AppHelperText(
-                  text: '통계는 추모관 업데이트 및 기도 참여 현황에 따라 매일 오전 갱신됩니다.',
+                  text: '통계는 추억 저장소 업데이트 및 활동 현황에 따라 매일 오전 갱신됩니다.',
                   icon: Icons.info_outline,
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: DesignTokens.spacingLG),
                 AppOutlinedButton(
-                  label: '추모관 통계 자세히 보기',
+                  label: '추억 통계 자세히 보기',
                   leadingIcon: Icons.bar_chart_outlined,
+                  fullWidth: true,
                   onPressed: () {
                     Navigator.pushNamed(
                       context,
@@ -274,7 +283,7 @@ class HomeScreen extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 32),
+          SizedBox(height: DesignTokens.spacing3XL),
         ],
       ),
     );
@@ -296,55 +305,56 @@ class _HomeSectionHeader extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: AppPalette.warmBrown,
-              ),
-            ),
-            const SizedBox(height: 4),
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.55,
-              child: Text(
-                subtitle,
-                style: const TextStyle(
-                  fontSize: 13,
-                  color: AppPalette.caption,
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: DesignTokens.heading3(context).copyWith(
+                  color: DesignTokens.warmBrown,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
-            ),
-          ],
+              SizedBox(height: DesignTokens.spacingXS),
+              Text(
+                subtitle,
+                style: DesignTokens.captionText(context),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
         ),
-        Column(
-          children: [
-            TextButton(
-              onPressed: () {},
-              style: TextButton.styleFrom(
-                foregroundColor: AppPalette.warmBrown,
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                minimumSize: const Size(0, 32),
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: const [
-                  Text(
-                    '전체 보기 (준비 중)',
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
-                  ),
-                  SizedBox(width: 4),
-                  Icon(Icons.arrow_forward_ios, size: 14),
-                ],
-              ),
+        SizedBox(width: DesignTokens.spacingSM),
+        Flexible(
+          child: TextButton(
+            onPressed: () {},
+            style: TextButton.styleFrom(
+              foregroundColor: DesignTokens.warmBrown,
+              padding: EdgeInsets.symmetric(horizontal: DesignTokens.spacingSM),
+              minimumSize: const Size(0, 32),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
-          ],
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Flexible(
+                  child: Text(
+                    '전체 보기 (준비 중)',
+                    style: DesignTokens.small(context).copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                SizedBox(width: DesignTokens.spacingXS),
+                Icon(Icons.arrow_forward_ios, size: 14, color: DesignTokens.warmBrown),
+              ],
+            ),
+          ),
         ),
       ],
     );
@@ -360,71 +370,64 @@ class _AnniversaryTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppPalette.warmBeige, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: _colorWithOpacity(Colors.black, 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        color: DesignTokens.white,
+        borderRadius: BorderRadius.circular(DesignTokens.radiusMD),
+        border: DesignTokens.borderDefault,
+        boxShadow: DesignTokens.shadowSoft,
       ),
-      padding: const EdgeInsets.all(16),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final double contentWidth = constraints.maxWidth - 80;
-          return Column(
+      padding: EdgeInsets.all(DesignTokens.spacingLG),
+      child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(DesignTokens.radiusSM),
                     child: Image.network(
                       memorial.imageUrl,
                       width: 64,
                       height: 64,
                       fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        width: 64,
+                        height: 64,
+                        color: DesignTokens.warmBeige,
+                        child: Icon(Icons.image, color: DesignTokens.caption),
+                      ),
                     ),
                   ),
-                  const SizedBox(width: 16),
-                  SizedBox(
-                    width: contentWidth > 0 ? contentWidth : constraints.maxWidth,
+                  SizedBox(width: DesignTokens.spacingLG),
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           memorial.title,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: AppPalette.warmBrown,
+                          style: DesignTokens.bodyBold(context).copyWith(
+                            color: DesignTokens.warmBrown,
                           ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        const SizedBox(height: 6),
+                        SizedBox(height: DesignTokens.spacingXS),
                         Text(
                           memorial.message,
-                          style: const TextStyle(
-                            fontSize: 13,
+                          style: DesignTokens.captionText(context).copyWith(
                             height: 1.4,
-                            color: AppPalette.caption,
                           ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        const SizedBox(height: 8),
+                        SizedBox(height: DesignTokens.spacingSM),
                         Row(
                           children: [
-                            const Icon(Icons.event, size: 14, color: AppPalette.warmBrown),
-                            const SizedBox(width: 6),
+                            Icon(Icons.event, size: 14, color: DesignTokens.warmBrown),
+                            SizedBox(width: DesignTokens.spacingXS),
                             Flexible(
                               child: Text(
                                 memorial.dateLabel,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: AppPalette.caption,
-                                ),
+                                style: DesignTokens.small(context),
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
@@ -435,30 +438,26 @@ class _AnniversaryTile extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: DesignTokens.spacingSM),
               Wrap(
-                spacing: 8,
-                runSpacing: 6,
+                spacing: DesignTokens.spacingSM,
+                runSpacing: DesignTokens.spacingXS,
                 crossAxisAlignment: WrapCrossAlignment.center,
-                children: const [
-                  _BadgeChip(label: '추모관 방문 152명'),
-                  _BadgeChip(label: '댓글 24'),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Align(
-                alignment: Alignment.centerRight,
-                child: AppOutlinedButton(
-                  label: '추모하러 가기',
-                  leadingIcon: Icons.arrow_forward,
-                  badgeText: '준비 중',
-                  onPressed: () {},
-                ),
+                    children: const [
+                      _BadgeChip(label: '방문 152명'),
+                      _BadgeChip(label: '댓글 24'),
+                    ],
+                  ),
+                  SizedBox(height: DesignTokens.spacingMD),
+                  AppOutlinedButton(
+                    label: '추억 보러 가기',
+                leadingIcon: Icons.arrow_forward,
+                badgeText: '준비 중',
+                fullWidth: true,
+                onPressed: () {},
               ),
             ],
-          );
-        },
-      ),
+          ),
     );
   }
 }
@@ -474,80 +473,92 @@ class _MemorialHighlightCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double cardWidth = Responsive.isMobile(context) ? 220 : 260;
+    
     return Container(
-      width: 220,
+      width: cardWidth,
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.black.withOpacity(0.08), width: 1.2),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        color: DesignTokens.white,
+        borderRadius: BorderRadius.circular(DesignTokens.radiusLG),
+        border: DesignTokens.borderDefault,
+        boxShadow: DesignTokens.shadowMedium,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(16),
-              topRight: Radius.circular(16),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(DesignTokens.radiusLG),
+              topRight: Radius.circular(DesignTokens.radiusLG),
             ),
             child: Image.network(
               highlight.imageUrl,
-              height: 120,
+              height: Responsive.responsiveImageHeight(
+                context,
+                mobile: 120,
+                tablet: 140,
+              ),
               width: double.infinity,
               fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) => Container(
+                height: Responsive.responsiveImageHeight(
+                  context,
+                  mobile: 120,
+                  tablet: 140,
+                ),
+                color: DesignTokens.warmBeige,
+                child: Icon(Icons.image, color: DesignTokens.caption, size: 40),
+              ),
             ),
           ),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.all(14),
+              padding: EdgeInsets.all(DesignTokens.spacingMD),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    highlight.title,
-                    style: TextStyle(
-                      fontSize: 14.5,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+                  Row(
+                    children: [
+                      Text(
+                        highlight.memoryType.icon,
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          highlight.title,
+                          style: DesignTokens.bodyBold(context).copyWith(
+                            fontSize: 15,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 6),
+                  SizedBox(height: DesignTokens.spacingXS),
                   Expanded(
                     child: Text(
                       highlight.message,
-                      style: TextStyle(
-                        fontSize: 12.5,
+                      style: DesignTokens.captionText(context).copyWith(
                         height: 1.4,
-                        color: Colors.black.withOpacity(0.7),
                       ),
                       maxLines: 4,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
+                  SizedBox(height: DesignTokens.spacingSM),
                   Text(
                     highlight.dateLabel,
-                    style: TextStyle(
-                      fontSize: 11.5,
-                      color: Colors.black.withOpacity(0.6),
-                    ),
+                    style: DesignTokens.small(context),
                   ),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    width: double.infinity,
-                    child: AppOutlinedButton(
-                      label: '살펴보기',
-                      leadingIcon: Icons.open_in_new,
-                  badgeText: '준비 중',
-                      onPressed: primaryAction,
-                    ),
+                  SizedBox(height: DesignTokens.spacingMD),
+                  AppOutlinedButton(
+                    label: '살펴보기',
+                    leadingIcon: Icons.open_in_new,
+                    badgeText: '준비 중',
+                    fullWidth: true,
+                    onPressed: primaryAction,
                   ),
                 ],
               ),
@@ -566,41 +577,42 @@ class _HomeStatTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color resolvedColor = Colors.white;
-    final Color foreground = Colors.black;
     return Container(
       decoration: BoxDecoration(
-        color: resolvedColor,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.black.withOpacity(0.08), width: 1.2),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        color: DesignTokens.white,
+        borderRadius: BorderRadius.circular(DesignTokens.radiusMD),
+        border: DesignTokens.borderDefault,
+        boxShadow: DesignTokens.shadowSoft,
       ),
-      padding: const EdgeInsets.all(14),
+      padding: EdgeInsets.all(DesignTokens.spacingMD),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(stat.icon, color: foreground, size: 28),
-          const SizedBox(height: 12),
+          Container(
+            padding: EdgeInsets.all(DesignTokens.spacingSM),
+            decoration: BoxDecoration(
+              color: stat.color.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(stat.icon, color: stat.color, size: 24),
+          ),
+          SizedBox(height: DesignTokens.spacingMD),
           Text(
             stat.value,
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: foreground,
-                ),
+            style: DesignTokens.heading3(context).copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 6),
+          SizedBox(height: DesignTokens.spacingXS),
           Text(
             stat.label,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: foreground.withOpacity(0.8),
-                  fontWeight: FontWeight.w500,
-                ),
+            style: DesignTokens.captionText(context).copyWith(
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
@@ -614,12 +626,14 @@ class _MemorialHighlightData {
     required this.message,
     required this.dateLabel,
     required this.imageUrl,
+    this.memoryType = MemoryType.memorial, // 기본값은 추모 (하위 호환성)
   });
 
   final String title;
   final String message;
   final String dateLabel;
   final String imageUrl;
+  final MemoryType memoryType;
 }
 
 class _HomeStat {
@@ -667,16 +681,18 @@ class _BadgeChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: EdgeInsets.symmetric(
+        horizontal: DesignTokens.spacingSM,
+        vertical: DesignTokens.spacingXS,
+      ),
       decoration: BoxDecoration(
-        color: _colorWithOpacity(AppPalette.warmBrown, 0.1),
-        borderRadius: BorderRadius.circular(999),
+        color: DesignTokens.warmBrown.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(DesignTokens.radiusFull),
       ),
       child: Text(
         label,
-        style: const TextStyle(
-          fontSize: 11,
-          color: AppPalette.warmBrown,
+        style: DesignTokens.small(context).copyWith(
+          color: DesignTokens.warmBrown,
           fontWeight: FontWeight.w600,
         ),
       ),
@@ -790,17 +806,17 @@ class HomeNavigatorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppPalette.softCream,
+      backgroundColor: DesignTokens.softCream,
       appBar: AppBar(
         title: const Text('기억의 정원 가이드'),
-        backgroundColor: AppPalette.warmBrown,
+        backgroundColor: DesignTokens.warmBrown,
         foregroundColor: Colors.white,
         elevation: 0,
         actions: const [AccessibilityButton()],
       ),
       bottomNavigationBar: const AppBottomNavBar(currentTab: AppNavTab.home),
       body: ListView.separated(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+        padding: Responsive.responsivePadding(context),
         itemBuilder: (context, index) {
           final category = _categories[index];
           return AppSurfaceCard(
@@ -828,22 +844,21 @@ class HomeNavigatorScreen extends StatelessWidget {
                       )
                       .toList(),
                 ),
-                const SizedBox(height: 16),
-                const Text(
+                SizedBox(height: DesignTokens.spacingLG),
+                Text(
                   '추천 이동 경로',
-                  style: TextStyle(
-                    fontSize: 13,
+                  style: DesignTokens.captionText(context).copyWith(
                     fontWeight: FontWeight.w600,
-                    color: AppPalette.warmBrown,
+                    color: DesignTokens.warmBrown,
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: DesignTokens.spacingSM),
                 AppChecklist(items: category.tips),
               ],
             ),
           );
         },
-        separatorBuilder: (_, __) => const SizedBox(height: 18),
+        separatorBuilder: (_, __) => SizedBox(height: DesignTokens.spacingMD),
         itemCount: _categories.length,
       ),
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:free_board/models/memorial.dart';
 import 'package:free_board/providers/auth_provider.dart';
 import 'package:free_board/providers/memorial_provider.dart';
 import 'package:free_board/widgets/components/app_buttons.dart';
@@ -25,6 +26,71 @@ class MemorialEditArguments {
   bool get isEdit => memorialId != null;
 }
 
+// 추억 타입 선택 위젯
+class _MemoryTypeSection extends StatelessWidget {
+  const _MemoryTypeSection({
+    required this.selectedType,
+    required this.onTypeSelected,
+  });
+
+  final MemoryType selectedType;
+  final ValueChanged<MemoryType> onTypeSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppSurfaceCard(
+      title: '추억 타입 선택',
+      subtitle: '어떤 종류의 추억을 기록하시나요?',
+      icon: Icons.category_outlined,
+      accentColor: AppPalette.warmBrown,
+      child: Wrap(
+        spacing: 12,
+        runSpacing: 12,
+        children: MemoryType.values.map((type) {
+          final isSelected = selectedType == type;
+          return GestureDetector(
+            onTap: () => onTypeSelected(type),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? AppPalette.warmBrown.withOpacity(0.1)
+                    : Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: isSelected
+                      ? AppPalette.warmBrown
+                      : AppPalette.warmBeige,
+                  width: isSelected ? 2 : 1,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    type.icon,
+                    style: const TextStyle(fontSize: 20),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    type.displayName,
+                    style: TextStyle(
+                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                      color: isSelected
+                          ? AppPalette.warmBrown
+                          : AppPalette.ink,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
 class _MemorialEditScreenState extends State<MemorialEditScreen> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameController;
@@ -32,6 +98,7 @@ class _MemorialEditScreenState extends State<MemorialEditScreen> {
   late final TextEditingController _storyController;
   late final TextEditingController _anniversaryController;
   late final TextEditingController _notesController;
+  MemoryType _selectedMemoryType = MemoryType.memorial; // 기본값은 추모 (하위 호환성)
   bool _isPublic = true;
   bool _allowComments = true;
   bool _allowSharing = true;
@@ -69,6 +136,7 @@ class _MemorialEditScreenState extends State<MemorialEditScreen> {
         _storyController.text = memorial.story ?? '';
         _anniversaryController.text = memorial.anniversaryLabel ?? '';
         _notesController.text = memorial.notes ?? '';
+        _selectedMemoryType = memorial.memoryType;
         _isPublic = memorial.isPublic;
         _allowComments = memorial.allowComments;
         _allowSharing = memorial.allowSharing;
@@ -96,7 +164,7 @@ class _MemorialEditScreenState extends State<MemorialEditScreen> {
     return Scaffold(
       backgroundColor: AppPalette.softCream,
       appBar: AppBar(
-        title: Text(isEdit ? '추모관 수정' : '새 추모관 만들기'),
+        title: Text(isEdit ? '추억 수정' : '새 추억 만들기'),
         backgroundColor: AppPalette.warmBrown,
         foregroundColor: Colors.white,
         actions: const [AccessibilityButton()],
@@ -107,8 +175,17 @@ class _MemorialEditScreenState extends State<MemorialEditScreen> {
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              _BasicInfoSection(),
+            children: [
+              _MemoryTypeSection(
+                selectedType: _selectedMemoryType,
+                onTypeSelected: (type) {
+                  setState(() {
+                    _selectedMemoryType = type;
+                  });
+                },
+              ),
+              const SizedBox(height: 20),
+              const _BasicInfoSection(),
               SizedBox(height: 20),
               _MemorialMetaSection(),
               SizedBox(height: 20),
@@ -177,6 +254,7 @@ class _MemorialEditScreenState extends State<MemorialEditScreen> {
     final success = await memorialProvider.createMemorial(
       name: name,
       createdBy: createdBy,
+      memoryType: _selectedMemoryType,
       relation: relation.isEmpty ? null : relation,
       story: story,
       anniversaryLabel: anniversary.isEmpty ? null : anniversary,
@@ -193,7 +271,13 @@ class _MemorialEditScreenState extends State<MemorialEditScreen> {
 
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('새 추모관이 생성되었습니다.')),
+        SnackBar(
+          content: Text(
+            _selectedMemoryType == MemoryType.memorial || _selectedMemoryType == MemoryType.petMemorial
+                ? '새 추모관이 생성되었습니다.'
+                : '새 추억이 생성되었습니다.',
+          ),
+        ),
       );
       Navigator.pop(context, true);
     } else {
@@ -342,12 +426,18 @@ Future<void> _showDatePicker(
     },
   );
 
-  if (picked != null) {
-    state.setState(() {
-      state._selectedAnniversary = picked;
-      state._anniversaryController.text =
+  if (picked != null && context.mounted) {
+    // 콜백을 통해 State의 setState 호출
+    final stateWidget = context.findAncestorStateOfType<_MemorialEditScreenState>();
+    if (stateWidget != null) {
+      // setState는 protected이므로 직접 호출 불가
+      // 대신 StatefulWidget의 public 메서드를 통해 접근
+      stateWidget._selectedAnniversary = picked;
+      stateWidget._anniversaryController.text =
           '${picked.year}년 ${picked.month}월 ${picked.day}일';
-    });
+      // setState를 호출하기 위해 위젯을 다시 빌드하도록 트리거
+      (stateWidget as State).setState(() {});
+    }
   }
 }
 
@@ -544,7 +634,9 @@ class _SaveButtonRow extends StatelessWidget {
           child: Consumer<MemorialProvider>(
             builder: (context, provider, _) {
               return AppPrimaryButton(
-                label: '추모관 저장하기',
+                label: state._selectedMemoryType == MemoryType.memorial || state._selectedMemoryType == MemoryType.petMemorial
+                    ? '추모관 저장하기'
+                    : '추억 저장하기',
                 icon: Icons.check_circle_outline,
                 isLoading: provider.isSubmitting,
                 onPressed: provider.isSubmitting

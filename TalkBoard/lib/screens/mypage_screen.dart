@@ -366,22 +366,32 @@ class _InfoRow extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
+          flex: 2,
           child: Text(
             label,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Colors.black,
                   fontWeight: FontWeight.w600,
                 ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
-        Text(
-          value,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: highlight
-                    ? const Color.fromRGBO(0, 0, 0, 1)
-                    : const Color.fromRGBO(0, 0, 0, 0.7),
-                fontWeight: highlight ? FontWeight.w700 : FontWeight.w500,
-              ),
+        SizedBox(width: 8),
+        Expanded(
+          flex: 3,
+          child: Text(
+            value,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: highlight
+                      ? const Color.fromRGBO(0, 0, 0, 1)
+                      : const Color.fromRGBO(0, 0, 0, 0.7),
+                  fontWeight: highlight ? FontWeight.w700 : FontWeight.w500,
+                ),
+            textAlign: TextAlign.end,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
       ],
     );

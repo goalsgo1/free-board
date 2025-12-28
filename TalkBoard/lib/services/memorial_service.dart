@@ -5,14 +5,53 @@ import 'package:free_board/models/memorial.dart';
 
 class MemorialService {
   MemorialService({FirebaseFirestore? firestore})
-      : _firestore = firestore ?? FirebaseFirestore.instance;
+    : _firestore = firestore ?? FirebaseFirestore.instance;
 
   final FirebaseFirestore _firestore;
   static const String _collection = 'memorials';
 
-  Stream<List<Memorial>> streamMemorials() {
-    return _firestore
-        .collection(_collection)
+  Future<QuerySnapshot<Map<String, dynamic>>> fetchMemorials({
+    DocumentSnapshot<Map<String, dynamic>>? startAfter,
+    int limit = 20,
+    String? currentUserId,
+  }) {
+    Query<Map<String, dynamic>> query = _firestore.collection(_collection);
+
+    if (currentUserId != null) {
+      query = query.where(
+        Filter.or(
+          Filter('isPublic', isEqualTo: true),
+          Filter('createdBy', isEqualTo: currentUserId),
+        ),
+      );
+    } else {
+      query = query.where('isPublic', isEqualTo: true);
+    }
+
+    query = query.orderBy('createdAt', descending: true).limit(limit);
+
+    if (startAfter != null) {
+      query = query.startAfterDocument(startAfter);
+    }
+
+    return query.get();
+  }
+
+  Stream<List<Memorial>> streamMemorials({String? currentUserId}) {
+    Query<Map<String, dynamic>> query = _firestore.collection(_collection);
+
+    if (currentUserId != null) {
+      query = query.where(
+        Filter.or(
+          Filter('isPublic', isEqualTo: true),
+          Filter('createdBy', isEqualTo: currentUserId),
+        ),
+      );
+    } else {
+      query = query.where('isPublic', isEqualTo: true);
+    }
+
+    return query
         .orderBy('createdAt', descending: true)
         .snapshots()
         .map(
@@ -40,8 +79,10 @@ class MemorialService {
 
   Future<Memorial?> getMemorial(String memorialId) async {
     try {
-      final doc =
-          await _firestore.collection(_collection).doc(memorialId).get();
+      final doc = await _firestore
+          .collection(_collection)
+          .doc(memorialId)
+          .get();
       final data = doc.data();
       if (data == null) return null;
       return Memorial.fromFirestore(data, doc.id);
@@ -56,7 +97,10 @@ class MemorialService {
     }
   }
 
-  Future<bool> updateMemorial(String memorialId, Map<String, dynamic> updates) async {
+  Future<bool> updateMemorial(
+    String memorialId,
+    Map<String, dynamic> updates,
+  ) async {
     try {
       await _firestore.collection(_collection).doc(memorialId).update({
         ...updates,
@@ -74,5 +118,3 @@ class MemorialService {
     }
   }
 }
-
-

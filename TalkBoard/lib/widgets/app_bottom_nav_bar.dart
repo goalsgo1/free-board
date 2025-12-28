@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:free_board/utils/design_tokens.dart';
 
 enum AppNavTab { home, matching, gratitude, mypage, settings }
 
@@ -19,35 +20,51 @@ class AppBottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final currentIndex = _items.indexWhere((item) => item.tab == currentTab);
 
-    return NavigationBarTheme(
-      data: NavigationBarThemeData(
-        indicatorColor: Colors.black.withOpacity(0.08),
-        labelTextStyle: WidgetStateProperty.resolveWith(
-          (states) => const TextStyle(
-            fontWeight: FontWeight.w600,
-            color: Colors.black,
+    return Container(
+      decoration: BoxDecoration(
+        color: DesignTokens.white,
+        boxShadow: DesignTokens.shadowTop,
+      ),
+      child: NavigationBarTheme(
+        data: NavigationBarThemeData(
+          indicatorColor: DesignTokens.warmBrown.withOpacity(0.1),
+          labelTextStyle: WidgetStateProperty.resolveWith(
+            (states) => TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 11,
+              color: states.contains(MaterialState.selected)
+                  ? DesignTokens.warmBrown
+                  : DesignTokens.caption,
+            ),
+          ),
+          iconTheme: WidgetStateProperty.resolveWith(
+            (states) => IconThemeData(
+              size: 24,
+              color: states.contains(MaterialState.selected)
+                  ? DesignTokens.warmBrown
+                  : DesignTokens.caption,
+            ),
           ),
         ),
-      ),
-      child: NavigationBar(
-        height: 72,
-        elevation: 12,
-        backgroundColor: Colors.white,
-        shadowColor: Colors.black.withOpacity(0.08),
-        surfaceTintColor: Colors.white,
-        selectedIndex: currentIndex.isNegative ? 0 : currentIndex,
-        destinations: _items
-            .map(
-              (item) => NavigationDestination(
-                icon: Icon(
-                  item.icon,
-                  color: item.tab == currentTab ? Colors.black : Colors.black54,
+        child: NavigationBar(
+          height: 72,
+          elevation: 0,
+          backgroundColor: DesignTokens.white,
+          selectedIndex: currentIndex.isNegative ? 0 : currentIndex,
+          destinations: _items
+              .map(
+                (item) => NavigationDestination(
+                  icon: Icon(item.icon),
+                  selectedIcon: Icon(
+                    item.icon,
+                    color: DesignTokens.warmBrown,
+                  ),
+                  label: item.label,
                 ),
-                label: item.label,
-              ),
-            )
-            .toList(),
-        onDestinationSelected: (index) => _handleTap(context, _items[index]),
+              )
+              .toList(),
+          onDestinationSelected: (index) => _handleTap(context, _items[index]),
+        ),
       ),
     );
   }
